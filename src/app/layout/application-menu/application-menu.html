@@ -1,0 +1,45 @@
+<aside class="sidebar">
+
+  @if (application) {
+
+    <h2 class="sidebar-title">
+      {{ application.title }}
+    </h2>
+
+    @for (menu of application.menus; track menu.id) {
+
+      <div class="menu-group">
+
+        <button
+          type="button"
+          (click)="openMenuItem(menu)"
+        >
+          {{ menu.title }}
+        </button>
+
+        @if (menu.children) {
+
+          <div class="submenu">
+
+            @for (child of menu.children; track child.id) {
+
+              <button
+                type="button"
+                (click)="openMenuItem(child)"
+              >
+                {{ child.title }}
+              </button>
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+  }
+
+</aside>

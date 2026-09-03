@@ -1,0 +1,22 @@
+<div class="tabs">
+  @for (tab of tabsService.tabs(); track tab.id) {
+
+    <button
+      type="button"
+      class="tab"
+      [class.active]="tabsService.activeTabId() === tab.id"
+      (click)="activate(tab.id)">
+
+      <span>
+        {{ tab.title }}
+      </span>
+
+      <span
+        class="close"
+        (click)="close($event, tab.id)">
+        ×
+      </span>
+
+    </button>
+  }
+</div>
