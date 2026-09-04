@@ -56,8 +56,16 @@ export class WorkspaceShell implements OnInit {
 
     this.menuService.getMenus(application.projeto)
       .subscribe(menus => {
-        application.menus = menus;
-        this.applications.update(applications => [...applications]);
+        this.applications.update(applications =>
+          applications.map(item =>
+            item.id === application.id
+              ? {
+                ...item,
+                menus
+              }
+              : item
+          )
+        );
       });
   }
 }

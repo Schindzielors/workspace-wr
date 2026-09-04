@@ -1,13 +1,15 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 
+import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu-item.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
-import { WorkspaceMenuService } from '../../features/workspace/service/workspace-menu.service';
-import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 
 @Component({
   selector: 'app-application-menu',
-  imports: [],
+  imports: [
+    NgTemplateOutlet
+  ],
   templateUrl: './application-menu.html',
   styleUrl: './application-menu.scss'
 })
@@ -24,17 +26,6 @@ export class ApplicationMenu {
   private readonly tabsService = inject(WorkspaceTabsService);
 
   @Input() application?: WorkspaceApplication;
-
-  // /**
-  //  * Serviço responsável por fornecer as aplicações e menus
-  //  * disponíveis no Workspace.
-  //  */
-  // private readonly menuService = inject(WorkspaceMenuService);
-
-  // /**
-  //  * Aplicações disponíveis para exibição no menu.
-  //  */
-  // readonly applications = this.menuService.getApplications();
 
   /**
    * Solicita a abertura da tela associada ao item selecionado.
@@ -54,5 +45,4 @@ export class ApplicationMenu {
       url: item.url
     });
   }
-
 }

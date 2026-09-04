@@ -67,3 +67,19 @@
 .menu-item-child {
   padding-left: 24px;
 }
+
+.submenu {
+  padding-left: 16px;
+}
+
+.sidebar {
+  width: 240px;
+  height: 100%;
+  padding: 16px;
+  border-right: 1px solid #ddd;
+  background: #fff;
+  box-sizing: border-box;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
