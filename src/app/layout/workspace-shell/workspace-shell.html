@@ -1,20 +1,36 @@
 <div class="workspace">
 
   <header class="header">
-    <strong>Workspace WR</strong>
+
+    <div class="header__identity">
+
+      <div class="header__brand">
+        WR
+      </div>
+
+      <div class="header__titles">
+        <strong class="header__title">
+          Workspace WR
+        </strong>
+
+        <span class="header__subtitle">
+          Datapar
+        </span>
+      </div>
+
+    </div>
+
+    <div class="header__actions">
+    </div>
+
   </header>
 
   <div class="workspace-body">
 
-    <app-application-rail
-      [applications]="applications()"
-      [activeApplicationId]="activeApplicationId"
-      (applicationSelected)="selectApplication($event)"
-    />
+    <app-application-rail [applications]="applications()" [activeApplicationId]="activeApplicationId"
+      (applicationSelected)="selectApplication($event)" />
 
-    <app-application-menu
-      [application]="activeApplication"
-    />
+    <app-application-menu [application]="activeApplication" />
 
     <main class="main">
 

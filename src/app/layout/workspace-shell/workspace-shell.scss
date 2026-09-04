@@ -13,13 +13,75 @@
 }
 
 .header {
-  height: 52px;
+  height: 64px;
+
   display: flex;
   align-items: center;
-  padding: 0 18px;
-  border-bottom: 1px solid #ddd;
-  background: #fff;
+  justify-content: space-between;
+
+  padding: 0 20px;
+
+  box-sizing: border-box;
+
+  border-bottom: 1px solid #e5e9f0;
+
+  background: #ffffff;
+
   flex-shrink: 0;
+}
+
+.header__identity {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.header__brand {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #050a1b;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.header__titles {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.header__title {
+  color: #172033;
+
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.header__subtitle {
+  color: #667085;
+
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
 }
 
 .workspace-body {
