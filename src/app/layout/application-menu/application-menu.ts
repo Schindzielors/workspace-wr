@@ -14,6 +14,7 @@ import { WorkspaceTabsService } from '../../features/workspace/service/workspace
   styleUrl: './application-menu.scss'
 })
 export class ApplicationMenu {
+  private readonly expandedItems = new Set<string>();
 
   /**
    * Serviço responsável pelo gerenciamento das abas do Workspace.
@@ -44,5 +45,23 @@ export class ApplicationMenu {
       system: item.system,
       url: item.url
     });
+  }
+
+  isExpanded(item: WorkspaceMenuItem): boolean {
+    return this.expandedItems.has(item.id);
+  }
+
+  toggleItem(item: WorkspaceMenuItem): void {
+    if (!item.children?.length) {
+      this.openMenuItem(item);
+      return;
+    }
+
+    if (this.expandedItems.has(item.id)) {
+      this.expandedItems.delete(item.id);
+      return;
+    }
+
+    this.expandedItems.add(item.id);
   }
 }

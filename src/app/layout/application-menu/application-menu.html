@@ -26,12 +26,25 @@
       <button
         type="button"
         class="menu-item"
-        (click)="openMenuItem(item)"
+        (click)="toggleItem(item)"
       >
-        {{ item.title }}
+
+        @if (item.children?.length) {
+          <span class="menu-toggle">
+            {{ isExpanded(item) ? '▾' : '▸' }}
+          </span>
+        }
+
+        <span>
+          {{ item.title }}
+        </span>
+
       </button>
 
-      @if (item.children?.length) {
+      @if (
+        item.children?.length &&
+        isExpanded(item)
+      ) {
 
         <div class="submenu">
 

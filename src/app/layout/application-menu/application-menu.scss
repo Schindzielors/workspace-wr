@@ -44,7 +44,7 @@
 }
 
 .menu-item {
-  display: block;
+  display: flex;
 
   width: 100%;
   padding: 10px 12px;
@@ -59,9 +59,17 @@
 
   cursor: pointer;
 
+  align-items: center;
+  gap: 8px;
+
   &:hover {
     background: #f1f3f5;
   }
+}
+
+.menu-toggle {
+  flex: 0 0 12px;
+  text-align: center;
 }
 
 .menu-item-child {
