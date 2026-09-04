@@ -213,8 +213,13 @@ export class IframeHost {
      * Esta operação pressupõe que a URL pertence a uma aplicação confiável
      * e previamente cadastrada/configurada pelo Workspace.
      */
+    const reloadUrl = this.buildReloadUrl(
+      url,
+      reloadVersion
+    );
+
     const safeUrl =
-      this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      this.sanitizer.bypassSecurityTrustResourceUrl(reloadUrl);
 
     // Mantém a referência em cache durante todo o ciclo de vida da aba.
     this.safeUrls.set(tabId, {
@@ -223,5 +228,28 @@ export class IframeHost {
     });
 
     return safeUrl;
+  }
+
+  private buildReloadUrl(
+    url: string,
+    reloadVersion: number
+  ): string {
+
+    if (reloadVersion === 0) {
+      return url;
+    }
+
+    const [baseUrl, fragment] = url.split('#', 2);
+
+    const separator = baseUrl.includes('?')
+      ? '&'
+      : '?';
+
+    const reloadUrl =
+      `${baseUrl}${separator}wrReload=${reloadVersion}`;
+
+    return fragment
+      ? `${reloadUrl}#${fragment}`
+      : reloadUrl;
   }
 }
