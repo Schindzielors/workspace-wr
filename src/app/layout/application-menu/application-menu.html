@@ -2,16 +2,13 @@
 
   @if (application) {
 
-    <h2 class="sidebar-title">
-      {{ application.title }}
-    </h2>
+  <h2 class="sidebar-title">
+    {{ application.title }}
+  </h2>
 
-    <ng-container
-      [ngTemplateOutlet]="menuItems"
-      [ngTemplateOutletContext]="{
+  <ng-container [ngTemplateOutlet]="menuItems" [ngTemplateOutletContext]="{
         $implicit: application.menus
-      }"
-    />
+      }" />
 
   }
 
@@ -21,45 +18,36 @@
 
   @for (item of items; track item.id) {
 
-    <div class="menu-group">
+  <div class="menu-group">
 
-      <button
-        type="button"
-        class="menu-item"
-        (click)="toggleItem(item)"
-      >
+    <button type="button" class="menu-item" (click)="toggleItem(item)">
+      <span class="menu-item-title">
+        {{ item.title }}
+      </span>
 
-        @if (item.children?.length) {
-          <span class="menu-toggle">
-            {{ isExpanded(item) ? '▾' : '▸' }}
-          </span>
-        }
-
-        <span>
-          {{ item.title }}
-        </span>
-
-      </button>
-
-      @if (
-        item.children?.length &&
-        isExpanded(item)
-      ) {
-
-        <div class="submenu">
-
-          <ng-container
-            [ngTemplateOutlet]="menuItems"
-            [ngTemplateOutletContext]="{
-              $implicit: item.children
-            }"
-          />
-
-        </div>
-
+      @if (item.children?.length) {
+      <span class="menu-toggle">
+        {{ isExpanded(item) ? '▾' : '▸' }}
+      </span>
       }
+    </button>
+
+    @if (
+    item.children?.length &&
+    isExpanded(item)
+    ) {
+
+    <div class="submenu">
+
+      <ng-container [ngTemplateOutlet]="menuItems" [ngTemplateOutletContext]="{
+              $implicit: item.children
+            }" />
 
     </div>
+
+    }
+
+  </div>
 
   }
 
