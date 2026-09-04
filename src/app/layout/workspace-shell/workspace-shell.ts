@@ -35,6 +35,11 @@ export class WorkspaceShell {
 
   selectApplication(applicationId: string): void {
     this.activeApplicationId = applicationId;
+
+    //Teste
+    this.menuService.getProjects().subscribe(response => {
+      console.log('Projetos da API:', response);
+    });
   }
 
 }

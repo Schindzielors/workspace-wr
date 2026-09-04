@@ -3,15 +3,14 @@ import { WorkspaceApplication } from '../model/workspace-application.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { WorkspaceProjectResponseDto } from '../dto/workspace-project-response.dto';
+import { appConfig } from '../../../core/config/app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceMenuService {
   private readonly http = inject(HttpClient);
-
-  private readonly apiUrl =
-    'https://localhost:7055/api/WorkspaceMenu';
+  private readonly apiUrl = `${appConfig.apiUrl}/api/WorkspaceMenu`;
 
   /**
    * Aplicações disponíveis no Workspace.
