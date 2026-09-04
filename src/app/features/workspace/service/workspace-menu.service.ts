@@ -1,10 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { WorkspaceApplication } from '../model/workspace-application.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { WorkspaceProjectResponseDto } from '../dto/workspace-project-response.dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceMenuService {
+  private readonly http = inject(HttpClient);
+
+  private readonly apiUrl =
+    'https://localhost:7055/api/WorkspaceMenu';
 
   /**
    * Aplicações disponíveis no Workspace.
@@ -69,5 +76,11 @@ export class WorkspaceMenuService {
    */
   getApplications(): WorkspaceApplication[] {
     return this.applications;
+  }
+
+  getProjects(): Observable<WorkspaceProjectResponseDto> {
+    return this.http.get<WorkspaceProjectResponseDto>(
+      `${this.apiUrl}/Projetos`
+    );
   }
 }
