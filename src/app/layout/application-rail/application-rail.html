@@ -1,0 +1,102 @@
+<nav class="application-rail">
+
+  <div class="application-rail__main">
+
+    <button
+      type="button"
+      class="application-item application-item--static"
+      disabled
+    >
+      <span class="application-item__icon">
+        ⌂
+      </span>
+
+      <span class="application-item__label">
+        Início
+      </span>
+    </button>
+
+    @for (application of applications; track application.id) {
+
+      <button
+        type="button"
+        class="application-item"
+        [class.application-item--active]="application.id === activeApplicationId"
+        (click)="selectApplication(application.id)"
+      >
+
+        <span class="application-item__icon">
+          @switch (application.icon) {
+
+            @case ('truck') {
+              ▣
+            }
+
+            @case ('map') {
+              ◫
+            }
+
+            @case ('monitor') {
+              ▤
+            }
+
+            @default {
+              ◻
+            }
+
+          }
+        </span>
+
+        <span class="application-item__label">
+          {{ application.shortTitle ?? application.title }}
+        </span>
+
+      </button>
+
+    }
+
+    <button
+      type="button"
+      class="application-item application-item--static"
+      disabled
+    >
+      <span class="application-item__icon">
+        ▦
+      </span>
+
+      <span class="application-item__label">
+        Painéis
+      </span>
+    </button>
+
+    <div class="application-rail__divider"></div>
+
+    <button
+      type="button"
+      class="application-item application-item--static"
+      disabled
+    >
+      <span class="application-item__icon">
+        +
+      </span>
+
+      <span class="application-item__label">
+        Mais
+      </span>
+    </button>
+
+  </div>
+
+  <div class="application-rail__user">
+
+    <div class="application-user__avatar">
+      B
+    </div>
+
+    <span class="application-user__name">
+      Bruno
+    </span>
+
+  </div>
+
+</nav>

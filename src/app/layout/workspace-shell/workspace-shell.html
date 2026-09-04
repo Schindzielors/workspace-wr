@@ -1,0 +1,29 @@
+<div class="workspace">
+
+  <header class="header">
+    <strong>Workspace WR</strong>
+  </header>
+
+  <div class="workspace-body">
+
+    <app-application-rail
+      [applications]="applications"
+      [activeApplicationId]="activeApplicationId"
+      (applicationSelected)="selectApplication($event)"
+    />
+
+    <app-application-menu
+      [application]="activeApplication"
+    />
+
+    <main class="main">
+
+      <app-tabs />
+
+      <app-iframe-host />
+
+    </main>
+
+  </div>
+
+</div>

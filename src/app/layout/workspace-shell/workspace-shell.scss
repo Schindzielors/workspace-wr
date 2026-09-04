@@ -4,7 +4,7 @@
   height: 100vh;
 }
 
-.poc-wrapper {
+.workspace {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -12,24 +12,26 @@
   overflow: hidden;
 }
 
-.poc-header {
-  height: 48px;
+.header {
+  height: 52px;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 18px;
   border-bottom: 1px solid #ddd;
   background: #fff;
   flex-shrink: 0;
 }
 
-.poc-content {
+.workspace-body {
+  display: flex;
   flex: 1;
   min-height: 0;
 }
 
-.portal-frame {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
 }
