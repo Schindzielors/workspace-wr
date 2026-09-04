@@ -8,7 +8,13 @@
       disabled
     >
       <span class="application-item__icon">
-        ⌂
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M3 11.5 12 4l9 7.5" />
+          <path d="M5 10.5V20h14v-9.5" />
+        </svg>
       </span>
 
       <span class="application-item__label">
@@ -24,33 +30,48 @@
         [class.application-item--active]="application.id === activeApplicationId"
         (click)="selectApplication(application.id)"
       >
-
         <span class="application-item__icon">
+
           @switch (application.icon) {
 
             @case ('truck') {
-              ▣
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 6h11v10H3z" />
+                <path d="M14 9h4l3 3v4h-7z" />
+                <circle cx="7" cy="18" r="2" />
+                <circle cx="18" cy="18" r="2" />
+              </svg>
             }
 
             @case ('map') {
-              ◫
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z" />
+                <path d="M9 3v15" />
+                <path d="M15 6v15" />
+              </svg>
             }
 
             @case ('monitor') {
-              ▤
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="14" rx="2" />
+                <path d="M8 21h8" />
+                <path d="M12 18v3" />
+              </svg>
             }
 
             @default {
-              ◻
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="4" width="16" height="16" rx="2" />
+              </svg>
             }
 
           }
+
         </span>
 
         <span class="application-item__label">
           {{ application.shortTitle ?? application.title }}
         </span>
-
       </button>
 
     }
@@ -63,7 +84,11 @@
       disabled
     >
       <span class="application-item__icon">
-        +
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M12 8v8" />
+          <path d="M8 12h8" />
+        </svg>
       </span>
 
       <span class="application-item__label">

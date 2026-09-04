@@ -14,7 +14,7 @@
 
   box-sizing: border-box;
 
-  padding: 12px 8px 14px;
+  padding: 14px 8px 12px;
 
   background: #050a1b;
   color: #ffffff;
@@ -23,29 +23,29 @@
 .application-rail__main {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .application-item {
   position: relative;
 
   width: 100%;
-  min-height: 68px;
+  min-height: 76px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  gap: 7px;
+  gap: 8px;
 
   padding: 8px 4px;
 
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
 
   background: transparent;
-  color: #c5cada;
+  color: #b8bfd0;
 
   font: inherit;
 
@@ -57,12 +57,12 @@
 }
 
 .application-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.04);
   color: #ffffff;
 }
 
 .application-item--active {
-  background: rgba(255, 255, 255, 0.09);
+  background: transparent;
   color: #ffffff;
 }
 
@@ -72,8 +72,8 @@
   position: absolute;
 
   left: -8px;
-  top: 10px;
-  bottom: 10px;
+  top: 7px;
+  bottom: 7px;
 
   width: 3px;
 
@@ -88,7 +88,7 @@
 
 .application-item--static:hover {
   background: transparent;
-  color: #c5cada;
+  color: #b8bfd0;
 }
 
 .application-item:disabled {
@@ -96,14 +96,24 @@
 }
 
 .application-item__icon {
-  min-height: 20px;
+  width: 21px;
+  height: 21px;
 
   display: flex;
   align-items: center;
   justify-content: center;
+}
 
-  font-size: 20px;
-  line-height: 1;
+.application-item__icon svg {
+  width: 100%;
+  height: 100%;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .application-item__label {
@@ -111,14 +121,19 @@
 
   font-size: 12px;
   line-height: 16px;
+  font-weight: 400;
 
   text-align: center;
+}
+
+.application-item--active .application-item__label {
+  font-weight: 500;
 }
 
 .application-rail__divider {
   height: 1px;
 
-  margin: 8px 12px;
+  margin: 8px 12px 6px;
 
   background: rgba(255, 255, 255, 0.18);
 }
