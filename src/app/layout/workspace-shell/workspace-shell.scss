@@ -128,6 +128,11 @@
     color 0.15s ease;
 }
 
+.header-action:focus-visible {
+  outline: 2px solid #3478f6;
+  outline-offset: 2px;
+}
+
 .header-action:hover {
   background: #f7f9fc;
   border-color: #cfd6e1;
