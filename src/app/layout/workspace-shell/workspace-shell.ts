@@ -57,7 +57,8 @@ export class WorkspaceShell implements OnInit {
     this.menuService
       .getMenus(
         application.projeto,
-        application.baseUrl
+        application.baseUrl,
+        application.system
       )
       .subscribe(menus => {
         this.applications.update(applications =>

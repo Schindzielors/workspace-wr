@@ -29,6 +29,15 @@ export interface WorkspaceApplication {
   icon?: string;
 
   /**
+   * Identificador técnico da aplicação utilizado pelas
+   * abas abertas no Workspace.
+   *
+   * Exemplo:
+   * portal-wr
+   */
+  system: string;
+
+  /**
    * Identificador utilizado pelo backend para relacionar
    * a aplicação aos seus menus.
    *

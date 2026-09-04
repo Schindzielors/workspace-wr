@@ -33,6 +33,7 @@ export class WorkspaceMenuService {
           response.items.map(project => ({
             id: project.id.toString(),
             projeto: project.projeto,
+            system: this.buildSystemId(project.projeto),
             title: project.nome,
             shortTitle: project.nome,
             baseUrl: project.url,
@@ -42,9 +43,19 @@ export class WorkspaceMenuService {
       );
   }
 
+  private buildSystemId(project: string): string {
+    return project
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-');
+  }
+
   getMenus(
     projeto: string,
-    baseUrl: string
+    baseUrl: string,
+    system: string
   ): Observable<WorkspaceMenuItem[]> {
     const params = new HttpParams()
       .set('projeto', projeto);
@@ -58,7 +69,8 @@ export class WorkspaceMenuService {
         map(response =>
           this.buildMenuTree(
             response.items,
-            baseUrl
+            baseUrl,
+            system
           )
         )
       );
@@ -66,7 +78,8 @@ export class WorkspaceMenuService {
 
   private buildMenuTree(
     items: WorkspaceMenuDto[],
-    baseUrl: string
+    baseUrl: string,
+    system: string
   ): WorkspaceMenuItem[] {
 
     const menuMap = new Map<number, WorkspaceMenuItem>();
@@ -75,6 +88,7 @@ export class WorkspaceMenuService {
       menuMap.set(item.Id, {
         id: item.Id.toString(),
         title: item.Titulo,
+        system,
         url: this.buildMenuUrl(baseUrl, item.Rota),
         children: []
       });

@@ -58,18 +58,16 @@ export interface WorkspaceTab {
   /**
    * Identifica a aplicação/sistema ao qual a aba pertence.
    *
-   * Essa informação permite ao Workspace conhecer a origem da tela
-   * independentemente da URL carregada no iframe.
+   * O valor é gerado a partir da aplicação carregada pela API
+   * e permite identificar a origem da tela independentemente
+   * da URL carregada no iframe.
    *
-   * Atualmente são suportados:
-   * - `portal-wr`: aplicação Portal WR;
-   * - `web-rodopar`: aplicação Web Rodopar;
-   * - `rodopar`: sistema legado Rodopar.
-   *
-   * No futuro, esta definição poderá evoluir para suportar aplicações
-   * cadastradas dinamicamente, incluindo sistemas externos/customizados.
+   * Exemplos:
+   * - portal-wr
+   * - web-rodopar
+   * - rodopar
    */
-  system: 'portal-wr' | 'web-rodopar' | 'rodopar';
+  system: string;
 
   /**
    * URL que será carregada no iframe associado à aba.
