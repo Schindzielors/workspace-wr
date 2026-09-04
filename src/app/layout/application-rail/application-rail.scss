@@ -83,16 +83,7 @@
 }
 
 .application-item--static {
-  cursor: default;
-}
-
-.application-item--static:hover {
-  background: transparent;
-  color: #b8bfd0;
-}
-
-.application-item:disabled {
-  opacity: 1;
+  cursor: pointer;
 }
 
 .application-item__icon {
