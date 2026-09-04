@@ -20,6 +20,10 @@
 
     </div>
 
+    <div class="header__tabs">
+      <app-tabs />
+    </div>
+
     <div class="header__actions">
     </div>
 
@@ -27,17 +31,18 @@
 
   <div class="workspace-body">
 
-    <app-application-rail [applications]="applications()" [activeApplicationId]="activeApplicationId"
-      (applicationSelected)="selectApplication($event)" />
+    <app-application-rail
+      [applications]="applications()"
+      [activeApplicationId]="activeApplicationId"
+      (applicationSelected)="selectApplication($event)"
+    />
 
-    <app-application-menu [application]="activeApplication" />
+    <app-application-menu
+      [application]="activeApplication"
+    />
 
     <main class="main">
-
-      <app-tabs />
-
       <app-iframe-host />
-
     </main>
 
   </div>

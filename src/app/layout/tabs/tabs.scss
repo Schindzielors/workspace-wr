@@ -4,20 +4,18 @@
 }
 
 .tabs {
-  min-height: 58px;
+  min-height: 0;
 
   display: flex;
   align-items: center;
 
   gap: 8px;
 
-  padding: 0 16px;
+  padding: 0;
 
   box-sizing: border-box;
 
-  border-bottom: 1px solid #e5e9f0;
-
-  background: #f7f9fc;
+  background: transparent;
 
   overflow-x: auto;
   overflow-y: hidden;

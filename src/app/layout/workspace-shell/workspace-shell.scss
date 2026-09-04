@@ -17,7 +17,7 @@
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
 
   padding: 0 20px;
 
@@ -35,6 +35,22 @@
   align-items: center;
 
   gap: 12px;
+  flex: 0 0 auto;
+}
+
+.header__tabs {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.header__tabs app-tabs {
+  width: 100%;
+  min-width: 0;
 }
 
 .header__brand {
@@ -82,6 +98,7 @@
   align-items: center;
 
   gap: 8px;
+  flex: 0 0 auto;
 }
 
 .workspace-body {
