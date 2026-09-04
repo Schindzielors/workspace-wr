@@ -7,7 +7,7 @@
   <div class="workspace-body">
 
     <app-application-rail
-      [applications]="applications"
+      [applications]="applications()"
       [activeApplicationId]="activeApplicationId"
       (applicationSelected)="selectApplication($event)"
     />

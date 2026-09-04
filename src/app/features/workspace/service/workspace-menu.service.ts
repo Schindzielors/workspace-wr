@@ -1,85 +1,42 @@
-import { inject, Injectable } from '@angular/core';
-import { WorkspaceApplication } from '../model/workspace-application.model';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { WorkspaceProjectResponseDto } from '../dto/workspace-project-response.dto';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
+
 import { appConfig } from '../../../core/config/app-config';
+import { WorkspaceProjectResponseDto } from '../dto/workspace-project-response.dto';
+import { WorkspaceApplication } from '../model/workspace-application.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceMenuService {
-  private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${appConfig.apiUrl}/api/WorkspaceMenu`;
 
-  /**
-   * Aplicações disponíveis no Workspace.
-   *
-   * Neste momento os dados permanecem mockados para permitir
-   * a evolução da POC. Futuramente essa estrutura poderá ser
-   * carregada a partir do backend.
-   */
-  private readonly applications: WorkspaceApplication[] = [
-    {
-      id: 'portal-wr',
-      title: 'Portal WR',
-      shortTitle: 'Portal WR',
-      icon: 'map',
-      menus: [
-        {
-          id: 'cotacoes',
-          title: 'Cotações',
-          children: [
-            {
-              id: 'portal-wr-cotacoes-aberto',
-              title: 'Cotações em aberto',
-              system: 'portal-wr',
-              url: 'http://54.232.212.10:8588/#/login'
-            }
-          ]
-        }
-      ]
-    },
-    {
-      id: 'web-rodopar',
-      title: 'Web Rodopar',
-      shortTitle: 'Web RP',
-      icon: 'truck',
-      menus: [
-        {
-          id: 'web-rodopar-home',
-          title: 'Web Rodopar',
-          system: 'web-rodopar',
-          url: 'https://webrodopar-dev.datapardc.com/#/login'
-        }
-      ]
-    },
-    {
-      id: 'rodopar',
-      title: 'Rodopar',
-      shortTitle: 'Rodopar',
-      icon: 'monitor',
-      menus: [
-        {
-          id: 'rodopar-legado',
-          title: 'Rodopar',
-          system: 'rodopar',
-          url: 'https://webcloud1.datapardc.com/'
-        }
-      ]
-    }
-  ];
+  private readonly http = inject(HttpClient);
+
+  private readonly apiUrl =
+    `${appConfig.apiUrl}/api/WorkspaceMenu`;
 
   /**
    * Retorna as aplicações disponíveis no Workspace.
+   *
+   * O contrato da API é convertido para o modelo utilizado
+   * pelos componentes do Workspace.
    */
-  getApplications(): WorkspaceApplication[] {
-    return this.applications;
-  }
-
-  getProjects(): Observable<WorkspaceProjectResponseDto> {
-    return this.http.get<WorkspaceProjectResponseDto>(
-      `${this.apiUrl}/Projetos`
-    );
+  getApplications(): Observable<WorkspaceApplication[]> {
+    return this.http
+      .get<WorkspaceProjectResponseDto>(
+        `${this.apiUrl}/Projetos`
+      )
+      .pipe(
+        map(response =>
+          response.items.map(project => ({
+            id: project.id.toString(),
+            projeto: project.projeto,
+            title: project.nome,
+            shortTitle: project.nome,
+            menus: []
+          }))
+        )
+      );
   }
 }

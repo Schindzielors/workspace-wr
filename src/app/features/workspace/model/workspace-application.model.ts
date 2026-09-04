@@ -28,5 +28,14 @@ export interface WorkspaceApplication {
    */
   icon?: string;
 
+  /**
+   * Identificador utilizado pelo backend para relacionar
+   * a aplicação aos seus menus.
+   *
+   * Exemplo:
+   * Portal Wr
+   */
+  projeto: string;
+
   menus: WorkspaceMenuItem[];
 }

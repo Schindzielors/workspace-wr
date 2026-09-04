@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { ApplicationRail } from '../application-rail/application-rail';
 import { ApplicationMenu } from '../application-menu/application-menu';
@@ -19,27 +19,26 @@ import { WorkspaceApplication } from '../../features/workspace/model/workspace-a
   templateUrl: './workspace-shell.html',
   styleUrl: './workspace-shell.scss'
 })
-export class WorkspaceShell {
-
+export class WorkspaceShell implements OnInit {
   private readonly menuService = inject(WorkspaceMenuService);
 
-  readonly applications = this.menuService.getApplications();
-
-  activeApplicationId = this.applications[0]?.id;
+  readonly applications = signal<WorkspaceApplication[]>([]);
+  activeApplicationId?: string;
 
   get activeApplication(): WorkspaceApplication | undefined {
-    return this.applications.find(
+    return this.applications().find(
       application => application.id === this.activeApplicationId
     );
   }
 
-  selectApplication(applicationId: string): void {
-    this.activeApplicationId = applicationId;
-
-    //Teste
-    this.menuService.getProjects().subscribe(response => {
-      console.log('Projetos da API:', response);
+  ngOnInit(): void {
+    this.menuService.getApplications().subscribe(applications => {
+      this.applications.set(applications);
+      this.activeApplicationId = applications[0]?.id;
     });
   }
 
+  selectApplication(applicationId: string): void {
+    this.activeApplicationId = applicationId;
+  }
 }
