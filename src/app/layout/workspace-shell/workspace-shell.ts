@@ -40,5 +40,21 @@ export class WorkspaceShell implements OnInit {
 
   selectApplication(applicationId: string): void {
     this.activeApplicationId = applicationId;
+
+    const application = this.applications().find(
+      item => item.id === applicationId
+    );
+
+    if (!application) {
+      return;
+    }
+
+    this.menuService.getMenus(application.projeto)
+      .subscribe(response => {
+        console.log(
+          `Menus de ${application.projeto}:`,
+          response
+        );
+      });
   }
 }

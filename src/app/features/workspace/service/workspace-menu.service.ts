@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-
 import { appConfig } from '../../../core/config/app-config';
 import { WorkspaceProjectResponseDto } from '../dto/workspace-project-response.dto';
 import { WorkspaceApplication } from '../model/workspace-application.model';
+import { HttpParams } from '@angular/common/http';
+import { WorkspaceMenuResponseDto } from '../dto/workspace-menu-response.dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceMenuService {
-
   private readonly http = inject(HttpClient);
 
   private readonly apiUrl =
@@ -38,5 +38,15 @@ export class WorkspaceMenuService {
           }))
         )
       );
+  }
+
+  getMenus(projeto: string): Observable<WorkspaceMenuResponseDto> {
+    const params = new HttpParams()
+      .set('projeto', projeto);
+
+    return this.http.get<WorkspaceMenuResponseDto>(
+      `${this.apiUrl}/MenuProjetos`,
+      { params }
+    );
   }
 }
