@@ -28,6 +28,19 @@ export class ApplicationMenu {
 
   @Input() application?: WorkspaceApplication;
 
+  isActive(item: WorkspaceMenuItem): boolean {
+    const activeTab = this.tabsService.activeTab();
+
+    if (!activeTab || !this.application) {
+      return false;
+    }
+
+    return (
+      activeTab.id === item.id &&
+      activeTab.system === this.application.system
+    );
+  }
+
   /**
    * Solicita a abertura da tela associada ao item selecionado.
    *

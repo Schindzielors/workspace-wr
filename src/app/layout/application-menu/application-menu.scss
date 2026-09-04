@@ -74,6 +74,12 @@
   color: #245fc5;
 }
 
+.menu-item.active {
+  background: #eaf2ff;
+  color: #245fc5;
+  font-weight: 500;
+}
+
 .menu-item-title {
   flex: 1;
   overflow: hidden;
@@ -92,6 +98,7 @@
   text-align: center;
 }
 
-.menu-item:hover .menu-toggle {
+.menu-item:hover .menu-toggle,
+.menu-item.active .menu-toggle {
   color: #245fc5;
 }
