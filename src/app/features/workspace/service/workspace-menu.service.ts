@@ -35,13 +35,17 @@ export class WorkspaceMenuService {
             projeto: project.projeto,
             title: project.nome,
             shortTitle: project.nome,
+            baseUrl: project.url,
             menus: []
           }))
         )
       );
   }
 
-  getMenus(projeto: string): Observable<WorkspaceMenuItem[]> {
+  getMenus(
+    projeto: string,
+    baseUrl: string
+  ): Observable<WorkspaceMenuItem[]> {
     const params = new HttpParams()
       .set('projeto', projeto);
 
@@ -51,12 +55,18 @@ export class WorkspaceMenuService {
         { params }
       )
       .pipe(
-        map(response => this.buildMenuTree(response.items))
+        map(response =>
+          this.buildMenuTree(
+            response.items,
+            baseUrl
+          )
+        )
       );
   }
 
   private buildMenuTree(
-    items: WorkspaceMenuDto[]
+    items: WorkspaceMenuDto[],
+    baseUrl: string
   ): WorkspaceMenuItem[] {
 
     const menuMap = new Map<number, WorkspaceMenuItem>();
@@ -65,6 +75,7 @@ export class WorkspaceMenuService {
       menuMap.set(item.Id, {
         id: item.Id.toString(),
         title: item.Titulo,
+        url: this.buildMenuUrl(baseUrl, item.Rota),
         children: []
       });
     });
@@ -91,5 +102,27 @@ export class WorkspaceMenuService {
     });
 
     return rootItems;
+  }
+
+  private buildMenuUrl(
+    baseUrl: string,
+    route: string | null
+  ): string | undefined {
+
+    if (!route?.trim() || !baseUrl?.trim()) {
+      return undefined;
+    }
+
+    const normalizedBaseUrl =
+      baseUrl.endsWith('/')
+        ? baseUrl
+        : `${baseUrl}/`;
+
+    const normalizedRoute =
+      route.startsWith('/')
+        ? route.substring(1)
+        : route;
+
+    return `${normalizedBaseUrl}#/${normalizedRoute}`;
   }
 }

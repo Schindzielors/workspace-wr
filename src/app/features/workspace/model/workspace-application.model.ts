@@ -37,5 +37,14 @@ export interface WorkspaceApplication {
    */
   projeto: string;
 
+  /**
+ * URL base utilizada para montar as URLs das telas
+ * pertencentes à aplicação.
+ *
+ * Exemplo:
+ * http://54.232.212.10:8588/
+ */
+  baseUrl: string;
+
   menus: WorkspaceMenuItem[];
 }
