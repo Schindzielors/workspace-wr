@@ -97,7 +97,6 @@ export class Tabs {
     // Impede que o clique no botão de fechar seja propagado para o
     // elemento da aba e acabe acionando também o método `activate`.
     event.stopPropagation();
-
     this.tabsService.closeTab(tabId);
   }
 }
