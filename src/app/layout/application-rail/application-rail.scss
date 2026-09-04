@@ -14,7 +14,7 @@
 
   box-sizing: border-box;
 
-  padding: 14px 8px 12px;
+  padding: 8px 8px 10px;
 
   background: #050a1b;
   color: #ffffff;
@@ -30,16 +30,16 @@
   position: relative;
 
   width: 100%;
-  min-height: 76px;
+  min-height: 72px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  gap: 8px;
+  gap: 7px;
 
-  padding: 8px 4px;
+  padding: 7px 4px;
 
   border: 0;
   border-radius: 8px;
@@ -133,7 +133,7 @@
 .application-rail__divider {
   height: 1px;
 
-  margin: 8px 12px 6px;
+  margin: 10px 12px 8px;
 
   background: rgba(255, 255, 255, 0.18);
 }
