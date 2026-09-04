@@ -34,7 +34,12 @@ export class WorkspaceShell implements OnInit {
   ngOnInit(): void {
     this.menuService.getApplications().subscribe(applications => {
       this.applications.set(applications);
-      this.activeApplicationId = applications[0]?.id;
+
+      const firstApplication = applications[0];
+
+      if (firstApplication) {
+        this.selectApplication(firstApplication.id);
+      }
     });
   }
 
@@ -50,11 +55,9 @@ export class WorkspaceShell implements OnInit {
     }
 
     this.menuService.getMenus(application.projeto)
-      .subscribe(response => {
-        console.log(
-          `Menus de ${application.projeto}:`,
-          response
-        );
+      .subscribe(menus => {
+        application.menus = menus;
+        this.applications.update(applications => [...applications]);
       });
   }
 }
