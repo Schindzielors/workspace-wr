@@ -156,54 +156,6 @@
   font-size: 12px;
 }
 
-.header-user {
-  display: flex;
-  align-items: center;
-
-  gap: 8px;
-
-  padding-left: 4px;
-}
-
-.header-user__avatar {
-  width: 34px;
-  height: 34px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: #3478f6;
-  color: #ffffff;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.header-user__info {
-  display: flex;
-  flex-direction: column;
-
-  line-height: 1.1;
-}
-
-.header-user__info strong {
-  color: #172033;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.header-user__info span {
-  margin-top: 2px;
-
-  color: #8a94a6;
-
-  font-size: 11px;
-}
-
 .workspace-body {
   display: flex;
   flex: 1;
