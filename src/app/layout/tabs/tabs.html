@@ -4,25 +4,34 @@
     <button
       type="button"
       class="tab"
-      [class.active]="tabsService.activeTabId() === tab.id"
-      (click)="activate(tab.id)">
+      [class.tab--active]="tabsService.activeTabId() === tab.id"
+      (click)="activate(tab.id)"
+    >
 
-      <span>
+      <span class="tab__title">
         {{ tab.title }}
       </span>
 
       <span
-        class="reload"
+        class="tab__action tab__reload"
         title="Atualizar"
-        (click)="reload($event, tab.id)">
-        ↻
+        (click)="reload($event, tab.id)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+          <path d="M20 4v7h-7" />
+        </svg>
       </span>
 
       <span
-        class="close"
+        class="tab__action tab__close"
         title="Fechar"
-        (click)="close($event, tab.id)">
-        ×
+        (click)="close($event, tab.id)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12" />
+          <path d="M18 6 6 18" />
+        </svg>
       </span>
 
     </button>

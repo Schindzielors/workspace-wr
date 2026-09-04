@@ -1,32 +1,123 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
 .tabs {
+  min-height: 58px;
+
   display: flex;
-  min-height: 42px;
-  border-bottom: 1px solid #ddd;
-  background: #f8f9fa;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  border-bottom: 1px solid #e5e9f0;
+
+  background: #f7f9fc;
+
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .tab {
+  height: 38px;
+  min-width: 0;
+  max-width: 240px;
+
+  flex: 0 0 auto;
+
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 14px;
-  border: 0;
-  border-right: 1px solid #ddd;
-  background: transparent;
+
+  gap: 8px;
+
+  padding: 0 12px 0 14px;
+
+  border: 1px solid #dce2eb;
+  border-radius: 8px;
+
+  background: #f7f9fc;
+  color: #172033;
+
+  font: inherit;
+
   cursor: pointer;
 
-  &.active {
-    background: #fff;
-    font-weight: 600;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:hover {
+    background: #ffffff;
+    border-color: #cbd3df;
   }
 }
 
-.close {
-  font-size: 18px;
-  line-height: 1;
-  opacity: .6;
+.tab--active {
+  background: #ffffff;
+  border-color: #cbd3df;
 
-  &:hover {
-    opacity: 1;
-  }
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.tab__title {
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+.tab--active .tab__title {
+  font-weight: 500;
+}
+
+.tab__action {
+  width: 18px;
+  height: 18px;
+
+  flex: 0 0 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 4px;
+
+  color: #667085;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.tab__action:hover {
+  background: #eef1f5;
+  color: #172033;
+}
+
+.tab__action svg {
+  width: 14px;
+  height: 14px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tab__reload svg {
+  width: 13px;
+  height: 13px;
 }
