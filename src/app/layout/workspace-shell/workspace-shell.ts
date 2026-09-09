@@ -44,6 +44,7 @@ export class WorkspaceShell implements OnInit {
   }
 
   selectApplication(applicationId: string): void {
+    console.log("applicationId", applicationId);
     this.activeApplicationId = applicationId;
 
     const application = this.applications().find(

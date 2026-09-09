@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, output, Output } from '@angular/core';
 
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 
@@ -10,16 +10,21 @@ import { WorkspaceApplication } from '../../features/workspace/model/workspace-a
 })
 export class ApplicationRail {
 
-  @Input({ required: true })
-  applications: WorkspaceApplication[] = [];
+  // @Input({ required: true })
+  // applications: WorkspaceApplication[] = [];
+  applications = input.required<WorkspaceApplication[]>();
 
-  @Input()
-  activeApplicationId?: string;
+  // @Input()
+  // activeApplicationId?: string;
+  activeApplicationId = input<string>();
 
-  @Output()
-  applicationSelected = new EventEmitter<string>();
+
+  // @Output()
+  // applicationSelected = new EventEmitter<string>();
+  applicationSelected = output<string>();
 
   selectApplication(applicationId: string): void {
+    this.applications()[0].title = "teste";
     this.applicationSelected.emit(applicationId);
   }
 

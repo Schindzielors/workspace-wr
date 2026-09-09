@@ -21,12 +21,12 @@
       </span>
     </button>
 
-    @for (application of applications; track application.id) {
+    @for (application of applications(); track application.id) {
 
       <button
         type="button"
         class="application-item"
-        [class.application-item--active]="application.id === activeApplicationId"
+        [class.application-item--active]="application.id === activeApplicationId()"
         (click)="selectApplication(application.id)"
       >
         <span class="application-item__icon">
