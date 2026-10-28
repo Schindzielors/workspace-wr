@@ -148,10 +148,10 @@
   justify-content: center;
   width: 36px;
   height: 40px;
-  border: 1px solid var(--color-neutral-intense);
+  border: 1px solid var(--header-apps-border);
   border-radius: 8px;
   background: transparent;
-  color: var(--color-neutral-soft);
+  color: var(--header-apps-icon);
 }
 
 .header__apps:disabled {
@@ -182,8 +182,8 @@
   justify-content: center;
   flex: 0 0 40px;
   border-radius: 8px;
-  background: var(--color-brand-secondary-light);
-  color: var(--color-neutral-maximum);
+  background: var(--header-avatar-bg);
+  color: var(--header-avatar-text);
   font-size: var(--font-size-sm);
   font-weight: 600;
 }
@@ -201,12 +201,12 @@
 
 .header__user-info span {
   font-size: var(--font-size-xs);
-  color: #aebbd0;
+  color: var(--header-user-secondary);
 }
 
 .header__user-chevron {
   margin-left: auto;
-  color: #dbe5f1;
+  color: var(--header-chevron);
 }
 
 .workspace-body {
