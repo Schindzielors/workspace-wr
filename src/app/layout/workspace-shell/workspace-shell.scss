@@ -13,21 +13,21 @@
 }
 
 .header {
-  height: 64px;
-
+  height: 72px;
   display: flex;
   align-items: center;
   gap: 20px;
-
   padding: 0 20px;
-
   box-sizing: border-box;
-
-  border-bottom: 1px solid #e5e9f0;
-
-  background: #ffffff;
-
+  background: #192638;
+  color: #ffffff;
   flex-shrink: 0;
+}
+
+.header app-application-rail {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
 }
 
 .header__identity {
@@ -36,21 +36,6 @@
 
   gap: 12px;
   flex: 0 0 auto;
-}
-
-.header__tabs {
-  flex: 1;
-  min-width: 0;
-
-  display: flex;
-  align-items: center;
-
-  overflow: hidden;
-}
-
-.header__tabs app-tabs {
-  width: 100%;
-  min-width: 0;
 }
 
 .header__brand {
@@ -63,7 +48,7 @@
 
   border-radius: 8px;
 
-  background: #050a1b;
+  background: #36465e;
   color: #ffffff;
 
   font-size: 13px;
@@ -79,16 +64,14 @@
 }
 
 .header__title {
-  color: #172033;
-
+  color: #ffffff;
   font-size: 14px;
   line-height: 18px;
   font-weight: 600;
 }
 
 .header__subtitle {
-  color: #667085;
-
+  color: #aebbd0;
   font-size: 12px;
   line-height: 16px;
 }
@@ -103,29 +86,18 @@
 
 .header-action {
   height: 36px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 8px;
-
   padding: 0 10px;
-
-  border: 1px solid #e2e7ef;
+  border: 1px solid #46576f;
   border-radius: 8px;
-
-  background: #ffffff;
-  color: #667085;
-
+  background: #26384f;
+  color: #e1e9f4;
   font: inherit;
-
   cursor: pointer;
-
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .header-action:focus-visible {
@@ -134,9 +106,9 @@
 }
 
 .header-action:hover {
-  background: #f7f9fc;
-  border-color: #cfd6e1;
-  color: #172033;
+  background: #364b66;
+  border-color: #60748e;
+  color: #ffffff;
 }
 
 .header-action svg {
@@ -173,4 +145,15 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+}
+.main__tabs {
+  flex: 0 0 auto;
+  min-width: 0;
+  border-bottom: 1px solid #e5e9f0;
+  background: #ffffff;
+}
+
+.main__tabs app-tabs {
+  display: block;
+  min-width: 0;
 }
