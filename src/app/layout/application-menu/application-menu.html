@@ -1,54 +1,66 @@
-<aside class="sidebar">
-
+<aside class="sidebar" aria-label="Menu da aplicação">
   @if (application) {
-
-  <h2 class="sidebar-title">
-    {{ application.title }}
-  </h2>
-
-  <ng-container [ngTemplateOutlet]="menuItems" [ngTemplateOutletContext]="{
-        $implicit: application.menus
-      }" />
-
-  }
-
-</aside>
-
-<ng-template #menuItems let-items>
-
-  @for (item of items; track item.id) {
-
-  <div class="menu-group">
-
-    <button type="button" class="menu-item" [class.active]="isActive(item)" (click)="toggleItem(item)">
-      <span class="menu-item-title">
-        {{ item.title }}
-      </span>
-
-      @if (item.children?.length) {
-      <span class="menu-toggle">
-        {{ isExpanded(item) ? '▾' : '▸' }}
-      </span>
-      }
-    </button>
-
-    @if (
-    item.children?.length &&
-    isExpanded(item)
-    ) {
-
-    <div class="submenu">
-
-      <ng-container [ngTemplateOutlet]="menuItems" [ngTemplateOutletContext]="{
-              $implicit: item.children
-            }" />
-
+    <div class="sidebar__heading">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z" />
+        <path d="M9 3v15M15 6v15" />
+      </svg>
+      <span>{{ application.shortTitle ?? application.title }}</span>
     </div>
 
-    }
+    <div class="sidebar__tools">
+      <label class="sidebar__search">
+        <input type="search" aria-label="Pesquisar menus" placeholder="Pesquisar"
+          [value]="searchTerm()" (input)="updateSearch($event)" />
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6" />
+          <path d="m16 16 4 4" />
+        </svg>
+      </label>
+    </div>
 
-  </div>
-
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">Sistema</div>
+      <ng-container [ngTemplateOutlet]="menuItems"
+        [ngTemplateOutletContext]="{ $implicit: application.menus, depth: 0 }" />
+    </div>
   }
+</aside>
 
+<ng-template #menuItems let-items let-depth="depth">
+  @for (item of items; track item.id) {
+    @if (matchesSearch(item)) {
+      <div class="menu-group">
+        <button type="button" class="menu-item"
+          [class.menu-item--folder]="item.children?.length"
+          [class.active]="isActive(item)"
+          [style.--menu-depth]="depth"
+          [attr.aria-expanded]="item.children?.length ? (isExpanded(item) || !!searchTerm()) : null"
+          [title]="item.title"
+          (click)="toggleItem(item)">
+          @if (item.children?.length) {
+            <svg class="menu-item__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 7V5h7l2 2h9v12H3z" />
+              <path d="M3 10h18l-2 9H3" />
+            </svg>
+          } @else {
+            <span class="menu-item__leaf" aria-hidden="true"></span>
+          }
+          <span class="menu-item-title">{{ item.title }}</span>
+          @if (item.children?.length) {
+            <svg class="menu-toggle" [class.menu-toggle--open]="isExpanded(item) || !!searchTerm()"
+              viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          }
+        </button>
+        @if (item.children?.length && (isExpanded(item) || !!searchTerm())) {
+          <div class="submenu">
+            <ng-container [ngTemplateOutlet]="menuItems"
+              [ngTemplateOutletContext]="{ $implicit: item.children, depth: depth + 1 }" />
+          </div>
+        }
+      </div>
+    }
+  }
 </ng-template>
