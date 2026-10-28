@@ -1,5 +1,6 @@
 export interface AppConfig {
   apiUrl: string;
+  theme?: 'light' | 'dark' | 'system';
 }
 
 declare global {

@@ -1,3 +1,6 @@
+@use './styles/theme-tokens';
+@use './styles/typography';
+
 html,
 body {
   width: 100%;
@@ -7,12 +10,10 @@ body {
 }
 
 body {
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+  background: var(--surface-app);
 }
 
 button,

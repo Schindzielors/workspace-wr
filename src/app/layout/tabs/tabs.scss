@@ -26,22 +26,22 @@
   max-width: 240px;
   padding: 0 8px 0 12px;
   box-sizing: border-box;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-neutral-light);
   border-radius: 8px;
-  background: #ffffff;
-  color: #364153;
+  background: var(--tab-inactive-bg);
+  color: var(--tab-inactive-text);
   transition: background 150ms ease, border-color 150ms ease;
 }
 
 .tab:hover {
-  background: #f3f4f6;
+  background: var(--color-neutral-soft);
 }
 
 .tab--active,
 .tab--active:hover {
-  background: #2a507a;
-  border-color: #2a507a;
-  color: #f9fafb;
+  background: var(--tab-active-bg);
+  border-color: var(--tab-active-bg);
+  color: var(--tab-active-text);
 }
 
 .tab__select {
@@ -62,7 +62,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   line-height: 18px;
 }
