@@ -7,20 +7,19 @@
 .application-rail {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
   height: 100%;
   min-width: 0;
-  box-sizing: border-box;
   color: #ffffff;
 }
 
 .application-rail__main {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  padding: 3px;
   min-width: 0;
+  border-radius: 8px;
+  background: #354358;
   overflow-x: auto;
   scrollbar-width: thin;
 }
@@ -30,17 +29,22 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 8px 12px;
+  gap: 7px;
+  min-height: 32px;
+  padding: 6px 10px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
-  color: #b8c7da;
+  color: #e1e8f1;
   font: inherit;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s ease, color 0.15s ease;
+}
+
+.application-item--static:disabled {
+  opacity: 1;
+  cursor: not-allowed;
 }
 
 .application-item:focus-visible {
@@ -48,19 +52,20 @@
   outline-offset: 2px;
 }
 
-.application-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+.application-item:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
 }
 
-.application-item--active {
-  background: #364b66;
-  color: #ffffff;
+.application-item--active,
+.application-item--active:not(:disabled):hover {
+  background: #ffffff;
+  color: #1b2b40;
 }
 
 .application-item__icon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,51 +82,11 @@
 }
 
 .application-item__label {
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
   font-weight: 400;
 }
 
 .application-item--active .application-item__label {
   font-weight: 600;
-}
-
-.application-rail__divider {
-  width: 1px;
-  height: 24px;
-  margin: 0 6px;
-  flex: 0 0 auto;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.application-rail__user {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.application-user__avatar {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #3478f6;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.application-user__name {
-  font-size: 12px;
-  line-height: 16px;
-  color: #ffffff;
-}
-
-@media (max-width: 1000px) {
-  .application-user__name {
-    display: none;
-  }
 }
