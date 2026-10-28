@@ -1,38 +1,21 @@
-<nav class="application-rail">
-
+<nav class="application-rail" aria-label="Aplicações">
   <div class="application-rail__main">
-
-    <button
-      type="button"
-      class="application-item application-item--static"
-    >
+    <button type="button" class="application-item application-item--static" disabled title="Início (em desenvolvimento)">
       <span class="application-item__icon">
-        <svg
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 11.5 12 4l9 7.5" />
           <path d="M5 10.5V20h14v-9.5" />
         </svg>
       </span>
-
-      <span class="application-item__label">
-        Início
-      </span>
+      <span class="application-item__label">Início</span>
     </button>
 
     @for (application of applications(); track application.id) {
-
-      <button
-        type="button"
-        class="application-item"
+      <button type="button" class="application-item"
         [class.application-item--active]="application.id === activeApplicationId()"
-        (click)="selectApplication(application.id)"
-      >
+        (click)="selectApplication(application.id)">
         <span class="application-item__icon">
-
           @switch (application.icon) {
-
             @case ('truck') {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 6h11v10H3z" />
@@ -41,7 +24,6 @@
                 <circle cx="18" cy="18" r="2" />
               </svg>
             }
-
             @case ('map') {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z" />
@@ -49,7 +31,6 @@
                 <path d="M15 6v15" />
               </svg>
             }
-
             @case ('monitor') {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <rect x="3" y="4" width="18" height="14" rx="2" />
@@ -57,55 +38,15 @@
                 <path d="M12 18v3" />
               </svg>
             }
-
             @default {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
             }
-
           }
-
         </span>
-
-        <span class="application-item__label">
-          {{ application.shortTitle ?? application.title }}
-        </span>
+        <span class="application-item__label">{{ application.shortTitle ?? application.title }}</span>
       </button>
-
     }
-
-    <div class="application-rail__divider"></div>
-
-    <button
-      type="button"
-      class="application-item application-item--static"
-    >
-      <span class="application-item__icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="8" />
-          <path d="M12 8v8" />
-          <path d="M8 12h8" />
-        </svg>
-      </span>
-
-      <span class="application-item__label">
-        Mais
-      </span>
-    </button>
-
   </div>
-
-  <div class="application-rail__user">
-
-    <div class="application-user__avatar">
-      B
-    </div>
-
-    <span class="application-user__name">
-      Bruno
-    </span>
-
-  </div>
-
 </nav>
