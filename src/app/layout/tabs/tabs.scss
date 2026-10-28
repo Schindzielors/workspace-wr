@@ -28,8 +28,8 @@
   box-sizing: border-box;
   border: 1px solid var(--color-neutral-light);
   border-radius: 8px;
-  background: var(--surface-panel);
-  color: var(--color-neutral-intense);
+  background: var(--tab-inactive-bg);
+  color: var(--tab-inactive-text);
   transition: background 150ms ease, border-color 150ms ease;
 }
 
