@@ -3,6 +3,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ApplicationRail } from '../application-rail/application-rail';
 import { ApplicationMenu } from '../application-menu/application-menu';
 import { Tabs } from '../tabs/tabs';
+import { Icon } from '../../shared/icon/icon';
 
 import { IframeHost } from '../../features/workspace/iframe-host/iframe-host';
 import { WorkspaceMenuService } from '../../features/workspace/service/workspace-menu.service';
@@ -14,7 +15,8 @@ import { WorkspaceApplication } from '../../features/workspace/model/workspace-a
     ApplicationRail,
     ApplicationMenu,
     Tabs,
-    IframeHost
+    IframeHost,
+    Icon
   ],
   templateUrl: './workspace-shell.html',
   styleUrl: './workspace-shell.scss'

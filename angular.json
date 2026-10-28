@@ -27,9 +27,19 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "{caret-down,caret-up-down,house,magnifying-glass,map-trifold,squares-four,truck}.svg",
+                "input": "node_modules/@phosphor-icons/core/assets/regular",
+                "output": "icons"
               }
             ],
             "styles": [
+              "node_modules/@fontsource/google-sans/latin-400.css",
+              "node_modules/@fontsource/google-sans/latin-500.css",
+              "node_modules/@fontsource/google-sans/latin-600.css",
+              "node_modules/@fontsource/google-sans/latin-700.css",
+              "node_modules/@fontsource/inter/latin-500.css",
               "src/styles.scss"
             ]
           },

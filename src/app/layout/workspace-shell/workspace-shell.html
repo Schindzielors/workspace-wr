@@ -1,46 +1,45 @@
 <div class="workspace">
   <header class="header">
-    <div class="header__identity">
-      <div class="header__brand" aria-hidden="true">WR</div>
-      <div class="header__titles">
-        <strong class="header__title">Workspace WR</strong>
-        <span class="header__subtitle">Datapar</span>
+    <button type="button" class="header__company" disabled
+      title="Troca de empresa/filial (em desenvolvimento)">
+      <span class="header__company-identity">
+        <span class="header__logo" aria-hidden="true">WR</span>
+        <span class="header__company-names">
+          <strong class="header__company-name">Workspace WR</strong>
+          <span class="header__company-branch">Datapar</span>
+        </span>
+      </span>
+      <app-icon class="header__company-caret" name="caret-up-down" [size]="20" />
+    </button>
+
+    <div class="header__container">
+      <app-application-rail
+        [applications]="applications()"
+        [activeApplicationId]="activeApplicationId"
+        (applicationSelected)="selectApplication($event)" />
+
+      <div class="header__user-area">
+        <button type="button" class="header__apps" title="Aplicações (em desenvolvimento)"
+          aria-label="Aplicações (em desenvolvimento)" disabled>
+          <app-icon name="squares-four" [size]="20" />
+        </button>
+
+        <button type="button" class="header__user" disabled title="Perfil (em desenvolvimento)">
+          <span class="header__avatar" aria-hidden="true">B</span>
+          <span class="header__user-info">
+            <strong class="header__user-name">Bruno</strong>
+            <span class="header__user-role">Usuário</span>
+          </span>
+          <app-icon class="header__user-caret" name="caret-down" [size]="16" />
+        </button>
       </div>
-      <span class="header__chevrons" aria-hidden="true">⌃<span>⌄</span></span>
     </div>
 
-    <app-application-rail
-      [applications]="applications()"
-      [activeApplicationId]="activeApplicationId"
-      (applicationSelected)="selectApplication($event)" />
-
-    <div class="header__search">
+    <label class="header__search">
       <input type="search" aria-label="Busca global (em desenvolvimento)"
         placeholder="Telas, sistemas e comandos..." disabled />
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="11" cy="11" r="6" />
-        <path d="m16 16 4 4" />
-      </svg>
-    </div>
-
-    <div class="header__actions">
-      <button type="button" class="header__apps" title="Aplicações (em desenvolvimento)" aria-label="Aplicações (em desenvolvimento)" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="4" y="4" width="6" height="6" rx="1" />
-          <rect x="14" y="4" width="6" height="6" rx="1" />
-          <rect x="4" y="14" width="6" height="6" rx="1" />
-          <rect x="14" y="14" width="6" height="6" rx="1" />
-        </svg>
-      </button>
-      <div class="header__user">
-        <div class="header__avatar" aria-hidden="true">B</div>
-        <div class="header__user-info">
-          <strong>Bruno</strong>
-          <span>Usuário</span>
-        </div>
-        <span class="header__user-chevron" aria-hidden="true">⌄</span>
-      </div>
-    </div>
+      <app-icon name="magnifying-glass" [size]="20" />
+    </label>
   </header>
 
   <div class="workspace-body" [class.workspace-body--menu-collapsed]="menuCollapsed()">
