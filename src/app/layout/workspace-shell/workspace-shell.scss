@@ -226,8 +226,12 @@
 .main__tabs {
   flex: 0 0 auto;
   min-width: 0;
-  border-bottom: 1px solid #e5e9f0;
+  height: 50px;
+  margin: 12px 12px 4px 4px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   background: #ffffff;
+  overflow: hidden;
 }
 
 .main__tabs app-tabs {
