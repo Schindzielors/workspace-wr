@@ -45,9 +45,11 @@
 
   <div class="workspace-body" [class.workspace-body--menu-collapsed]="menuCollapsed()">
     @if (menuCollapsed()) {
+      <aside class="menu-collapsed" aria-label="Menu recolhido">
       <button type="button" class="menu-expand" (click)="toggleMenu()" title="Exibir menu" aria-label="Exibir menu">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7" /><path d="m14 5 7 7-7 7" /></svg>
       </button>
+    </aside>
     }
     @if (!menuCollapsed()) {
       <app-application-menu [application]="activeApplication" (collapseRequested)="toggleMenu()" />
