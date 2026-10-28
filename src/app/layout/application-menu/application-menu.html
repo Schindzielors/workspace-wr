@@ -17,6 +17,9 @@
           <path d="m16 16 4 4" />
         </svg>
       </label>
+      <button type="button" class="sidebar__collapse" (click)="collapseRequested.emit()" title="Ocultar menu" aria-label="Ocultar menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 5-7 7 7 7" /><path d="m10 5-7 7 7 7" /></svg>
+      </button>
     </div>
 
     <div class="sidebar__section">
