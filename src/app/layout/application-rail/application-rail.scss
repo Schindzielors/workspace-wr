@@ -19,7 +19,7 @@
   padding: 4px;
   min-width: 0;
   border-radius: 8px;
-  background: #364153;
+  background: var(--header-control-bg);
   overflow-x: auto;
   scrollbar-width: thin;
 }
@@ -36,7 +36,7 @@
   border: 0;
   border-radius: 4px;
   background: transparent;
-  color: #f9fafb;
+  color: var(--color-neutral-very-soft);
   font: inherit;
   cursor: pointer;
   white-space: nowrap;
@@ -60,8 +60,8 @@
 
 .application-item--active,
 .application-item--active:not(:disabled):hover {
-  background: #ffffff;
-  color: #030712;
+  background: var(--nav-selected-bg);
+  color: var(--nav-selected-text);
 }
 
 .application-item__icon {
@@ -83,7 +83,7 @@
 }
 
 .application-item__label {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   line-height: 16px;
   font-weight: 400;
 }
