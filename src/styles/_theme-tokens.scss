@@ -81,6 +81,10 @@
   --header-control-text: #f9fafb;
   --tab-active-bg: #2a507a;
   --tab-active-text: #f9fafb;
+  --tabs-bar-bg: #ffffff;
+  --tab-inactive-bg: #ffffff;
+  --tab-inactive-text: #364153;
+  --sidebar-bg: #ffffff;
 }
 
 :root[data-theme="dark"] {
@@ -163,6 +167,10 @@
   --header-text: #f9fafb;
   --header-control-bg: #364153;
   --header-control-text: #f9fafb;
-  --tab-active-bg: #2a507a;
-  --tab-active-text: #f9fafb;
+  --tab-active-bg: #9cbddd;
+  --tab-active-text: #030712;
+  --tabs-bar-bg: #101828;
+  --tab-inactive-bg: #101828;
+  --tab-inactive-text: #f9fafb;
+  --sidebar-bg: #101828;
 }
