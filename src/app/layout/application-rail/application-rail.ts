@@ -24,7 +24,6 @@ export class ApplicationRail {
   applicationSelected = output<string>();
 
   selectApplication(applicationId: string): void {
-    this.applications()[0].title = "teste";
     this.applicationSelected.emit(applicationId);
   }
 
