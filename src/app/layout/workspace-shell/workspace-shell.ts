@@ -23,6 +23,11 @@ export class WorkspaceShell implements OnInit {
   private readonly menuService = inject(WorkspaceMenuService);
 
   readonly applications = signal<WorkspaceApplication[]>([]);
+  readonly menuCollapsed = signal(false);
+
+  toggleMenu(): void {
+    this.menuCollapsed.update(value => !value);
+  }
   activeApplicationId?: string;
 
   get activeApplication(): WorkspaceApplication | undefined {
