@@ -20,9 +20,8 @@
 
     </div>
 
-    <div class="header__tabs">
-      <app-tabs />
-    </div>
+    <app-application-rail [applications]="applications()" [activeApplicationId]="activeApplicationId"
+      (applicationSelected)="selectApplication($event)" />
 
     <div class="header__actions">
 
@@ -69,12 +68,12 @@
 
   <div class="workspace-body">
 
-    <app-application-rail [applications]="applications()" [activeApplicationId]="activeApplicationId"
-      (applicationSelected)="selectApplication($event)" />
-
     <app-application-menu [application]="activeApplication" />
 
     <main class="main">
+      <div class="main__tabs">
+        <app-tabs />
+      </div>
       <app-iframe-host />
     </main>
 
