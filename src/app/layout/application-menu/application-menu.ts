@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu-item.model';
@@ -7,46 +7,42 @@ import { WorkspaceTabsService } from '../../features/workspace/service/workspace
 
 @Component({
   selector: 'app-application-menu',
-  imports: [
-    NgTemplateOutlet
-  ],
+  imports: [NgTemplateOutlet],
   templateUrl: './application-menu.html',
   styleUrl: './application-menu.scss'
 })
 export class ApplicationMenu {
   private readonly expandedItems = new Set<string>();
-
-  /**
-   * Serviço responsável pelo gerenciamento das abas do Workspace.
-   *
-   * O menu da aplicação utiliza este serviço para solicitar a abertura
-   * das telas selecionadas pelo usuário. As regras relacionadas à criação,
-   * reutilização e ativação das abas permanecem centralizadas no
-   * WorkspaceTabsService.
-   */
   private readonly tabsService = inject(WorkspaceTabsService);
+
+  readonly searchTerm = signal('');
 
   @Input() application?: WorkspaceApplication;
 
+  updateSearch(event: Event): void {
+    this.searchTerm.set((event.target as HTMLInputElement).value.trim().toLocaleLowerCase());
+  }
+
+  matchesSearch(item: WorkspaceMenuItem): boolean {
+    const query = this.searchTerm();
+    if (!query) {
+      return true;
+    }
+
+    return item.title.toLocaleLowerCase().includes(query)
+      || !!item.children?.some(child => this.matchesSearch(child));
+  }
+
   isActive(item: WorkspaceMenuItem): boolean {
     const activeTab = this.tabsService.activeTab();
-
     if (!activeTab || !this.application) {
       return false;
     }
 
-    return (
-      activeTab.id === item.id &&
-      activeTab.system === this.application.system
-    );
+    return activeTab.id === item.id
+      && activeTab.system === this.application.system;
   }
 
-  /**
-   * Solicita a abertura da tela associada ao item selecionado.
-   *
-   * Itens utilizados apenas como agrupadores não possuem system
-   * e url e, portanto, não geram uma nova aba.
-   */
   openMenuItem(item: WorkspaceMenuItem): void {
     if (!item.system || !item.url) {
       return;
