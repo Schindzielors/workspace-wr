@@ -4,14 +4,6 @@ import { App } from './app/app';
 
 type ThemeMode = 'light' | 'dark' | 'system';
 
-type WorkspaceRuntimeConfig = { theme?: ThemeMode };
-
-declare global {
-  interface Window {
-    __APP_CONFIG__?: WorkspaceRuntimeConfig & { apiUrl?: string };
-  }
-}
-
 const configuredTheme = window.__APP_CONFIG__?.theme;
 const theme: ThemeMode = configuredTheme === 'dark' || configuredTheme === 'system'
   ? configuredTheme
