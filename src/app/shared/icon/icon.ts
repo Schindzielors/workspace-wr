@@ -8,8 +8,12 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  * a cor do texto (`currentColor`) e acompanha estados como ativo e hover.
  */
 export type IconName =
+  | 'caret-double-left'
+  | 'caret-double-right'
   | 'caret-down'
+  | 'caret-up'
   | 'caret-up-down'
+  | 'folder-open'
   | 'house'
   | 'magnifying-glass'
   | 'map-trifold'
