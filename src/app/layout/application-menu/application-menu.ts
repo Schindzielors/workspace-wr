@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, inject, Input, output, signal } from '@angular/core';
 
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu-item.model';
@@ -16,6 +16,7 @@ export class ApplicationMenu {
   private readonly tabsService = inject(WorkspaceTabsService);
 
   readonly searchTerm = signal('');
+  readonly collapseRequested = output<void>();
 
   @Input() application?: WorkspaceApplication;
 
