@@ -1,0 +1,9 @@
+:host {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: var(--icon-size, 20px);
+  height: var(--icon-size, 20px);
+  background-color: currentColor;
+  -webkit-mask: var(--icon-url) center / contain no-repeat;
+  mask: var(--icon-url) center / contain no-repeat;
+}

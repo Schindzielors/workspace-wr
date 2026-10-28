@@ -12,104 +12,138 @@
   overflow: hidden;
 }
 
+/* Header — Figma "Header" (2725:28127), página "Ready for development". */
 .header {
-  height: 64px;
   position: relative;
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin: 12px 12px 0;
-  padding: 0 12px;
-  border-radius: 12px;
-  box-sizing: border-box;
-  background: var(--header-bg);
-  color: var(--color-neutral-very-soft);
   flex-shrink: 0;
+  height: 64px;
+  margin: 12px 12px 0;
+  border-radius: 12px;
+  background: var(--header-bg);
+  color: var(--header-text);
 }
 
-.header__identity {
+/* "User Company": logo + empresa/filial + CaretUpDown, com divisória à direita. */
+.header__company {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /*
+   * No Figma este bloco tem 240px. Mantemos a divisória alinhada à borda
+   * do menu lateral de 300px (12px de margem + 288px), conforme o PR #10.
+   */
+  flex: 0 0 288px;
+  height: 100%;
+  padding: 12px;
+  border: 0;
+  border-right: 1px solid var(--color-neutral-intense);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.header__company:disabled {
+  cursor: default;
+}
+
+.header__company-identity {
   display: flex;
   align-items: center;
   gap: 12px;
-  /* Align the identity divider with the 300px application menu edge. */
-  flex: 0 0 calc(300px - 24px);
   min-width: 0;
-  height: 100%;
-  padding-right: 18px;
-  border-right: 1px solid var(--color-neutral-intense);
 }
 
-.header__brand {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+.header__logo {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
   border-radius: 8px;
-  background: var(--color-neutral-maximum);
-  color: #ffffff;
+  background: var(--header-logo-bg);
+  color: var(--color-static-white);
   font-size: var(--font-size-sm);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
-.header__titles {
+.header__company-names {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   min-width: 0;
-  gap: 3px;
-}
-
-.header__title {
-  color: #ffffff;
-  font-size: 13px;
-  line-height: 17px;
-  font-weight: 600;
   white-space: nowrap;
 }
 
-.header__subtitle {
-  color: #aebbd0;
-  font-size: 11px;
-  line-height: 15px;
+.header__company-name {
+  color: var(--header-text);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
 }
 
-.header__chevrons {
-  margin-left: auto;
+.header__company-branch {
+  color: var(--header-user-secondary);
+  font-family: var(--font-family-caption);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-caption-xs);
+}
+
+.header__company-caret {
+  color: var(--header-chevron);
+}
+
+/* "Container": navegação à esquerda, ações do usuário à direita. */
+.header__container {
   display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  line-height: 8px;
-  color: #c7d2e2;
-}
-
-.header app-application-rail {
-  flex: 0 1 auto;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   min-width: 0;
   height: 100%;
+  padding: 12px 12px 12px 24px;
 }
 
+.header__container app-application-rail {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* "Search bar": 282px, centralizada no header. */
 .header__search {
   position: absolute;
+  top: 12px;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
   width: 282px;
   max-width: 24%;
-  min-width: 0;
-  margin: 0;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--header-control-bg);
+  color: var(--header-placeholder-text);
+  overflow: hidden;
 }
 
 .header__search input {
-  width: 100%;
-  height: 40px;
-  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 8px 0 8px 16px;
   border: 0;
-  border-radius: 8px;
-  padding: 0 38px 0 16px;
-  background: var(--header-control-bg);
-  color: var(--color-neutral-very-soft);
-  font: inherit;
-  font-size: var(--font-size-sm);
+  background: transparent;
+  color: var(--header-control-text);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-paragraph-sm);
+  outline: none;
 }
 
 .header__search input::placeholder {
@@ -118,37 +152,29 @@
 }
 
 .header__search input:disabled {
-  opacity: 1;
   cursor: not-allowed;
 }
 
-.header__search svg {
-  position: absolute;
-  right: 18px;
-  top: 13px;
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: var(--color-neutral-subtle-2);
-  stroke-width: 1.25;
-  stroke-linecap: round;
+.header__search app-icon {
+  margin-right: 16px;
   pointer-events: none;
 }
 
-.header__actions {
+/* "User": botão de aplicações + perfil, 16px entre eles. */
+.header__user-area {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   flex: 0 0 auto;
-  margin-left: auto;
 }
 
 .header__apps {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
+  width: 40px;
   height: 40px;
+  padding: 4px;
   border: 1px solid var(--header-apps-border);
   border-radius: 8px;
   background: transparent;
@@ -156,58 +182,60 @@
 }
 
 .header__apps:disabled {
-  opacity: 1;
   cursor: not-allowed;
-}
-
-.header__apps svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
 }
 
 .header__user {
   display: flex;
   align-items: center;
-  gap: 9px;
-  min-width: 138px;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.header__user:disabled {
+  cursor: default;
 }
 
 .header__avatar {
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
   border-radius: 8px;
   background: var(--header-avatar-bg);
   color: var(--header-avatar-text);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
 }
 
 .header__user-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  line-height: var(--line-height-text);
+  white-space: nowrap;
 }
 
-.header__user-info strong {
+.header__user-name {
   color: var(--header-text);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
 }
 
-.header__user-info span {
-  font-size: var(--font-size-xs);
+.header__user-role {
   color: var(--header-user-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
 }
 
-.header__user-chevron {
-  margin-left: auto;
+.header__user-caret {
   color: var(--header-chevron);
 }
 
@@ -242,24 +270,20 @@
 }
 
 @media (max-width: 1150px) {
-  .header {
-    gap: 12px;
+  .header__company {
+    flex-basis: 175px;
   }
 
-  .header__identity {
-    flex-basis: 175px;
+  .header__container {
+    gap: 12px;
   }
 
   .header__search {
     display: none;
   }
 
-  .header__user {
-    min-width: auto;
-  }
-
   .header__user-info,
-  .header__user-chevron {
+  .header__user-caret {
     display: none;
   }
 }

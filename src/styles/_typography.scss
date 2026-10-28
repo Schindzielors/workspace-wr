@@ -2,6 +2,8 @@
 :root {
   --font-family-sans: "Google Sans", Arial, sans-serif;
   --font-family-display: "Google Sans", Arial, sans-serif;
+  /* Caption/xs/medium usa Inter no Figma. */
+  --font-family-caption: "Inter", Arial, sans-serif;
   --font-size-xs: 10px;
   --font-size-sm: 12px;
   --font-size-md: 14px;
@@ -20,6 +22,9 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --line-height-text: 1.5;
+  --line-height-paragraph-sm: 22px;
+  --line-height-caption-xs: 19px;
   --letter-spacing-tight: -0.5px;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.5px;
