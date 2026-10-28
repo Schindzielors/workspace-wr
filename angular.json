@@ -29,7 +29,7 @@
                 "input": "public"
               },
               {
-                "glob": "{caret-down,caret-up-down,house,magnifying-glass,map-trifold,squares-four,truck}.svg",
+                "glob": "{caret-double-left,caret-double-right,caret-down,caret-up,caret-up-down,folder-open,house,magnifying-glass,map-trifold,squares-four,truck}.svg",
                 "input": "node_modules/@phosphor-icons/core/assets/regular",
                 "output": "icons"
               }
