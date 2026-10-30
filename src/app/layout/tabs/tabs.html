@@ -7,6 +7,7 @@
         <span class="tab__title">{{ tab.title }}</span>
       </button>
       <button type="button" class="tab__action tab__reload"
+        [class.tab__reload--loading]="tabsService.isLoading(tab.id)"
         [attr.aria-label]="'Atualizar ' + tab.title" title="Atualizar"
         (click)="reload($event, tab.id)">
         <svg viewBox="0 0 24 24" aria-hidden="true">

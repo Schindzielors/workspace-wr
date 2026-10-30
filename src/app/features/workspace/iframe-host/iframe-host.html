@@ -9,6 +9,16 @@
 
   }
 
+  <!-- Loading da aba ativa enquanto o iframe carrega a tela. -->
+  @if (tabsService.activeTab(); as activeTab) {
+    @if (tabsService.isLoading(activeTab.id)) {
+      <div class="frame-loading" role="status" aria-live="polite">
+        <span class="frame-loading__spinner" aria-hidden="true"></span>
+        <p class="frame-loading__text">Carregando {{ activeTab.title }}...</p>
+      </div>
+    }
+  }
+
   @if (tabsService.tabs().length) {
 
     @for (tab of tabsService.tabs(); track tab.id) {
@@ -21,7 +31,8 @@
           tab.url,
           tabsService.reloadVersion(tab.id)
         )"
-        [title]="tab.title">
+        [title]="tab.title"
+        (load)="onFrameLoad(tab.id, $event)">
       </iframe>
 
     }

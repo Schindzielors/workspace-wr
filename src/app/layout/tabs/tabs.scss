@@ -101,3 +101,20 @@
   outline: 2px solid #60a5fa;
   outline-offset: 2px;
 }
+
+/* Enquanto a aba carrega, o ícone de atualizar gira. */
+.tab__reload--loading svg {
+  animation: tab-reload-spin 800ms linear infinite;
+}
+
+@keyframes tab-reload-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab__reload--loading svg {
+    animation-duration: 2s;
+  }
+}
