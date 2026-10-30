@@ -1,28 +1,99 @@
-<div class="tabs" role="tablist" aria-label="Abas abertas">
-  @for (tab of tabsService.tabs(); track tab.id) {
-    <div class="tab" [class.tab--active]="tabsService.activeTabId() === tab.id">
-      <button type="button" class="tab__select" role="tab"
-        [attr.aria-selected]="tabsService.activeTabId() === tab.id"
-        [attr.title]="tab.title" (click)="activate(tab.id)">
-        <span class="tab__title">{{ tab.title }}</span>
-      </button>
-      <button type="button" class="tab__action tab__reload"
-        [class.tab__reload--loading]="tabsService.isLoading(tab.id)"
-        [attr.aria-label]="'Atualizar ' + tab.title" title="Atualizar"
-        (click)="reload($event, tab.id)">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M20 11a8 8 0 1 0-2.3 5.7" />
-          <path d="M20 4v7h-7" />
-        </svg>
-      </button>
-      <button type="button" class="tab__action tab__close"
-        [attr.aria-label]="'Fechar ' + tab.title" title="Fechar"
-        (click)="close($event, tab.id)">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6l12 12" />
-          <path d="M18 6 6 18" />
-        </svg>
-      </button>
-    </div>
-  }
+<div class="tabs-bar">
+  <div class="tabs" role="tablist" aria-label="Abas abertas">
+    @for (item of itens(); track item.chave) {
+      @if (item.grupo) {
+        <!-- Abas unidas (tela dividida): um chip com as duas. -->
+        <div class="tab tab--group" [class.tab--active]="item.ativo"
+          (click)="$event.target === $event.currentTarget && activate(item.abas[0].id)"
+          [attr.aria-label]="'Guias unidas: ' + item.abas[0].title + ' e ' + item.abas[1].title">
+          @for (tab of item.abas; track tab.id; let ultimo = $last) {
+            <ng-container [ngTemplateOutlet]="conteudoAba" [ngTemplateOutletContext]="{ $implicit: tab, ativo: item.ativo }" />
+            @if (!ultimo) {
+              <span class="tab__divider" aria-hidden="true"></span>
+            }
+          }
+        </div>
+      } @else {
+        <div class="tab" [class.tab--active]="item.ativo">
+          <ng-container [ngTemplateOutlet]="conteudoAba" [ngTemplateOutletContext]="{ $implicit: item.abas[0], ativo: item.ativo }" />
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Unir guias (tela dividida) -->
+  <button #uniaoTrigger type="button" class="tabs__union-trigger"
+    [class.tabs__union-trigger--open]="uniaoAberta()"
+    aria-haspopup="dialog" [attr.aria-expanded]="uniaoAberta()"
+    [disabled]="!podeAbrirUniao()"
+    [title]="podeAbrirUniao() ? 'Unir guias (tela dividida)' : 'Abra pelo menos 2 guias para unir'"
+    [attr.aria-label]="uniaoAberta() ? 'Fechar união de guias' : 'Unir guias'"
+    (click)="alternarUniao()">
+    <app-icon [name]="uniaoAberta() ? 'x' : 'copy'" [size]="16" />
+  </button>
 </div>
+
+@if (uniaoAberta()) {
+  <div class="union-backdrop" (click)="fecharUniao()" aria-hidden="true"></div>
+  <section class="union" role="dialog" aria-labelledby="uniao-titulo" aria-describedby="uniao-descricao"
+    [style.top.px]="posicaoUniao().top" [style.right.px]="posicaoUniao().right"
+    (keydown.escape)="fecharUniao()">
+    <header class="union__header">
+      <h2 class="union__title" id="uniao-titulo">Guias abertas</h2>
+      <p class="union__subtitle" id="uniao-descricao">Selecione 2 guias</p>
+    </header>
+
+    @if (abasDisponiveis().length) {
+      <ul class="union__list">
+        @for (tab of abasDisponiveis(); track tab.id; let i = $index) {
+          <li>
+            <label class="union__option">
+              <input type="checkbox" [checked]="selecionadas().includes(tab.id)"
+                [attr.data-autofocus]="i === 0 ? '' : null"
+                (change)="alternarSelecao(tab.id)" />
+              <span class="union__option-title" [title]="tab.title">{{ tab.title }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="union__empty">Todas as guias abertas já estão unidas.</p>
+    }
+
+    <footer class="union__footer">
+      <button type="button" class="union__submit" [disabled]="selecionadas().length !== 2" (click)="unir()">
+        Unir guias
+      </button>
+      @if (grupoAtivo(); as grupo) {
+        <button type="button" class="union__separate" (click)="separar(grupo.id)">
+          Separar guias atuais
+        </button>
+      }
+    </footer>
+  </section>
+}
+
+<ng-template #conteudoAba let-tab let-ativo="ativo">
+  <button type="button" class="tab__select" role="tab"
+    [attr.aria-selected]="ativo"
+    [attr.title]="tab.title" (click)="activate(tab.id)">
+    <span class="tab__title">{{ tab.title }}</span>
+  </button>
+  <button type="button" class="tab__action tab__reload"
+    [class.tab__reload--loading]="tabsService.isLoading(tab.id)"
+    [attr.aria-label]="'Atualizar ' + tab.title" title="Atualizar"
+    (click)="reload($event, tab.id)">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+      <path d="M20 4v7h-7" />
+    </svg>
+  </button>
+  <button type="button" class="tab__action tab__close"
+    [attr.aria-label]="'Fechar ' + tab.title" title="Fechar"
+    (click)="close($event, tab.id)">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </svg>
+  </button>
+</ng-template>

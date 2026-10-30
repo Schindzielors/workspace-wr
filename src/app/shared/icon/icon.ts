@@ -21,6 +21,7 @@ export type IconName =
   | 'caret-down'
   | 'caret-up'
   | 'caret-up-down'
+  | 'copy'
   | 'folder-open'
   | 'gear'
   | 'grid-nine'

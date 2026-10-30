@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   effect,
   inject
 } from '@angular/core';
@@ -15,7 +16,10 @@ import { WorkspaceTabsService } from '../service/workspace-tabs.service';
   selector: 'app-iframe-host',
   imports: [],
   templateUrl: './iframe-host.html',
-  styleUrl: './iframe-host.scss'
+  styleUrl: './iframe-host.scss',
+  host: {
+    '[class.split]': 'split()'
+  }
 })
 export class IframeHost {
 
@@ -51,6 +55,15 @@ export class IframeHost {
    * antes de serem consideradas confiáveis.
    */
   private readonly sanitizer = inject(DomSanitizer);
+
+  /** Duas abas unidas na tela (Figma "WR Guias unidas"). */
+  readonly split = computed(() => this.tabsService.visibleTabIds().length > 1);
+
+  private readonly visibleIds = computed(() => new Set(this.tabsService.visibleTabIds()));
+
+  isVisible(tabId: string): boolean {
+    return this.visibleIds().has(tabId);
+  }
 
   /**
    * Cache das URLs já sanitizadas, indexado pelo identificador único da aba.

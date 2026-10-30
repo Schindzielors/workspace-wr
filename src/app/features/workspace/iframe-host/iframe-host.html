@@ -1,31 +1,21 @@
-<div class="iframe-container">
+<!--
+  Cada aba tem um "slot" fixo com o seu iframe. Os slots nunca mudam de
+  lugar no DOM (mover um iframe faz o navegador recarregá-lo): a tela
+  dividida só muda o layout (grid) e quais slots ficam visíveis.
+-->
+<div class="iframe-container" [class.iframe-container--split]="split()">
 
   @if (!tabsService.activeTab()) {
-
     <div class="empty-state">
       <h2>Workspace WR</h2>
       <p>Selecione uma tela no menu lateral.</p>
     </div>
-
   }
 
-  <!-- Loading da aba ativa enquanto o iframe carrega a tela. -->
-  @if (tabsService.activeTab(); as activeTab) {
-    @if (tabsService.isLoading(activeTab.id)) {
-      <div class="frame-loading" role="status" aria-live="polite">
-        <span class="frame-loading__spinner" aria-hidden="true"></span>
-        <p class="frame-loading__text">Carregando {{ activeTab.title }}...</p>
-      </div>
-    }
-  }
-
-  @if (tabsService.tabs().length) {
-
-    @for (tab of tabsService.tabs(); track tab.id) {
-
+  @for (tab of tabsService.tabs(); track tab.id) {
+    <div class="frame-slot" [class.frame-slot--visible]="isVisible(tab.id)">
       <iframe
         class="workspace-frame"
-        [class.active]="tabsService.activeTabId() === tab.id"
         [src]="getSafeUrl(
           tab.id,
           tab.url,
@@ -35,8 +25,14 @@
         (load)="onFrameLoad(tab.id, $event)">
       </iframe>
 
-    }
-
+      <!-- Loading da aba enquanto o iframe carrega a tela. -->
+      @if (isVisible(tab.id) && tabsService.isLoading(tab.id)) {
+        <div class="frame-loading" role="status" aria-live="polite">
+          <span class="frame-loading__spinner" aria-hidden="true"></span>
+          <p class="frame-loading__text">Carregando {{ tab.title }}...</p>
+        </div>
+      }
+    </div>
   }
 
 </div>

@@ -1,11 +1,12 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { WorkspaceTab } from '../model/workspace-tab.model';
+import { WorkspaceTab, WorkspaceTabGroup } from '../model/workspace-tab.model';
 import { WorkspaceSessionService } from './workspace-session.service';
 
 /** Formato salvo na sessão (ver WorkspaceSessionService). */
 interface AbasSalvas {
   tabs: WorkspaceTab[];
   activeTabId: string | null;
+  groups?: WorkspaceTabGroup[];
 }
 
 const CHAVE_SESSAO = 'abas';
@@ -58,6 +59,9 @@ export class WorkspaceTabsService {
    * gerar uma nova referência de SafeResourceUrl e, consequentemente,
    * fazer o navegador recarregar o iframe correspondente.
    */
+  /** Pares de abas unidas em tela dividida (restaurados da sessão). */
+  private readonly _groups = signal<WorkspaceTabGroup[]>(this.abasSalvas().groups ?? []);
+
   private readonly _reloadVersions = signal<Record<string, number>>({});
 
   /**
@@ -106,6 +110,62 @@ export class WorkspaceTabsService {
    * - não existirem abas abertas;
    * - o ID ativo não for encontrado na coleção.
    */
+  /** Pares de abas unidas em tela dividida. */
+  readonly groups = this._groups.asReadonly();
+
+  /**
+   * Abas visíveis na área principal, na ordem da barra de abas:
+   * - aba sozinha: só ela;
+   * - aba unida: as duas do grupo, lado a lado.
+   */
+  readonly visibleTabIds = computed<string[]>(() => {
+    const activeTabId = this._activeTabId();
+
+    if (!activeTabId) {
+      return [];
+    }
+
+    const group = this.groupOf(activeTabId);
+
+    if (!group) {
+      return [activeTabId];
+    }
+
+    const ordem = this._tabs().map(tab => tab.id);
+    return [...group.tabIds].sort((a, b) => ordem.indexOf(a) - ordem.indexOf(b));
+  });
+
+  /** Grupo (tela dividida) da aba, se houver. */
+  groupOf(tabId: string): WorkspaceTabGroup | undefined {
+    return this._groups().find(group => group.tabIds.includes(tabId));
+  }
+
+  /**
+   * Une duas abas em tela dividida e mostra as duas. Se alguma delas já
+   * estava unida a outra aba, a união anterior é desfeita.
+   */
+  uniteTabs(primeiraId: string, segundaId: string): void {
+    const ids = new Set(this._tabs().map(tab => tab.id));
+
+    if (primeiraId === segundaId || !ids.has(primeiraId) || !ids.has(segundaId)) {
+      return;
+    }
+
+    this._groups.update(groups => [
+      ...groups.filter(group =>
+        !group.tabIds.includes(primeiraId) && !group.tabIds.includes(segundaId)
+      ),
+      { id: `grupo-${primeiraId}-${segundaId}`, tabIds: [primeiraId, segundaId] }
+    ]);
+
+    this._activeTabId.set(primeiraId);
+  }
+
+  /** Desfaz a união: as duas abas continuam abertas, cada uma sozinha. */
+  separateGroup(groupId: string): void {
+    this._groups.update(groups => groups.filter(group => group.id !== groupId));
+  }
+
   readonly activeTab = computed(() => {
     const activeTabId = this._activeTabId();
 
@@ -123,7 +183,8 @@ export class WorkspaceTabsService {
     effect(() => {
       const salvas: AbasSalvas = {
         tabs: this._tabs(),
-        activeTabId: this._activeTabId()
+        activeTabId: this._activeTabId(),
+        groups: this._groups()
       };
 
       this.session.salvar(CHAVE_SESSAO, salvas);
@@ -140,7 +201,17 @@ export class WorkspaceTabsService {
       ? salvas!.activeTabId
       : null;
 
-    return { tabs, activeTabId };
+    // Só restaura uniões cujas duas abas ainda existem.
+    const ids = new Set(tabs.map(tab => tab.id));
+    const groups = Array.isArray(salvas?.groups)
+      ? salvas.groups.filter(group =>
+        Array.isArray(group?.tabIds) &&
+        group.tabIds.length === 2 &&
+        group.tabIds.every(id => ids.has(id))
+      )
+      : [];
+
+    return { tabs, activeTabId, groups };
   }
 
   /**
@@ -150,6 +221,7 @@ export class WorkspaceTabsService {
   limparSessao(): void {
     this._tabs.set([]);
     this._activeTabId.set(null);
+    this._groups.set([]);
     this._loadingTabIds.set(new Set());
     this._reloadVersions.set({});
     this.session.limpar();
@@ -342,6 +414,14 @@ export class WorkspaceTabsService {
     // Cria uma nova coleção sem a aba que está sendo fechada.
     const newTabs = currentTabs.filter(tab => tab.id !== tabId);
 
+    // Fechar uma aba unida desfaz a união; a outra continua aberta.
+    const group = this.groupOf(tabId);
+    const partnerId = group?.tabIds.find(id => id !== tabId);
+
+    if (group) {
+      this.separateGroup(group.id);
+    }
+
     this._tabs.set(newTabs);
     this.setLoading(tabId, false);
 
@@ -354,6 +434,12 @@ export class WorkspaceTabsService {
     // Somente precisamos escolher outra aba ativa quando a aba
     // removida era justamente a aba que estava selecionada.
     if (this._activeTabId() === tabId) {
+
+      // Se estava em tela dividida, a outra aba do par continua na tela.
+      if (partnerId) {
+        this._activeTabId.set(partnerId);
+        return;
+      }
 
       /**
        * Após a remoção, primeiro tentamos utilizar o mesmo índice.

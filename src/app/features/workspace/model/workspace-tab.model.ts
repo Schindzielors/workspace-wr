@@ -89,3 +89,14 @@ export interface WorkspaceTab {
    */
   url: string;
 }
+
+/**
+ * Duas abas unidas em tela dividida (Figma "WR união de guias").
+ *
+ * As abas continuam existindo separadas (com o próprio iframe); o grupo só
+ * define que, ao ativar qualquer uma delas, as duas aparecem lado a lado.
+ */
+export interface WorkspaceTabGroup {
+  id: string;
+  tabIds: [string, string];
+}

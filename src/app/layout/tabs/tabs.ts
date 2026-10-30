@@ -1,102 +1,159 @@
-import { Component, inject } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+
+import { WorkspaceTab, WorkspaceTabGroup } from '../../features/workspace/model/workspace-tab.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
+import { Icon } from '../../shared/icon/icon';
+
+/** Item da barra: uma aba sozinha ou duas abas unidas (tela dividida). */
+interface ItemBarra {
+  chave: string;
+  abas: WorkspaceTab[];
+  grupo: WorkspaceTabGroup | null;
+  ativo: boolean;
+}
 
 @Component({
   selector: 'app-tabs',
-  imports: [],
+  imports: [NgTemplateOutlet, Icon],
   templateUrl: './tabs.html',
   styleUrl: './tabs.scss'
 })
 export class Tabs {
 
-  /**
-   * Serviço responsável pelo gerenciamento centralizado das abas
-   * abertas no Workspace.
-   *
-   * Este componente utiliza o serviço tanto para consultar o estado
-   * atual das abas no template quanto para executar ações solicitadas
-   * pelo usuário, como:
-   * - ativar uma aba;
-   * - fechar uma aba.
-   *
-   * O componente não mantém uma cópia própria da lista de abas.
-   * Dessa forma, existe uma única fonte de verdade para o estado
-   * das abas: o WorkspaceTabsService.
-   */
   readonly tabsService = inject(WorkspaceTabsService);
 
+  private readonly uniaoTrigger = viewChild<ElementRef<HTMLButtonElement>>('uniaoTrigger');
+
   /**
-   * Ativa uma aba existente no Workspace.
-   *
-   * Este método é chamado quando o usuário clica em uma das abas
-   * exibidas na barra de navegação.
-   *
-   * A responsabilidade real de alterar o estado da aba ativa permanece
-   * no WorkspaceTabsService. O componente atua apenas como intermediário
-   * entre a interação da interface e o serviço de gerenciamento.
-   *
-   * A ativação de uma aba não recria nem recarrega seu iframe.
-   * Ela apenas altera qual aba deve ser considerada ativa e, portanto,
-   * qual conteúdo deve ser apresentado ao usuário.
-   *
-   * @param tabId Identificador único da aba que deve ser ativada.
+   * Itens da barra, na ordem das abas. Abas unidas viram um único chip, na
+   * posição da primeira delas.
    */
+  readonly itens = computed<ItemBarra[]>(() => {
+    const visiveis = new Set(this.tabsService.visibleTabIds());
+    const porId = new Map(this.tabsService.tabs().map(tab => [tab.id, tab]));
+    const jaIncluidas = new Set<string>();
+    const itens: ItemBarra[] = [];
+
+    for (const tab of this.tabsService.tabs()) {
+      if (jaIncluidas.has(tab.id)) {
+        continue;
+      }
+
+      const grupo = this.tabsService.groupOf(tab.id) ?? null;
+      const abas = grupo
+        ? grupo.tabIds.map(id => porId.get(id)!).filter(Boolean)
+        : [tab];
+
+      // Mesma ordem da tela dividida: a que vem antes na barra fica à esquerda.
+      abas.sort((a, b) => this.tabsService.tabs().indexOf(a) - this.tabsService.tabs().indexOf(b));
+      abas.forEach(aba => jaIncluidas.add(aba.id));
+
+      itens.push({
+        chave: grupo?.id ?? tab.id,
+        abas,
+        grupo,
+        ativo: abas.some(aba => visiveis.has(aba.id))
+      });
+    }
+
+    return itens;
+  });
+
   activate(tabId: string): void {
     this.tabsService.activateTab(tabId);
   }
 
-  /**
-   * Recarrega o conteúdo de uma aba aberta.
-   *
-   * Como o botão de reload está dentro do elemento clicável da própria aba,
-   * interrompemos a propagação para evitar que o clique execute também
-   * a ação de ativação.
-   *
-   * O componente apenas encaminha a intenção para o WorkspaceTabsService.
-   * O reload efetivo do iframe é realizado pelo IframeHost.
-   *
-   * @param event Evento de clique do botão de reload.
-   * @param tabId Identificador da aba que deve ser atualizada.
-   */
   reload(event: MouseEvent, tabId: string): void {
     event.stopPropagation();
 
     this.tabsService.reloadTab(tabId);
   }
 
-  /**
-   * Fecha uma aba aberta no Workspace.
-   *
-   * Este método é chamado pelo botão/ícone de fechamento (`×`)
-   * existente dentro de cada aba.
-   *
-   * Como o botão de fechar está localizado dentro do elemento clicável
-   * da própria aba, o evento de clique poderia continuar propagando até
-   * o elemento pai e também executar a ação de ativação da aba.
-   *
-   * Por esse motivo, `event.stopPropagation()` é chamado antes do
-   * fechamento. Isso impede que o clique utilizado para fechar a aba
-   * seja interpretado também como um clique para ativá-la.
-   *
-   * Após interromper a propagação do evento, o fechamento é delegado ao
-   * WorkspaceTabsService, que fica responsável por:
-   * - remover a aba da coleção;
-   * - manter ou redefinir a aba ativa;
-   * - selecionar a próxima aba quando necessário.
-   *
-   * O componente Tabs não implementa essas regras diretamente, mantendo
-   * a lógica de gerenciamento centralizada no serviço.
-   *
-   * @param event Evento de clique disparado pelo botão de fechamento.
-   *              É utilizado para interromper a propagação do clique.
-   *
-   * @param tabId Identificador único da aba que deve ser fechada.
-   */
   close(event: MouseEvent, tabId: string): void {
 
     // Impede que o clique no botão de fechar seja propagado para o
     // elemento da aba e acabe acionando também o método `activate`.
     event.stopPropagation();
     this.tabsService.closeTab(tabId);
+  }
+
+  // ---------------------------------------------------------------------
+  // Unir guias (Figma "WR união de guias")
+  // ---------------------------------------------------------------------
+
+  readonly uniaoAberta = signal(false);
+  readonly posicaoUniao = signal({ top: 0, right: 0 });
+
+  /** Ids escolhidos, na ordem em que foram marcados (máximo 2). */
+  readonly selecionadas = signal<string[]>([]);
+
+  /** Abas que podem ser unidas: as que ainda não estão em uma união. */
+  readonly abasDisponiveis = computed(() =>
+    this.tabsService.tabs().filter(tab => !this.tabsService.groupOf(tab.id))
+  );
+
+  /** União em que está a aba ativa (para oferecer "Separar guias"). */
+  readonly grupoAtivo = computed(() => {
+    const ativa = this.tabsService.activeTabId();
+    return ativa ? this.tabsService.groupOf(ativa) ?? null : null;
+  });
+
+  readonly podeAbrirUniao = computed(() =>
+    this.abasDisponiveis().length >= 2 || !!this.grupoAtivo()
+  );
+
+  alternarUniao(): void {
+    this.uniaoAberta() ? this.fecharUniao() : this.abrirUniao();
+  }
+
+  abrirUniao(): void {
+    // A barra de abas corta o que sai dela (overflow); o painel usa posição
+    // fixa, calculada a partir do botão.
+    const botao = this.uniaoTrigger()?.nativeElement.getBoundingClientRect();
+
+    if (botao) {
+      this.posicaoUniao.set({
+        top: botao.bottom + 8,
+        right: Math.max(window.innerWidth - botao.right, 12)
+      });
+    }
+
+    this.selecionadas.set([]);
+    this.uniaoAberta.set(true);
+
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLInputElement>('.union [data-autofocus]')?.focus()
+    );
+  }
+
+  fecharUniao(): void {
+    this.uniaoAberta.set(false);
+    this.uniaoTrigger()?.nativeElement.focus();
+  }
+
+  /** Marca/desmarca; ao marcar uma terceira, a mais antiga é desmarcada. */
+  alternarSelecao(tabId: string): void {
+    this.selecionadas.update(selecionadas =>
+      selecionadas.includes(tabId)
+        ? selecionadas.filter(id => id !== tabId)
+        : [...selecionadas, tabId].slice(-2)
+    );
+  }
+
+  unir(): void {
+    const [primeira, segunda] = this.selecionadas();
+
+    if (!primeira || !segunda) {
+      return;
+    }
+
+    this.tabsService.uniteTabs(primeira, segunda);
+    this.fecharUniao();
+  }
+
+  separar(groupId: string): void {
+    this.tabsService.separateGroup(groupId);
+    this.fecharUniao();
   }
 }
