@@ -1,0 +1,253 @@
+/* "Trocar visão" — Figma "Home - Perfil empresa". */
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.12);
+  animation: fade-in 120ms ease-out;
+}
+
+/* Abre logo abaixo do bloco da empresa no header. */
+.picker {
+  position: absolute;
+  top: 88px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  width: min(336px, calc(100vw - 24px));
+  max-height: calc(100vh - 100px);
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+  box-shadow: 0 16px 48px rgba(3, 7, 18, 0.16), 0 2px 6px rgba(3, 7, 18, 0.06);
+  animation: picker-in 140ms ease-out;
+}
+
+.picker__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 12px;
+}
+
+.picker__title {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-text);
+}
+
+.picker__subtitle {
+  margin: 2px 0 0;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+}
+
+.picker__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--surface-panel);
+  color: var(--color-neutral-intense);
+  cursor: pointer;
+}
+
+.picker__close:hover {
+  background: var(--color-neutral-soft);
+}
+
+.picker__close:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}
+
+.picker__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  padding: 0 16px 16px;
+  overflow-y: auto;
+}
+
+/* ---------------------------------------------------------------- */
+/* Busca                                                             */
+/* ---------------------------------------------------------------- */
+
+.picker__search-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.picker__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral-base);
+}
+
+.picker__search:focus-within {
+  border-color: var(--color-brand-secondary-base);
+  box-shadow: 0 0 0 3px var(--color-brand-secondary-soft);
+}
+
+.picker__search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-neutral-maximum);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+}
+
+.picker__search input::placeholder {
+  color: var(--color-neutral-base);
+  opacity: 1;
+}
+
+.picker__results {
+  max-height: 196px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-light) transparent;
+}
+
+.picker__result {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.picker__result--active {
+  background: var(--color-neutral-soft);
+}
+
+/* "Insany LTDA / Insany 01 / Filial": níveis acima + tipo em azul. */
+.picker__result-path {
+  overflow: hidden;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker__result-sep {
+  padding: 0 1px;
+}
+
+.picker__result-type {
+  color: var(--color-brand-secondary-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.picker__result-name {
+  overflow: hidden;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker__result-empty {
+  padding: 12px 8px;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+}
+
+/* ---------------------------------------------------------------- */
+/* Rodapé                                                            */
+/* ---------------------------------------------------------------- */
+
+.picker__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+/* Botão primário amarelo (brand primary). */
+.picker__submit {
+  width: 100%;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-brand-primary-base);
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.picker__submit:hover:not(:disabled) {
+  background: var(--color-brand-primary-strong);
+}
+
+.picker__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.picker__submit:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}
+
+.picker__error {
+  margin: 0;
+  color: var(--color-feedback-error-intense);
+  font-size: var(--font-size-sm);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .picker {
+    animation: none;
+  }
+}

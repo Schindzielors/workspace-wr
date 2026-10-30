@@ -1,12 +1,13 @@
 <div class="workspace">
   <header class="header">
-    <button type="button" class="header__company" disabled
-      title="Troca de empresa/filial (em desenvolvimento)">
+    <!-- Visão atual (grupo/empresa/filial); abre o "Trocar visão". -->
+    <button #visaoTrigger type="button" class="header__company" aria-haspopup="dialog"
+      [attr.aria-expanded]="visaoOpen()" title="Trocar visão" (click)="openVisao()">
       <span class="header__company-identity">
         <span class="header__logo" aria-hidden="true">WR</span>
         <span class="header__company-names">
-          <strong class="header__company-name">Workspace WR</strong>
-          <span class="header__company-branch">Datapar</span>
+          <strong class="header__company-name">{{ visaoService.rotulo()?.titulo ?? 'Workspace WR' }}</strong>
+          <span class="header__company-branch">{{ visaoService.rotulo()?.subtitulo ?? 'Datapar' }}</span>
         </span>
       </span>
       <app-icon class="header__company-caret" name="caret-up-down" [size]="20" />
@@ -80,4 +81,8 @@
 @if (paletteOpen()) {
   <app-command-palette [applications]="applications()"
     (escolhido)="runPaletteAction($event)" (fechar)="closePalette()" />
+}
+
+@if (visaoOpen()) {
+  <app-visao-picker (fechar)="closeVisao()" />
 }
