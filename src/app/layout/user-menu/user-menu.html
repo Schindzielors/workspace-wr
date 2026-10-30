@@ -1,0 +1,29 @@
+<div class="backdrop" (click)="fechar.emit()" aria-hidden="true"></div>
+
+<div class="user-menu" role="menu" aria-label="Menu do usuário">
+  @if (usuarioService.perfil(); as perfil) {
+    <div class="user-menu__profile">
+      <app-avatar [iniciais]="usuarioService.iniciais()" [fotoUrl]="perfil.fotoUrl" [size]="36" />
+      <div class="user-menu__identity">
+        <strong class="user-menu__name">{{ perfil.nome }}</strong>
+        <span class="user-menu__email">{{ perfil.email }}</span>
+      </div>
+    </div>
+  }
+
+  <div class="user-menu__items">
+    <button type="button" class="user-menu__item" role="menuitem" (click)="escolhido.emit('configuracoes')">
+      <app-icon name="gear" [size]="16" /> Configurações
+    </button>
+    <button type="button" class="user-menu__item" role="menuitem" (click)="escolhido.emit('notificacoes')">
+      <app-icon name="bell" [size]="16" /> Notificações
+    </button>
+    <button type="button" class="user-menu__item" role="menuitem" disabled title="Ajuda (em desenvolvimento)">
+      <app-icon name="question" [size]="16" /> Ajuda
+    </button>
+    <button type="button" class="user-menu__item user-menu__item--danger" role="menuitem" disabled
+      title="Sair (disponível quando o login for implementado)">
+      <app-icon name="sign-out" [size]="16" /> Sair
+    </button>
+  </div>
+</div>

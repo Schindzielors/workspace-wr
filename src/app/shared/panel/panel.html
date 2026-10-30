@@ -1,0 +1,23 @@
+<div class="backdrop" (click)="fechar.emit()" aria-hidden="true"></div>
+
+<section class="panel" [class.panel--left]="align() === 'left'" role="dialog" aria-modal="true"
+  [attr.aria-labelledby]="id + '-titulo'"
+  [attr.aria-describedby]="subtitulo() ? id + '-subtitulo' : null">
+  <header class="panel__header">
+    <div>
+      <h2 class="panel__title" [id]="id + '-titulo'">{{ titulo() }}</h2>
+      @if (subtitulo()) {
+        <p class="panel__subtitle" [id]="id + '-subtitulo'">{{ subtitulo() }}</p>
+      }
+    </div>
+    <button type="button" class="panel__close" aria-label="Fechar" title="Fechar" (click)="fechar.emit()">
+      <app-icon name="x" [size]="16" />
+    </button>
+  </header>
+
+  <div class="panel__body">
+    <ng-content />
+  </div>
+
+  <ng-content select="[panel-footer]" />
+</section>

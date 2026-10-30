@@ -1,0 +1,110 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.12);
+  animation: fade-in 120ms ease-out;
+}
+
+/* Abaixo do header, alinhado à direita (menu do usuário) ou à esquerda. */
+.panel {
+  position: absolute;
+  top: 88px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  width: min(344px, calc(100vw - 24px));
+  max-height: calc(100vh - 100px);
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+  box-shadow: 0 16px 48px rgba(3, 7, 18, 0.16), 0 2px 6px rgba(3, 7, 18, 0.06);
+  animation: panel-in 140ms ease-out;
+}
+
+.panel--left {
+  right: auto;
+  left: 12px;
+}
+
+.panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-neutral-light);
+}
+
+.panel__title {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-text);
+}
+
+.panel__subtitle {
+  margin: 2px 0 0;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+}
+
+.panel__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--surface-panel);
+  color: var(--color-neutral-intense);
+  cursor: pointer;
+}
+
+.panel__close:hover {
+  background: var(--color-neutral-soft);
+}
+
+.panel__close:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}
+
+.panel__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-subtle) transparent;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .panel {
+    animation: none;
+  }
+}

@@ -27,11 +27,15 @@
           <app-icon name="squares-four" [size]="20" />
         </button>
 
-        <button type="button" class="header__user" disabled title="Perfil (em desenvolvimento)">
-          <span class="header__avatar" aria-hidden="true">B</span>
+        <!-- Menu do usuário: Configurações, Notificações, Ajuda, Sair. -->
+        <button #userTrigger type="button" class="header__user" aria-haspopup="menu"
+          [attr.aria-expanded]="userPanel() === 'menu'" title="Menu do usuário"
+          (click)="toggleUserMenu()">
+          <app-avatar class="header__avatar" [iniciais]="usuarioService.iniciais()"
+            [fotoUrl]="usuarioService.perfil()?.fotoUrl" [size]="40" />
           <span class="header__user-info">
-            <strong class="header__user-name">Bruno</strong>
-            <span class="header__user-role">Usuário</span>
+            <strong class="header__user-name">{{ usuarioService.primeiroNome() || 'Usuário' }}</strong>
+            <span class="header__user-role">{{ usuarioService.perfil()?.cargo ?? '' }}</span>
           </span>
           <app-icon class="header__user-caret" name="caret-down" [size]="16" />
         </button>
@@ -85,4 +89,16 @@
 
 @if (visaoOpen()) {
   <app-visao-picker (fechar)="closeVisao()" />
+}
+
+@switch (userPanel()) {
+  @case ('menu') {
+    <app-user-menu (escolhido)="openUserPanel($event)" (fechar)="closeUserPanel()" />
+  }
+  @case ('configuracoes') {
+    <app-user-settings (fechar)="closeUserPanel()" />
+  }
+  @case ('notificacoes') {
+    <app-user-notifications (fechar)="closeUserPanel()" />
+  }
 }
