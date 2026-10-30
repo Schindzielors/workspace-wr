@@ -3,7 +3,15 @@
   min-width: 0;
 }
 
+/* Abas (com rolagem) + botão de unir fixo à direita. */
+.tabs-bar {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
 .tabs {
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -116,5 +124,211 @@
 @media (prefers-reduced-motion: reduce) {
   .tab__reload--loading svg {
     animation-duration: 2s;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Abas unidas: um chip com as duas (Figma "WR Guias unidas")        */
+/* ---------------------------------------------------------------- */
+
+.tab--group {
+  max-width: 440px;
+  cursor: pointer;
+}
+
+.tab--group .tab__select {
+  max-width: 160px;
+}
+
+.tab__divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  margin: 6px 2px;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+/* ---------------------------------------------------------------- */
+/* Botão "Unir guias"                                               */
+/* ---------------------------------------------------------------- */
+
+.tabs__union-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  margin-right: 9px;
+  padding: 0;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--tab-inactive-bg);
+  color: var(--color-neutral-intense);
+  cursor: pointer;
+}
+
+.tabs__union-trigger:hover:not(:disabled),
+.tabs__union-trigger--open {
+  background: var(--color-neutral-soft);
+}
+
+.tabs__union-trigger:disabled {
+  color: var(--color-neutral-subtle);
+  cursor: not-allowed;
+}
+
+.tabs__union-trigger:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Painel "Guias abertas"                                           */
+/* ---------------------------------------------------------------- */
+
+.union-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.union {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: 248px;
+  max-height: calc(100vh - 160px);
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+  box-shadow: 0 16px 48px rgba(3, 7, 18, 0.16), 0 2px 6px rgba(3, 7, 18, 0.06);
+  animation: union-in 120ms ease-out;
+}
+
+.union__header {
+  padding: 16px 16px 8px;
+}
+
+.union__title {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-text);
+}
+
+.union__subtitle {
+  margin: 2px 0 0;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+}
+
+/* ~5 guias visíveis, com rolagem. */
+.union__list {
+  max-height: 180px;
+  margin: 0;
+  padding: 4px 8px 8px;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-light) transparent;
+}
+
+.union__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+  cursor: pointer;
+}
+
+.union__option:hover {
+  background: var(--color-neutral-soft);
+}
+
+.union__option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--color-brand-secondary-base);
+  cursor: pointer;
+}
+
+.union__option-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.union__empty {
+  margin: 0;
+  padding: 8px 16px 12px;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+}
+
+.union__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+.union__submit {
+  width: 100%;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-brand-primary-base);
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.union__submit:hover:not(:disabled) {
+  background: var(--color-brand-primary-strong);
+}
+
+.union__submit:disabled {
+  background: var(--color-brand-primary-soft);
+  color: var(--color-neutral-base);
+  cursor: not-allowed;
+}
+
+.union__separate {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-neutral-intense);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.union__separate:hover {
+  background: var(--color-neutral-soft);
+}
+
+.union__submit:focus-visible,
+.union__separate:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}
+
+@keyframes union-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 }
