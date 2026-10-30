@@ -31,6 +31,9 @@
       titulo="Favoritos"
       descricao="Tenha um acesso rápido as suas funcionalidades favoritas que você mais utiliza no dia a dia."
       [total]="favoritos()?.length ?? null">
+      @if (erros().favoritos) {
+        <p class="load-error">Não foi possível carregar os favoritos.</p>
+      }
       @if (favoritos(); as favoritos) {
         @if (favoritos.length) {
           <ul class="list list--favoritos">
@@ -71,6 +74,9 @@
       [fadeHeight]="68"
       acao="Acessar conectores"
       [acaoDesabilitada]="true">
+      @if (erros().conectores) {
+        <p class="load-error">Não foi possível carregar os conectores.</p>
+      }
       @if (conectores(); as conectores) {
         @if (conectores.length) {
           <ul class="list list--conectores">
@@ -122,6 +128,9 @@
       [total]="paineis()?.length ?? null"
       acao="Acessar Painéis"
       [acaoDesabilitada]="true">
+      @if (erros().paineis) {
+        <p class="load-error">Não foi possível carregar os painéis.</p>
+      }
       @if (paineis(); as paineis) {
         @if (paineis.length) {
           <ul class="list list--paineis">

@@ -54,11 +54,34 @@ export class Home implements OnInit {
     'aguardando-configuracao': 'Aguardando configuração'
   };
 
+  /** Colunas cuja chamada à API falhou. */
+  readonly erros = signal<Partial<Record<'favoritos' | 'conectores' | 'paineis', boolean>>>({});
+
   ngOnInit(): void {
-    this.homeService.carregarUsuario().subscribe(usuario => this.usuario.set(usuario));
-    this.homeService.carregarFavoritos().subscribe(favoritos => this.favoritos.set(favoritos));
-    this.homeService.carregarConectores().subscribe(conectores => this.conectores.set(conectores));
-    this.homeService.carregarPaineis().subscribe(paineis => this.paineis.set(paineis));
+    this.homeService.carregarUsuario().subscribe({
+      next: usuario => this.usuario.set(usuario),
+      error: erro => console.error('Home: falha ao carregar o usuário.', erro)
+    });
+
+    this.homeService.carregarFavoritos().subscribe({
+      next: favoritos => this.favoritos.set(favoritos),
+      error: erro => this.marcarErro('favoritos', erro)
+    });
+
+    this.homeService.carregarConectores().subscribe({
+      next: conectores => this.conectores.set(conectores),
+      error: erro => this.marcarErro('conectores', erro)
+    });
+
+    this.homeService.carregarPaineis().subscribe({
+      next: paineis => this.paineis.set(paineis),
+      error: erro => this.marcarErro('paineis', erro)
+    });
+  }
+
+  private marcarErro(coluna: 'favoritos' | 'conectores' | 'paineis', erro: unknown): void {
+    console.error(`Home: falha ao carregar ${coluna}.`, erro);
+    this.erros.update(erros => ({ ...erros, [coluna]: true }));
   }
 
   abrirFavorito(favorito: HomeFavorito): void {

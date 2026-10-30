@@ -38,6 +38,7 @@ export class WorkspaceMenuService {
             title: project.nome,
             shortTitle: project.nome,
             baseUrl: project.url,
+            icon: project.icon ?? undefined,
             menus: []
           }))
         )

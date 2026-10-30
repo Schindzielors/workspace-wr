@@ -1,11 +1,10 @@
 /**
- * Contratos esperados da API da Home.
+ * Contratos de `/api/WorkspaceHome` (WorkspaceHomeController).
  *
- * Seguem o mesmo padrão dos endpoints já existentes do Workspace
- * (`/api/WorkspaceMenu/...`): propriedades em PascalCase e listas dentro
- * de `items`. Os nomes são uma PROPOSTA; ajuste aqui quando o backend
- * definir o contrato final. Os mocks em `../mock/home.mock.ts` usam
- * exatamente estes formatos.
+ * As propriedades vêm em PascalCase, como no `/WorkspaceMenu/MenuProjetos`:
+ * a API devolve linhas do Dapper (ou Dictionary, no mock), que mantêm o nome
+ * exato do alias do SQL. Se algum endpoint passar a devolver objeto anônimo
+ * ou classe, o .NET serializa em camelCase e estes nomes precisam mudar.
  */
 
 /** Envelope de lista usado pela API do Workspace. */
@@ -26,7 +25,7 @@ export interface HomeFavoritoDto {
   Categoria: string;
   Subcategoria: string;
 
-  /** Nome do projeto, igual ao campo `projeto` de `/Projetos` (ex.: "Portal Wr"). */
+  /** Mesmo valor do campo `projeto` de `/WorkspaceMenu/Projetos` (ex.: "Wr"). */
   Projeto: string;
 
   /** Rota da tela, no mesmo formato do campo `Rota` de `/MenuProjetos`. */

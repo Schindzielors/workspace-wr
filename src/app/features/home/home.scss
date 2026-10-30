@@ -379,6 +379,17 @@
   line-height: var(--line-height-text);
 }
 
+/* Falha ao carregar uma coluna. */
+.load-error {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--color-feedback-error-very-soft);
+  color: var(--color-feedback-error-intense);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-text);
+}
+
 /* ---------------------------------------------------------------- */
 /* Rodapé: logo brand-secondary/strong + versão                     */
 /* ---------------------------------------------------------------- */
