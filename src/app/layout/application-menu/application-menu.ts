@@ -4,10 +4,12 @@ import { Component, inject, Input, output, signal } from '@angular/core';
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu-item.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
+import { Icon, IconName } from '../../shared/icon/icon';
+import { applicationIcon } from '../../shared/icon/application-icon';
 
 @Component({
   selector: 'app-application-menu',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, Icon],
   templateUrl: './application-menu.html',
   styleUrl: './application-menu.scss'
 })
@@ -16,9 +18,23 @@ export class ApplicationMenu {
   private readonly tabsService = inject(WorkspaceTabsService);
 
   readonly searchTerm = signal('');
+  readonly systemSectionOpen = signal(true);
   readonly collapseRequested = output<void>();
 
   @Input() application?: WorkspaceApplication;
+
+  get applicationIconName(): IconName {
+    return this.application ? applicationIcon(this.application) : 'squares-four';
+  }
+
+  toggleSystemSection(): void {
+    this.systemSectionOpen.update(open => !open);
+  }
+
+  /** Pasta aberta pelo usuário, ou aberta automaticamente durante a busca. */
+  isOpen(item: WorkspaceMenuItem): boolean {
+    return this.isExpanded(item) || !!this.searchTerm();
+  }
 
   updateSearch(event: Event): void {
     this.searchTerm.set((event.target as HTMLInputElement).value.trim().toLocaleLowerCase());
