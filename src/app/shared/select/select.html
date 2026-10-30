@@ -1,0 +1,32 @@
+<span class="select__label" [id]="id + '-label'">{{ label() }}</span>
+
+<div class="select" [class.select--open]="aberto()">
+  <button type="button" class="select__trigger" role="combobox"
+    [attr.aria-labelledby]="id + '-label'"
+    [attr.aria-expanded]="aberto()"
+    [attr.aria-controls]="id + '-lista'"
+    [attr.aria-activedescendant]="aberto() ? id + '-opcao-' + indiceAtivo() : null"
+    [disabled]="disabled()"
+    (click)="alternar()" (keydown)="onKeydown($event)">
+    <span class="select__value" [class.select__value--placeholder]="!selecionado()">
+      {{ selecionado()?.label ?? placeholder() }}
+    </span>
+    <app-icon [name]="aberto() ? 'caret-up' : 'caret-down'" [size]="16" />
+  </button>
+
+  @if (aberto()) {
+    <ul class="select__list" role="listbox" [id]="id + '-lista'" [attr.aria-labelledby]="id + '-label'">
+      @for (option of options(); track option.value; let i = $index) {
+        <li class="select__option" role="option" [id]="id + '-opcao-' + i"
+          [class.select__option--active]="indiceAtivo() === i"
+          [class.select__option--selected]="option.value === value()"
+          [attr.aria-selected]="option.value === value()"
+          (mousedown)="$event.preventDefault()"
+          (mousemove)="indiceAtivo.set(i)"
+          (click)="escolher(option)">
+          {{ option.label }}
+        </li>
+      }
+    </ul>
+  }
+</div>

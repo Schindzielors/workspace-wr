@@ -41,8 +41,23 @@
   text-align: left;
 }
 
-.header__company:disabled {
-  cursor: default;
+.header__company {
+  cursor: pointer;
+}
+
+.header__company:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.header__company:focus-visible {
+  outline: 2px solid #8db5ff;
+  outline-offset: -4px;
+  border-radius: 12px;
+}
+
+.header__company-names > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header__company-identity {

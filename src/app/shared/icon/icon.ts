@@ -29,7 +29,8 @@ export type IconName =
   | 'star'
   | 'star-fill'
   | 'truck'
-  | 'usb';
+  | 'usb'
+  | 'x';
 
 @Component({
   selector: 'app-icon',

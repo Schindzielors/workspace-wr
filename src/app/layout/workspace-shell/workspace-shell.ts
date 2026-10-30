@@ -6,6 +6,8 @@ import { Tabs } from '../tabs/tabs';
 import { Icon } from '../../shared/icon/icon';
 import { Home, HomeTelaSolicitada } from '../../features/home/home';
 import { CommandPalette } from '../command-palette/command-palette';
+import { VisaoPicker } from '../visao-picker/visao-picker';
+import { WorkspaceVisaoService } from '../../features/workspace/service/workspace-visao.service';
 import { PaletteAcao } from '../command-palette/command-palette.model';
 
 import { IframeHost } from '../../features/workspace/iframe-host/iframe-host';
@@ -24,7 +26,8 @@ import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
     IframeHost,
     Icon,
     Home,
-    CommandPalette
+    CommandPalette,
+    VisaoPicker
   ],
   templateUrl: './workspace-shell.html',
   styleUrl: './workspace-shell.scss',
@@ -100,6 +103,24 @@ export class WorkspaceShell implements OnInit {
   // ---------------------------------------------------------------------
   // Busca global (CommandPalette)
   // ---------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------
+  // Trocar visão (grupo / empresa / filial)
+  // ---------------------------------------------------------------------
+
+  readonly visaoService = inject(WorkspaceVisaoService);
+  readonly visaoOpen = signal(false);
+  private readonly visaoTrigger = viewChild<ElementRef<HTMLButtonElement>>('visaoTrigger');
+
+  openVisao(): void {
+    this.paletteOpen.set(false);
+    this.visaoOpen.set(true);
+  }
+
+  closeVisao(): void {
+    this.visaoOpen.set(false);
+    this.visaoTrigger()?.nativeElement.focus();
+  }
 
   readonly paletteOpen = signal(false);
   private readonly searchTrigger = viewChild<ElementRef<HTMLButtonElement>>('searchTrigger');
@@ -182,6 +203,8 @@ export class WorkspaceShell implements OnInit {
   }
 
   ngOnInit(): void {
+    this.visaoService.carregar();
+
     this.menuService.getApplications().subscribe(applications => {
       this.applications.set(applications);
     });
