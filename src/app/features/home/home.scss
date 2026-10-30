@@ -1,0 +1,435 @@
+/* Home — Figma "Home - Completa": padding 12, gap 12, sem sidebar. */
+:host {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 640px;
+  padding: 12px;
+}
+
+/* Duas linhas com a mesma grade de 3 colunas (1416px -> 3 x 464px). */
+.home__top,
+.home__columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home__top {
+  flex: 0 0 auto;
+}
+
+.home__columns {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* Saudação                                                          */
+/* ---------------------------------------------------------------- */
+
+.greeting {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+}
+
+/* Heading/H4: 28px semibold, line-height 1.3. */
+.greeting__title {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+}
+
+/* Paragraph/sm/regular. */
+.greeting__message {
+  margin: 0;
+  color: var(--color-neutral-strong);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-paragraph-sm);
+}
+
+/* ---------------------------------------------------------------- */
+/* Banner: feedback-info/very-strong, 120px, texto H5 + logo branco  */
+/* ---------------------------------------------------------------- */
+
+.banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 120px;
+  padding: 0 24px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--color-feedback-info-very-strong);
+  color: #ffffff;
+}
+
+.banner__text {
+  max-width: 294px;
+  margin: 0;
+  font-size: var(--font-size-h5);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+}
+
+.banner__text--muted {
+  color: #d1d5dc;
+}
+
+/*
+ * Logotipo provisório em texto. Trocar pelo arquivo exportado do Figma
+ * ("Footer Logo", 102x20) quando disponível.
+ */
+.logo {
+  flex: 0 0 auto;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 800;
+  line-height: 20px;
+  letter-spacing: -0.5px;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.banner__logo {
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------------- */
+/* Listas                                                            */
+/* ---------------------------------------------------------------- */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list--favoritos,
+.list--paineis {
+  gap: 12px;
+}
+
+.list--conectores {
+  gap: 8px;
+}
+
+/* "Navigation Item": ícone List + caminho/título, gap 12. */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-item:disabled {
+  cursor: default;
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}
+
+.nav-item__handle {
+  color: var(--color-neutral-subtle-2);
+}
+
+.nav-item__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Caminho: FolderOpen 16 + "Categoria / Sub", 14px regular subtle 2. */
+.nav-item__path {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-neutral-subtle-2);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-text);
+  white-space: nowrap;
+}
+
+.nav-item__separator {
+  font-size: var(--font-size-sm);
+}
+
+/* Título: 16px medium neutral/intense, com reticências. */
+.nav-item__title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-neutral-intense);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-item:not(:disabled):hover .nav-item__title {
+  color: var(--color-neutral-maximum);
+}
+
+/* ---------------------------------------------------------------- */
+/* Card de conector                                                  */
+/* ---------------------------------------------------------------- */
+
+.connector {
+  overflow: hidden;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+}
+
+.connector__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.connector__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Espaço do logo: moldura com padding 2 + caixa 36x36. */
+.connector__logo-frame {
+  display: flex;
+  padding: 2px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+}
+
+.connector__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 6px;
+}
+
+.connector__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.connector__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: var(--line-height-text);
+}
+
+.connector__name {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+}
+
+.connector__description {
+  margin: 0;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-md);
+}
+
+.connector__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+.connector__category {
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+}
+
+.connector__button {
+  padding: 6px 12px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--color-neutral-very-soft);
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-text);
+}
+
+.connector__button:disabled {
+  cursor: not-allowed;
+}
+
+/* Tags de status: padding 4/8, raio 6, Text/SM/Medium. */
+.tag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+  white-space: nowrap;
+}
+
+.tag[data-status="ativo"] {
+  background: var(--color-feedback-success-very-soft);
+  color: var(--color-feedback-success-intense);
+}
+
+.tag[data-status="em-analise"] {
+  background: var(--color-feedback-warning-very-soft);
+  color: var(--color-feedback-warning-intense);
+}
+
+.tag[data-status="inativo"] {
+  background: var(--color-neutral-very-soft);
+  color: var(--color-neutral-maximum);
+}
+
+.tag[data-status="aguardando-configuracao"] {
+  background: var(--color-brand-secondary-very-soft);
+  color: var(--color-brand-secondary-intense);
+}
+
+/* ---------------------------------------------------------------- */
+/* Estado vazio                                                      */
+/* ---------------------------------------------------------------- */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  min-height: 200px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 4px;
+  border-radius: 999px;
+  background: var(--color-brand-secondary-very-soft);
+  color: var(--color-brand-secondary-base);
+}
+
+/* "Nenhum Painel criado": 18px semibold. */
+.empty__title {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-text);
+}
+
+.empty__text {
+  max-width: 356px;
+  margin: 0;
+  color: var(--color-neutral-strong);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-text);
+}
+
+/* ---------------------------------------------------------------- */
+/* Rodapé: logo brand-secondary/strong + versão                     */
+/* ---------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 20px;
+}
+
+.footer__logo {
+  color: var(--color-brand-secondary-strong);
+}
+
+.footer__version {
+  display: flex;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+}
+
+.footer__version-label {
+  color: var(--color-neutral-strong);
+}
+
+.footer__version-number {
+  color: var(--color-neutral-intense);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ---------------------------------------------------------------- */
+/* Telas menores: colunas empilhadas                                 */
+/* ---------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .home {
+    height: auto;
+  }
+
+  .home__top,
+  .home__columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .greeting {
+    grid-column: auto;
+  }
+
+  .home__columns app-home-section {
+    height: 520px;
+  }
+}

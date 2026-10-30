@@ -17,11 +17,15 @@ export type IconName =
   | 'caret-up'
   | 'caret-up-down'
   | 'folder-open'
+  | 'grid-nine'
   | 'house'
+  | 'list'
   | 'magnifying-glass'
   | 'map-trifold'
   | 'squares-four'
-  | 'truck';
+  | 'star'
+  | 'truck'
+  | 'usb';
 
 @Component({
   selector: 'app-icon',

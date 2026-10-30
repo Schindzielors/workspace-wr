@@ -242,6 +242,10 @@
   min-height: 0;
 }
 
+.workspace-body[hidden] {
+  display: none;
+}
+
 .main {
   display: flex;
   flex: 1;

@@ -7,6 +7,7 @@ import { WorkspaceApplication } from '../model/workspace-application.model';
 import { WorkspaceMenuResponseDto } from '../dto/workspace-menu-response.dto';
 import { WorkspaceMenuItem } from '../model/workspace-menu-item.model';
 import { WorkspaceMenuDto } from '../dto/workspace-menu.dto';
+import { buildScreenUrl, buildSystemId } from '../utils/workspace-url';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,7 @@ export class WorkspaceMenuService {
           response.items.map(project => ({
             id: project.id.toString(),
             projeto: project.projeto,
-            system: this.buildSystemId(project.projeto),
+            system: buildSystemId(project.projeto),
             title: project.nome,
             shortTitle: project.nome,
             baseUrl: project.url,
@@ -41,15 +42,6 @@ export class WorkspaceMenuService {
           }))
         )
       );
-  }
-
-  private buildSystemId(project: string): string {
-    return project
-      .trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '-');
   }
 
   getMenus(
@@ -89,7 +81,7 @@ export class WorkspaceMenuService {
         id: item.Id.toString(),
         title: item.Titulo,
         system,
-        url: this.buildMenuUrl(baseUrl, item.Rota),
+        url: buildScreenUrl(baseUrl, item.Rota),
         children: []
       });
     });
@@ -116,27 +108,5 @@ export class WorkspaceMenuService {
     });
 
     return rootItems;
-  }
-
-  private buildMenuUrl(
-    baseUrl: string,
-    route: string | null
-  ): string | undefined {
-
-    if (!route?.trim() || !baseUrl?.trim()) {
-      return undefined;
-    }
-
-    const normalizedBaseUrl =
-      baseUrl.endsWith('/')
-        ? baseUrl
-        : `${baseUrl}/`;
-
-    const normalizedRoute =
-      route.startsWith('/')
-        ? route.substring(1)
-        : route;
-
-    return `${normalizedBaseUrl}#/${normalizedRoute}`;
   }
 }
