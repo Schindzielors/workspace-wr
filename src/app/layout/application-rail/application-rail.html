@@ -1,13 +1,17 @@
 <nav class="application-rail" aria-label="Aplicações">
   <div class="application-rail__main">
-    <button type="button" class="application-item application-item--static" disabled title="Início (em desenvolvimento)">
+    <button type="button" class="application-item"
+      [class.application-item--active]="homeActive()"
+      [attr.aria-current]="homeActive() ? 'page' : null"
+      (click)="homeSelected.emit()">
       <app-icon name="house" [size]="16" />
       <span class="application-item__label">Início</span>
     </button>
 
     @for (application of applications(); track application.id) {
       <button type="button" class="application-item"
-        [class.application-item--active]="application.id === activeApplicationId()"
+        [class.application-item--active]="!homeActive() && application.id === activeApplicationId()"
+        [attr.aria-current]="!homeActive() && application.id === activeApplicationId() ? 'page' : null"
         (click)="selectApplication(application.id)">
         <app-icon [name]="iconFor(application)" [size]="16" />
         <span class="application-item__label">{{ application.shortTitle ?? application.title }}</span>

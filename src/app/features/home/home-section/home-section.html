@@ -1,0 +1,30 @@
+<section class="section" [attr.aria-label]="titulo()">
+  <header class="section__header">
+    <div class="section__title-row">
+      <span class="section__icon-frame">
+        <span class="section__icon-box">
+          <app-icon [name]="icon()" [size]="20" />
+        </span>
+      </span>
+      <h2 class="section__title">{{ titulo() }}</h2>
+      @if (total() !== null) {
+        <span class="section__count" [attr.aria-label]="total() + ' itens'">{{ totalFormatado() }}</span>
+      }
+    </div>
+    <p class="section__description">{{ descricao() }}</p>
+  </header>
+
+  <div class="section__body" [style.--fade-height.px]="fadeHeight()">
+    <div class="section__scroll">
+      <ng-content />
+    </div>
+  </div>
+
+  @if (acao()) {
+    <button type="button" class="section__action" (click)="acaoClicada.emit()"
+      [disabled]="acaoDesabilitada()"
+      [attr.title]="acaoDesabilitada() ? acao() + ' (em desenvolvimento)' : null">
+      {{ acao() }}
+    </button>
+  }
+</section>

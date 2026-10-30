@@ -1,0 +1,167 @@
+<div class="home">
+  <div class="home__top">
+    <!-- Figma "Greeting Container" -->
+    <section class="greeting">
+      <h1 class="greeting__title">
+        @if (usuario(); as usuario) {
+          Olá, {{ usuario.nome }}!
+        } @else {
+          Olá!
+        }
+      </h1>
+      <p class="greeting__message">
+        Boas-vindas, sua plataforma completa para todo seu processo de logística
+      </p>
+    </section>
+
+    <!-- Figma "Banner" -->
+    <aside class="banner" aria-label="Datapar">
+      <p class="banner__text">
+        <span class="banner__text--muted">Gestão inteligente de </span>
+        <span>logística e operações.</span>
+      </p>
+      <span class="logo banner__logo" aria-hidden="true">datapar</span>
+    </aside>
+  </div>
+
+  <div class="home__columns">
+    <!-- Favoritos -->
+    <app-home-section
+      icon="star"
+      titulo="Favoritos"
+      descricao="Tenha um acesso rápido as suas funcionalidades favoritas que você mais utiliza no dia a dia."
+      [total]="favoritos()?.length ?? null">
+      @if (erros().favoritos) {
+        <p class="load-error">Não foi possível carregar os favoritos.</p>
+      }
+      @if (favoritos(); as favoritos) {
+        @if (favoritos.length) {
+          <ul class="list list--favoritos">
+            @for (favorito of favoritos; track favorito.id) {
+              <li>
+                <button type="button" class="nav-item" [title]="favorito.titulo"
+                  (click)="abrirFavorito(favorito)">
+                  <app-icon class="nav-item__handle" name="list" [size]="20" />
+                  <span class="nav-item__content">
+                    <span class="nav-item__path">
+                      <app-icon name="folder-open" [size]="16" />
+                      <span>{{ favorito.categoria }}</span>
+                      <span class="nav-item__separator">/</span>
+                      <span>{{ favorito.subcategoria }}</span>
+                    </span>
+                    <span class="nav-item__title">{{ favorito.titulo }}</span>
+                  </span>
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="empty">
+            <span class="empty__icon"><app-icon name="star" [size]="20" /></span>
+            <p class="empty__title">Nenhum favorito adicionado</p>
+            <p class="empty__text">Favorite as telas que você mais usa para acessá-las rapidamente por aqui.</p>
+          </div>
+        }
+      }
+    </app-home-section>
+
+    <!-- Conectores -->
+    <app-home-section
+      icon="usb"
+      titulo="Conectores"
+      descricao="Adicione recursos e integrações ao seu sistema."
+      [total]="conectores()?.length ?? null"
+      [fadeHeight]="68"
+      acao="Acessar conectores"
+      [acaoDesabilitada]="true">
+      @if (erros().conectores) {
+        <p class="load-error">Não foi possível carregar os conectores.</p>
+      }
+      @if (conectores(); as conectores) {
+        @if (conectores.length) {
+          <ul class="list list--conectores">
+            @for (conector of conectores; track conector.id) {
+              <li class="connector">
+                <div class="connector__body">
+                  <div class="connector__head">
+                    <span class="connector__logo-frame">
+                      <span class="connector__logo">
+                        @if (conector.logoUrl) {
+                          <img [src]="conector.logoUrl" alt="" />
+                        }
+                      </span>
+                    </span>
+                    <span class="tag" [attr.data-status]="conector.status">
+                      {{ statusLabel[conector.status] }}
+                    </span>
+                  </div>
+                  <div class="connector__info">
+                    <p class="connector__name">{{ conector.nome }}</p>
+                    <p class="connector__description">{{ conector.descricao }}</p>
+                  </div>
+                </div>
+                <div class="connector__footer">
+                  <span class="connector__category">{{ conector.categoria }}</span>
+                  <button type="button" class="connector__button" disabled
+                    title="Ver conector (em desenvolvimento)">
+                    Ver conector
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="empty">
+            <span class="empty__icon"><app-icon name="usb" [size]="20" /></span>
+            <p class="empty__title">Nenhum conector disponível</p>
+            <p class="empty__text">Em breve novos recursos e integrações para o seu sistema.</p>
+          </div>
+        }
+      }
+    </app-home-section>
+
+    <!-- Painéis -->
+    <app-home-section
+      icon="grid-nine"
+      titulo="Painéis"
+      descricao="Tenha um acesso rápido aos seus painéis favoritos que mais utiliza no dia a dia."
+      [total]="paineis()?.length ?? null"
+      acao="Acessar Painéis"
+      [acaoDesabilitada]="true">
+      @if (erros().paineis) {
+        <p class="load-error">Não foi possível carregar os painéis.</p>
+      }
+      @if (paineis(); as paineis) {
+        @if (paineis.length) {
+          <ul class="list list--paineis">
+            @for (painel of paineis; track painel.id) {
+              <li>
+                <button type="button" class="nav-item nav-item--painel" [title]="painel.titulo"
+                  [disabled]="!podeAbrirPainel(painel)" (click)="abrirPainel(painel)">
+                  <app-icon class="nav-item__handle" name="list" [size]="20" />
+                  <span class="nav-item__title">{{ painel.titulo }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <!-- Texto do Figma "Home - Sem painel favoritado" -->
+          <div class="empty">
+            <span class="empty__icon"><app-icon name="grid-nine" [size]="20" /></span>
+            <p class="empty__title">Nenhum Painel criado</p>
+            <p class="empty__text">Solicite a criação de um painel para agilizar o seu dia a dia.</p>
+          </div>
+        }
+      }
+    </app-home-section>
+  </div>
+
+  <!-- Figma "Footer Container" -->
+  <footer class="footer">
+    <span class="logo footer__logo" aria-label="Datapar">datapar</span>
+    <span class="footer__version">
+      <span class="footer__version-label">Versão:</span>
+      <span class="footer__version-number">{{ versao }}</span>
+    </span>
+  </footer>
+</div>

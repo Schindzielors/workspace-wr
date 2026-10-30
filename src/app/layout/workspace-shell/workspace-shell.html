@@ -16,7 +16,9 @@
       <app-application-rail
         [applications]="applications()"
         [activeApplicationId]="activeApplicationId"
-        (applicationSelected)="selectApplication($event)" />
+        [homeActive]="homeActive()"
+        (applicationSelected)="selectApplication($event)"
+        (homeSelected)="showHome()" />
 
       <div class="header__user-area">
         <button type="button" class="header__apps" title="Aplicações (em desenvolvimento)"
@@ -42,7 +44,16 @@
     </label>
   </header>
 
-  <div class="workspace-body" [class.workspace-body--menu-collapsed]="menuCollapsed()">
+  @if (homeActive()) {
+    <app-home (telaSolicitada)="openFromHome($event)" />
+  }
+
+  <!--
+    Escondido (e não removido) enquanto a Home está aberta: assim os iframes
+    das abas continuam vivos e não perdem o estado.
+  -->
+  <div class="workspace-body" [class.workspace-body--menu-collapsed]="menuCollapsed()"
+    [hidden]="homeActive()">
     @if (menuCollapsed()) {
       <aside class="menu-collapsed" aria-label="Menu recolhido">
       <button type="button" class="menu-expand" (click)="toggleMenu()" title="Exibir menu" aria-label="Exibir menu">

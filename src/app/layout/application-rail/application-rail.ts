@@ -13,7 +13,12 @@ import { applicationIcon } from '../../shared/icon/application-icon';
 export class ApplicationRail {
   applications = input.required<WorkspaceApplication[]>();
   activeApplicationId = input<string>();
+
+  /** Quando verdadeiro, "Início" fica selecionado e nenhuma aplicação. */
+  homeActive = input(false);
+
   applicationSelected = output<string>();
+  homeSelected = output<void>();
 
   selectApplication(applicationId: string): void {
     this.applicationSelected.emit(applicationId);

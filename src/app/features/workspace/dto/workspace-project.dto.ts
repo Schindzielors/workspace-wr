@@ -4,4 +4,7 @@ export interface WorkspaceProjectDto {
   descricao: string;
   projeto: string;
   url: string;
+
+  /** Ícone da aplicação na navegação (ex.: "map", "truck"). */
+  icon?: string;
 }
