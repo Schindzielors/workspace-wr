@@ -31,27 +31,37 @@
       titulo="Favoritos"
       descricao="Tenha um acesso rápido as suas funcionalidades favoritas que você mais utiliza no dia a dia."
       [total]="favoritos()?.length ?? null">
-      @if (erros().favoritos) {
+      @if (erroFavoritos()) {
         <p class="load-error">Não foi possível carregar os favoritos.</p>
       }
       @if (favoritos(); as favoritos) {
         @if (favoritos.length) {
-          <ul class="list list--favoritos">
-            @for (favorito of favoritos; track favorito.id) {
-              <li>
-                <button type="button" class="nav-item" [title]="favorito.titulo"
-                  (click)="abrirFavorito(favorito)">
-                  <app-icon class="nav-item__handle" name="list" [size]="20" />
-                  <span class="nav-item__content">
-                    <span class="nav-item__path">
-                      <app-icon name="folder-open" [size]="16" />
-                      <span>{{ favorito.categoria }}</span>
-                      <span class="nav-item__separator">/</span>
-                      <span>{{ favorito.subcategoria }}</span>
-                    </span>
-                    <span class="nav-item__title">{{ favorito.titulo }}</span>
+          <ul class="list list--favoritos" cdkDropList [cdkDropListData]="favoritos"
+            cdkDropListLockAxis="y" (cdkDropListDropped)="reordenarFavoritos($event)"
+            aria-label="Favoritos (arraste pelo ícone para reordenar)">
+            @for (favorito of favoritos; track favorito.idMenu) {
+              <li class="drag-item" cdkDrag [cdkDragData]="favorito">
+                <div class="drag-item__placeholder" *cdkDragPlaceholder></div>
+                <div class="nav-item">
+                  <span class="nav-item__handle" cdkDragHandle
+                    title="Arraste para reordenar" aria-label="Arraste para reordenar">
+                    <app-icon name="list" [size]="20" />
                   </span>
-                </button>
+                  <button type="button" class="nav-item__open" [title]="favorito.titulo"
+                    (click)="abrirFavorito(favorito)">
+                    <span class="nav-item__content">
+                      <span class="nav-item__path">
+                        <app-icon name="folder-open" [size]="16" />
+                        <span>{{ favorito.categoria }}</span>
+                        @if (favorito.subcategoria) {
+                          <span class="nav-item__separator">/</span>
+                          <span>{{ favorito.subcategoria }}</span>
+                        }
+                      </span>
+                      <span class="nav-item__title">{{ favorito.titulo }}</span>
+                    </span>
+                  </button>
+                </div>
               </li>
             }
           </ul>
@@ -59,7 +69,7 @@
           <div class="empty">
             <span class="empty__icon"><app-icon name="star" [size]="20" /></span>
             <p class="empty__title">Nenhum favorito adicionado</p>
-            <p class="empty__text">Favorite as telas que você mais usa para acessá-las rapidamente por aqui.</p>
+            <p class="empty__text">Clique na estrela ao lado de uma tela no menu para acessá-la rapidamente por aqui.</p>
           </div>
         }
       }

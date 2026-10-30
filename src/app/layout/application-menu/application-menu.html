@@ -18,6 +18,42 @@
         </button>
       </div>
 
+      <!-- Figma "Content Sider bar" Favoritos: só aparece se houver favoritos. -->
+      @if (favoritosVisiveis(); as favoritos) {
+        @if (favoritos.length) {
+          <section class="sidebar__section">
+            <button type="button" class="sidebar__section-title"
+              [attr.aria-expanded]="favoritesSectionOpen()" (click)="toggleFavoritesSection()">
+              <span>Favoritos</span>
+              <app-icon [name]="favoritesSectionOpen() ? 'caret-up' : 'caret-down'" [size]="14" />
+            </button>
+
+            @if (favoritesSectionOpen()) {
+              <ul class="favorites">
+                @for (favorito of favoritos; track favorito.idMenu) {
+                  <li>
+                    <button type="button" class="favorite-item" [title]="favorito.titulo"
+                      [class.active]="isFavoritoAtivo(favorito)"
+                      [attr.aria-current]="isFavoritoAtivo(favorito) ? 'page' : null"
+                      (click)="abrirFavorito(favorito)">
+                      @if (favorito.categoria) {
+                        <span class="favorite-item__path">
+                          {{ favorito.categoria }}
+                          @if (favorito.subcategoria) {
+                            <span class="favorite-item__separator">/</span> {{ favorito.subcategoria }}
+                          }
+                        </span>
+                      }
+                      <span class="favorite-item__title">{{ favorito.titulo }}</span>
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </section>
+        }
+      }
+
       <section class="sidebar__section">
         <button type="button" class="sidebar__section-title"
           [attr.aria-expanded]="systemSectionOpen()" (click)="toggleSystemSection()">
@@ -64,15 +100,27 @@
         }
       }
     } @else {
-      <button type="button" class="menu-item menu-item--leaf"
-        [class.active]="isActive(item)"
-        [style.--menu-depth]="depth"
-        [attr.aria-current]="isActive(item) ? 'page' : null"
-        [title]="item.title"
-        (click)="toggleItem(item)">
-        <span class="menu-item__guide" aria-hidden="true"></span>
-        <span class="menu-item__title">{{ item.title }}</span>
-      </button>
+      <!-- Figma "Side bar Items / Subcategoria": Fav=true mostra a estrela. -->
+      <div class="menu-row" [class.menu-row--favorite]="isFavorito(item)">
+        <button type="button" class="menu-item menu-item--leaf"
+          [class.active]="isActive(item)"
+          [style.--menu-depth]="depth"
+          [attr.aria-current]="isActive(item) ? 'page' : null"
+          [title]="item.title"
+          (click)="toggleItem(item)">
+          <span class="menu-item__guide" aria-hidden="true"></span>
+          <span class="menu-item__title">{{ item.title }}</span>
+        </button>
+        @if (item.url) {
+          <button type="button" class="menu-favorite"
+            [attr.aria-pressed]="isFavorito(item)"
+            [attr.aria-label]="(isFavorito(item) ? 'Remover dos favoritos: ' : 'Favoritar: ') + item.title"
+            [title]="isFavorito(item) ? 'Remover dos favoritos' : 'Favoritar'"
+            (click)="toggleFavorito($event, item)">
+            <app-icon name="star" [size]="14" />
+          </button>
+        }
+      </div>
     }
   </div>
 </ng-template>

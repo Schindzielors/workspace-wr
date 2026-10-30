@@ -84,6 +84,7 @@ export class WorkspaceMenuService {
         title: item.Titulo,
         system,
         url: buildScreenUrl(baseUrl, item.Rota),
+        rota: item.Rota ?? undefined,
         children: []
       });
     });

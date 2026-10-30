@@ -1,13 +1,15 @@
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 
 import { Icon } from '../../shared/icon/icon';
 import { environment } from '../../../environments/environment';
 import { HomeSection } from './home-section/home-section';
 import { HomeService } from './service/home.service';
+import { WorkspaceFavorito } from '../workspace/model/workspace-favorito.model';
+import { WorkspaceFavoritosService } from '../workspace/service/workspace-favoritos.service';
 import {
   HomeConector,
   HomeConectorStatus,
-  HomeFavorito,
   HomePainel,
   HomeUsuario
 } from './model/home.model';
@@ -28,20 +30,23 @@ export interface HomeTelaSolicitada {
  */
 @Component({
   selector: 'app-home',
-  imports: [Icon, HomeSection],
+  imports: [Icon, HomeSection, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home implements OnInit {
   private readonly homeService = inject(HomeService);
+  private readonly favoritosService = inject(WorkspaceFavoritosService);
 
   /** Pede ao Workspace para abrir uma tela (favorito ou painel). */
   readonly telaSolicitada = output<HomeTelaSolicitada>();
 
   /** `null` enquanto carrega. */
   readonly usuario = signal<HomeUsuario | null>(null);
-  readonly favoritos = signal<HomeFavorito[] | null>(null);
+  /** Compartilhados com o menu lateral (favoritar no menu atualiza aqui). */
+  readonly favoritos = this.favoritosService.favoritos;
+  readonly erroFavoritos = this.favoritosService.erro;
   readonly conectores = signal<HomeConector[] | null>(null);
   readonly paineis = signal<HomePainel[] | null>(null);
 
@@ -55,7 +60,7 @@ export class Home implements OnInit {
   };
 
   /** Colunas cuja chamada à API falhou. */
-  readonly erros = signal<Partial<Record<'favoritos' | 'conectores' | 'paineis', boolean>>>({});
+  readonly erros = signal<Partial<Record<'conectores' | 'paineis', boolean>>>({});
 
   ngOnInit(): void {
     this.homeService.carregarUsuario().subscribe({
@@ -63,10 +68,7 @@ export class Home implements OnInit {
       error: erro => console.error('Home: falha ao carregar o usuário.', erro)
     });
 
-    this.homeService.carregarFavoritos().subscribe({
-      next: favoritos => this.favoritos.set(favoritos),
-      error: erro => this.marcarErro('favoritos', erro)
-    });
+    this.favoritosService.carregar();
 
     this.homeService.carregarConectores().subscribe({
       next: conectores => this.conectores.set(conectores),
@@ -79,18 +81,32 @@ export class Home implements OnInit {
     });
   }
 
-  private marcarErro(coluna: 'favoritos' | 'conectores' | 'paineis', erro: unknown): void {
+  private marcarErro(coluna: 'conectores' | 'paineis', erro: unknown): void {
     console.error(`Home: falha ao carregar ${coluna}.`, erro);
     this.erros.update(erros => ({ ...erros, [coluna]: true }));
   }
 
-  abrirFavorito(favorito: HomeFavorito): void {
+  abrirFavorito(favorito: WorkspaceFavorito): void {
     this.telaSolicitada.emit({
-      id: `favorito-${favorito.id}`,
+      // Mesmo id da aba aberta pelo menu: não duplica a tela.
+      id: favorito.idMenu,
       titulo: favorito.titulo,
       sistema: favorito.sistema,
       rota: favorito.rota
     });
+  }
+
+  /** Arrastar e soltar pela alça (ícone de lista) reordena os favoritos. */
+  reordenarFavoritos(evento: CdkDragDrop<WorkspaceFavorito[]>): void {
+    const favoritos = this.favoritos();
+
+    if (!favoritos || evento.previousIndex === evento.currentIndex) {
+      return;
+    }
+
+    const novaOrdem = [...favoritos];
+    moveItemInArray(novaOrdem, evento.previousIndex, evento.currentIndex);
+    this.favoritosService.reordenar(novaOrdem);
   }
 
   /** Painéis só abrem quando a API informar aplicação e rota. */

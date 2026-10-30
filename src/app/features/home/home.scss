@@ -162,7 +162,75 @@
 }
 
 .nav-item__handle {
+  display: flex;
   color: var(--color-neutral-subtle-2);
+}
+
+/* Favoritos: alça de arrastar + botão que abre a tela. */
+.list--favoritos .nav-item {
+  cursor: default;
+}
+
+.list--favoritos .nav-item__handle {
+  cursor: grab;
+  touch-action: none;
+}
+
+.list--favoritos .nav-item__handle:hover {
+  color: var(--color-neutral-strong);
+}
+
+.nav-item__open {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-item__open:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.nav-item__open:hover .nav-item__title {
+  color: var(--color-neutral-maximum);
+}
+
+/* Arrastar e soltar (Angular CDK). */
+.drag-item {
+  list-style: none;
+}
+
+.drag-item.cdk-drag-preview {
+  box-sizing: border-box;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--surface-panel);
+  box-shadow: 0 8px 24px rgba(3, 7, 18, 0.12);
+  font-family: var(--font-family-sans);
+  cursor: grabbing;
+}
+
+.drag-item__placeholder {
+  height: 45px;
+  border: 1px dashed var(--color-brand-secondary-subtle);
+  border-radius: 8px;
+  background: var(--color-brand-secondary-very-soft);
+}
+
+.list--favoritos.cdk-drop-list-dragging .drag-item:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .nav-item__content {

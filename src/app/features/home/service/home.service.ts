@@ -6,7 +6,6 @@ import { appConfig } from '../../../core/config/app-config';
 import { buildSystemId } from '../../workspace/utils/workspace-url';
 import {
   HomeConectorDto,
-  HomeFavoritoDto,
   HomeListResponseDto,
   HomePainelDto,
   HomeUsuarioDto
@@ -14,7 +13,6 @@ import {
 import {
   HomeConector,
   HomeConectorStatus,
-  HomeFavorito,
   HomePainel,
   HomeUsuario
 } from '../model/home.model';
@@ -44,13 +42,6 @@ export class HomeService {
       .pipe(map(dto => this.mapUsuario(dto)));
   }
 
-  /** Telas favoritas do usuário (coluna "Favoritos"). GET /api/WorkspaceHome/Favoritos */
-  carregarFavoritos(): Observable<HomeFavorito[]> {
-    return this.http
-      .get<HomeListResponseDto<HomeFavoritoDto>>(`${this.apiUrl}/Favoritos`)
-      .pipe(map(response => response.items.map(dto => this.mapFavorito(dto))));
-  }
-
   /** Conectores disponíveis (coluna "Conectores"). GET /api/WorkspaceHome/Conectores */
   carregarConectores(): Observable<HomeConector[]> {
     return this.http
@@ -71,17 +62,6 @@ export class HomeService {
 
   private mapUsuario(dto: HomeUsuarioDto): HomeUsuario {
     return { nome: dto.Nome };
-  }
-
-  private mapFavorito(dto: HomeFavoritoDto): HomeFavorito {
-    return {
-      id: dto.Id.toString(),
-      titulo: dto.Titulo,
-      categoria: dto.Categoria,
-      subcategoria: dto.Subcategoria,
-      sistema: buildSystemId(dto.Projeto),
-      rota: dto.Rota
-    };
   }
 
   private mapConector(dto: HomeConectorDto): HomeConector {

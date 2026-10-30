@@ -11,27 +11,6 @@ export interface HomeUsuario {
   nome: string;
 }
 
-/**
- * Tela marcada como favorita pelo usuário.
- *
- * Ao clicar, o Workspace sai da Home, seleciona a aplicação de origem
- * (`sistema`) e abre a tela em uma aba.
- */
-export interface HomeFavorito {
-  id: string;
-  titulo: string;
-
-  /** Caminho exibido acima do título: "Categoria / Subcategoria". */
-  categoria: string;
-  subcategoria: string;
-
-  /** Identificador técnico da aplicação (ex.: "portal-wr"). */
-  sistema: string;
-
-  /** Rota da tela; a URL é montada com a `baseUrl` da aplicação. */
-  rota: string;
-}
-
 export type HomeConectorStatus =
   | 'ativo'
   | 'em-analise'
