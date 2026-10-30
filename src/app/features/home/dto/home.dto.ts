@@ -18,20 +18,6 @@ export interface HomeUsuarioDto {
   Nome: string;
 }
 
-/** GET /api/WorkspaceHome/Favoritos */
-export interface HomeFavoritoDto {
-  Id: number;
-  Titulo: string;
-  Categoria: string;
-  Subcategoria: string;
-
-  /** Mesmo valor do campo `projeto` de `/WorkspaceMenu/Projetos` (ex.: "Wr"). */
-  Projeto: string;
-
-  /** Rota da tela, no mesmo formato do campo `Rota` de `/MenuProjetos`. */
-  Rota: string;
-}
-
 /** GET /api/WorkspaceHome/Conectores */
 export interface HomeConectorDto {
   Id: number;

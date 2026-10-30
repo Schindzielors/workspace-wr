@@ -269,3 +269,119 @@
   bottom: 4px;
   border-left: 2px solid var(--color-brand-secondary-base);
 }
+
+/* ---------------------------------------------------------------- */
+/* Favoritos                                                        */
+/* ---------------------------------------------------------------- */
+
+/* Seção "Favoritos": Navigation Item Type=Fav (caminho + título). */
+.favorites {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.favorite-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.favorite-item:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* "Local / Local": Text/SM/Regular, neutral/subtle 2. */
+.favorite-item__path {
+  overflow: hidden;
+  color: var(--color-neutral-subtle-2);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.favorite-item__separator {
+  padding: 0 2px;
+}
+
+/* Título: Text/MD/Medium, neutral/intense. */
+.favorite-item__title {
+  overflow: hidden;
+  color: var(--color-neutral-intense);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.favorite-item:hover .favorite-item__title,
+.favorite-item.active .favorite-item__title {
+  color: var(--color-neutral-maximum);
+}
+
+/* Linha da tela no menu: botão da tela + estrela à direita (14px). */
+.menu-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.menu-row .menu-item--leaf {
+  flex: 1 1 auto;
+}
+
+/* Fav=true: texto neutral/strong (entre o normal e o selecionado). */
+.menu-row--favorite .menu-item--leaf:not(.active) {
+  color: var(--color-neutral-strong);
+}
+
+.menu-favorite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-neutral-subtle-2);
+  cursor: pointer;
+  /* Sem favorito, a estrela só aparece ao passar o mouse ou com foco. */
+  opacity: 0;
+  transition: opacity 120ms ease, color 120ms ease;
+}
+
+.menu-row:hover .menu-favorite,
+.menu-favorite:focus-visible {
+  opacity: 1;
+}
+
+.menu-favorite:hover {
+  color: var(--color-neutral-maximum);
+}
+
+.menu-favorite:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+}
+
+/* Favoritada: estrela sempre visível, em brand secondary/base. */
+.menu-row--favorite .menu-favorite {
+  opacity: 1;
+  color: var(--color-brand-secondary-base);
+}

@@ -4,6 +4,9 @@ import { Component, inject, Input, output, signal } from '@angular/core';
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu-item.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
+import { WorkspaceFavoritosService } from '../../features/workspace/service/workspace-favoritos.service';
+import { WorkspaceFavorito } from '../../features/workspace/model/workspace-favorito.model';
+import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
 import { Icon, IconName } from '../../shared/icon/icon';
 import { applicationIcon } from '../../shared/icon/application-icon';
 
@@ -16,9 +19,63 @@ import { applicationIcon } from '../../shared/icon/application-icon';
 export class ApplicationMenu {
   private readonly expandedItems = new Set<string>();
   private readonly tabsService = inject(WorkspaceTabsService);
+  private readonly favoritosService = inject(WorkspaceFavoritosService);
 
   readonly searchTerm = signal('');
   readonly systemSectionOpen = signal(true);
+  readonly favoritesSectionOpen = signal(true);
+
+  constructor() {
+    this.favoritosService.carregar();
+  }
+
+  toggleFavoritesSection(): void {
+    this.favoritesSectionOpen.update(open => !open);
+  }
+
+  /** Favoritos desta aplicação (seção "Favoritos"), filtrados pela busca. */
+  favoritosVisiveis(): WorkspaceFavorito[] {
+    if (!this.application) {
+      return [];
+    }
+
+    const query = this.searchTerm();
+
+    return this.favoritosService
+      .favoritosDaAplicacao(this.application.system)
+      .filter(favorito => !query || favorito.titulo.toLocaleLowerCase().includes(query));
+  }
+
+  isFavorito(item: WorkspaceMenuItem): boolean {
+    return this.favoritosService.isFavorito(item.id);
+  }
+
+  toggleFavorito(event: MouseEvent, item: WorkspaceMenuItem): void {
+    event.stopPropagation();
+
+    if (this.application) {
+      this.favoritosService.alternar(item, this.application);
+    }
+  }
+
+  isFavoritoAtivo(favorito: WorkspaceFavorito): boolean {
+    return this.tabsService.activeTab()?.id === favorito.idMenu;
+  }
+
+  abrirFavorito(favorito: WorkspaceFavorito): void {
+    const url = this.application && buildScreenUrl(this.application.baseUrl, favorito.rota);
+
+    if (!this.application || !url) {
+      return;
+    }
+
+    this.tabsService.openTab({
+      id: favorito.idMenu,
+      title: favorito.titulo,
+      system: this.application.system,
+      url
+    });
+  }
   readonly collapseRequested = output<void>();
 
   @Input() application?: WorkspaceApplication;
