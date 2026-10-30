@@ -164,6 +164,17 @@ export class WorkspaceTabsService {
   }
 
   /**
+   * Deixa nenhuma aba ativa, sem fechar as abas abertas.
+   *
+   * Usado ao selecionar uma aplicação com menu que ainda não tem abas: as
+   * abas das outras aplicações continuam abertas (e seus iframes vivos), e
+   * a área principal mostra o estado vazio até o usuário escolher uma tela.
+   */
+  clearActiveTab(): void {
+    this._activeTabId.set(null);
+  }
+
+  /**
    * Solicita o recarregamento de uma aba aberta.
    *
    * A operação não fecha, recria ou altera a aba ativa.

@@ -15,7 +15,7 @@
     <div class="header__container">
       <app-application-rail
         [applications]="applications()"
-        [activeApplicationId]="activeApplicationId"
+        [activeApplicationId]="activeApplicationId()"
         [homeActive]="homeActive()"
         (applicationSelected)="selectApplication($event)"
         (homeSelected)="showHome()" />
@@ -53,16 +53,20 @@
     das abas continuam vivos e não perdem o estado.
   -->
   <div class="workspace-body" [class.workspace-body--menu-collapsed]="menuCollapsed()"
+    [class.workspace-body--no-menu]="!showSideMenu()"
     [hidden]="homeActive()">
-    @if (menuCollapsed()) {
-      <aside class="menu-collapsed" aria-label="Menu recolhido">
-      <button type="button" class="menu-expand" (click)="toggleMenu()" title="Exibir menu" aria-label="Exibir menu">
-        <app-icon name="caret-double-right" [size]="16" />
-      </button>
-    </aside>
-    }
-    @if (!menuCollapsed()) {
-      <app-application-menu [application]="activeApplication" (collapseRequested)="toggleMenu()" />
+    <!-- Aplicações sem menu (ex.: Rodopar) não têm menu lateral. -->
+    @if (showSideMenu()) {
+      @if (menuCollapsed()) {
+        <aside class="menu-collapsed" aria-label="Menu recolhido">
+        <button type="button" class="menu-expand" (click)="toggleMenu()" title="Exibir menu" aria-label="Exibir menu">
+          <app-icon name="caret-double-right" [size]="16" />
+        </button>
+      </aside>
+      }
+      @if (!menuCollapsed()) {
+        <app-application-menu [application]="activeApplication()" (collapseRequested)="toggleMenu()" />
+      }
     }
     <main class="main">
       <div class="main__tabs"><app-tabs /></div>

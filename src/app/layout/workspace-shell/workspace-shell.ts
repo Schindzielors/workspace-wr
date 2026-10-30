@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
 
 import { ApplicationRail } from '../application-rail/application-rail';
 import { ApplicationMenu } from '../application-menu/application-menu';
@@ -38,6 +38,52 @@ export class WorkspaceShell implements OnInit {
    */
   readonly homeActive = signal(true);
 
+  /** Aplicação selecionada na navegação do header. */
+  readonly activeApplicationId = signal<string | undefined>(undefined);
+
+  readonly activeApplication = computed(() =>
+    this.applications().find(
+      application => application.id === this.activeApplicationId()
+    )
+  );
+
+  /** Aplicações sem menu (ex.: Rodopar) ocupam a área toda, sem menu lateral. */
+  readonly showSideMenu = computed(() =>
+    this.activeApplication()?.possuiMenu ?? true
+  );
+
+  /** Última aba ativa de cada aplicação, para voltar a ela ao reselecionar. */
+  private readonly lastTabBySystem = new Map<string, string>();
+
+  constructor() {
+    /**
+     * Mantém a aplicação selecionada em sincronia com a aba ativa.
+     *
+     * As abas são compartilhadas entre as aplicações. Ao clicar na aba do
+     * Rodopar estando no WR (ou ao fechar uma aba e outra assumir), a
+     * aplicação da aba passa a ser a selecionada, e o menu lateral acompanha.
+     */
+    effect(() => {
+      const tab = this.tabsService.activeTab();
+
+      if (!tab) {
+        return;
+      }
+
+      this.lastTabBySystem.set(tab.system, tab.id);
+
+      untracked(() => {
+        const application = this.applications().find(
+          item => item.system === tab.system
+        );
+
+        if (application && application.id !== this.activeApplicationId()) {
+          this.activeApplicationId.set(application.id);
+        }
+      });
+    });
+  }
+
   showHome(): void {
     this.homeActive.set(true);
   }
@@ -67,13 +113,6 @@ export class WorkspaceShell implements OnInit {
   toggleMenu(): void {
     this.menuCollapsed.update(value => !value);
   }
-  activeApplicationId?: string;
-
-  get activeApplication(): WorkspaceApplication | undefined {
-    return this.applications().find(
-      application => application.id === this.activeApplicationId
-    );
-  }
 
   ngOnInit(): void {
     this.menuService.getApplications().subscribe(applications => {
@@ -82,9 +121,6 @@ export class WorkspaceShell implements OnInit {
   }
 
   selectApplication(applicationId: string): void {
-    console.log("applicationId", applicationId);
-    this.activeApplicationId = applicationId;
-
     const application = this.applications().find(
       item => item.id === applicationId
     );
@@ -94,6 +130,23 @@ export class WorkspaceShell implements OnInit {
     }
 
     this.homeActive.set(false);
+    this.activeApplicationId.set(application.id);
+
+    // Sem menu (ex.: Rodopar): abre a própria aplicação em uma aba.
+    // Se a aba já existir, apenas volta para ela (o iframe é preservado).
+    if (!application.possuiMenu) {
+      this.tabsService.openTab({
+        id: `aplicacao-${application.system}`,
+        title: application.title,
+        system: application.system,
+        url: application.baseUrl
+      });
+      return;
+    }
+
+    // Com menu (ex.: WR): volta para a última aba da aplicação, se houver;
+    // senão, a área principal mostra o estado vazio até escolher uma tela.
+    this.activateLastTabOf(application);
 
     // Os menus já carregados são mantidos ao voltar da Home.
     if (application.menus.length) {
@@ -118,5 +171,24 @@ export class WorkspaceShell implements OnInit {
           )
         );
       });
+  }
+
+  private activateLastTabOf(application: WorkspaceApplication): void {
+    const tabs = this.tabsService.tabs();
+
+    if (this.tabsService.activeTab()?.system === application.system) {
+      return;
+    }
+
+    const lastTabId = this.lastTabBySystem.get(application.system);
+    const lastTab =
+      tabs.find(tab => tab.id === lastTabId) ??
+      [...tabs].reverse().find(tab => tab.system === application.system);
+
+    if (lastTab) {
+      this.tabsService.activateTab(lastTab.id);
+    } else {
+      this.tabsService.clearActiveTab();
+    }
   }
 }

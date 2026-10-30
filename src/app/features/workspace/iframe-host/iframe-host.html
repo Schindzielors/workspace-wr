@@ -1,13 +1,15 @@
 <div class="iframe-container">
 
-  @if (tabsService.tabs().length === 0) {
+  @if (!tabsService.activeTab()) {
 
     <div class="empty-state">
       <h2>Workspace WR</h2>
       <p>Selecione uma tela no menu lateral.</p>
     </div>
 
-  } @else {
+  }
+
+  @if (tabsService.tabs().length) {
 
     @for (tab of tabsService.tabs(); track tab.id) {
 

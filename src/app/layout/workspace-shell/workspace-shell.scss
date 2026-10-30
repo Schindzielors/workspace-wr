@@ -246,6 +246,12 @@
   display: none;
 }
 
+/* Sem menu lateral: a área principal ganha a margem esquerda de 12px. */
+.workspace-body--no-menu .main__tabs,
+.workspace-body--no-menu app-iframe-host {
+  margin-left: 12px;
+}
+
 .main {
   display: flex;
   flex: 1;
