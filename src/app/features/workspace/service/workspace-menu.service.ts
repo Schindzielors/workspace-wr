@@ -32,13 +32,14 @@ export class WorkspaceMenuService {
       .pipe(
         map(response =>
           response.items.map(project => ({
-            id: project.id.toString(),
-            projeto: project.projeto,
-            system: buildSystemId(project.projeto),
-            title: project.nome,
-            shortTitle: project.nome,
-            baseUrl: project.url,
-            icon: project.icon ?? undefined,
+            id: project.Id.toString(),
+            projeto: project.Projeto,
+            system: buildSystemId(project.Projeto),
+            title: project.Nome,
+            shortTitle: project.Nome,
+            baseUrl: project.Url,
+            icon: project.Icon ?? undefined,
+            possuiMenu: project.PossuiMenu ?? true,
             menus: []
           }))
         )

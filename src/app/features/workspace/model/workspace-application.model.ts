@@ -55,5 +55,14 @@ export interface WorkspaceApplication {
  */
   baseUrl: string;
 
+  /**
+   * Indica se a aplicação tem menu lateral.
+   *
+   * - true (ex.: WR): ao selecionar, o Workspace mostra o menu lateral.
+   * - false (ex.: Rodopar): ao selecionar, o Workspace abre `baseUrl` direto
+   *   em uma aba, sem menu lateral.
+   */
+  possuiMenu: boolean;
+
   menus: WorkspaceMenuItem[];
 }
