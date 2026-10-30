@@ -37,11 +37,13 @@
       </div>
     </div>
 
-    <label class="header__search">
-      <input type="search" aria-label="Busca global (em desenvolvimento)"
-        placeholder="Telas, sistemas e comandos..." disabled />
+    <!-- Abre a busca global (também com Ctrl+K / ⌘K). -->
+    <button #searchTrigger type="button" class="header__search" aria-haspopup="dialog"
+      [attr.aria-expanded]="paletteOpen()" aria-keyshortcuts="Control+K Meta+K"
+      title="Buscar (Ctrl+K)" (click)="openPalette()">
+      <span class="header__search-placeholder">Telas, sistemas e comandos...</span>
       <app-icon name="magnifying-glass" [size]="20" />
-    </label>
+    </button>
   </header>
 
   @if (homeActive()) {
@@ -74,3 +76,8 @@
     </main>
   </div>
 </div>
+
+@if (paletteOpen()) {
+  <app-command-palette [applications]="applications()"
+    (escolhido)="runPaletteAction($event)" (fechar)="closePalette()" />
+}

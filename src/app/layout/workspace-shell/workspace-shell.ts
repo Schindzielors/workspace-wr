@@ -1,10 +1,12 @@
-import { Component, computed, effect, inject, OnInit, signal, untracked } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, OnInit, signal, untracked, viewChild } from '@angular/core';
 
 import { ApplicationRail } from '../application-rail/application-rail';
 import { ApplicationMenu } from '../application-menu/application-menu';
 import { Tabs } from '../tabs/tabs';
 import { Icon } from '../../shared/icon/icon';
 import { Home, HomeTelaSolicitada } from '../../features/home/home';
+import { CommandPalette } from '../command-palette/command-palette';
+import { PaletteAcao } from '../command-palette/command-palette.model';
 
 import { IframeHost } from '../../features/workspace/iframe-host/iframe-host';
 import { WorkspaceMenuService } from '../../features/workspace/service/workspace-menu.service';
@@ -21,10 +23,14 @@ import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
     Tabs,
     IframeHost,
     Icon,
-    Home
+    Home,
+    CommandPalette
   ],
   templateUrl: './workspace-shell.html',
-  styleUrl: './workspace-shell.scss'
+  styleUrl: './workspace-shell.scss',
+  host: {
+    '(document:keydown)': 'onDocumentKeydown($event)'
+  }
 })
 export class WorkspaceShell implements OnInit {
   private readonly menuService = inject(WorkspaceMenuService);
@@ -89,6 +95,60 @@ export class WorkspaceShell implements OnInit {
 
     /** Lembra na sessão se o usuário estava na Home (restaurado no F5). */
     effect(() => this.session.salvar('home', this.homeActive()));
+  }
+
+  // ---------------------------------------------------------------------
+  // Busca global (CommandPalette)
+  // ---------------------------------------------------------------------
+
+  readonly paletteOpen = signal(false);
+  private readonly searchTrigger = viewChild<ElementRef<HTMLButtonElement>>('searchTrigger');
+
+  /** Ctrl+K / ⌘K abre (ou fecha) a busca de qualquer lugar do Workspace. */
+  onDocumentKeydown(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      this.paletteOpen() ? this.closePalette() : this.openPalette();
+    }
+  }
+
+  openPalette(): void {
+    // A busca procura nas telas do menu: carrega o menu das aplicações que
+    // ainda não foram abertas.
+    this.applications().forEach(application => this.loadMenus(application));
+    this.paletteOpen.set(true);
+  }
+
+  closePalette(): void {
+    this.paletteOpen.set(false);
+    this.searchTrigger()?.nativeElement.focus();
+  }
+
+  runPaletteAction(acao: PaletteAcao): void {
+    this.paletteOpen.set(false);
+
+    if (acao.tipo === 'aplicacao') {
+      this.selectApplication(acao.applicationId);
+      return;
+    }
+
+    if (acao.tipo !== 'tela') {
+      return;
+    }
+
+    const application = this.applications().find(item => item.system === acao.sistema);
+
+    if (!application) {
+      return;
+    }
+
+    this.selectApplication(application.id);
+    this.tabsService.openTab({
+      id: acao.id,
+      title: acao.titulo,
+      system: application.system,
+      url: acao.url
+    });
   }
 
   showHome(): void {
