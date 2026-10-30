@@ -6,6 +6,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  * Os SVGs ficam em `public/icons` (licença MIT da Phosphor ao lado). Para
  * adicionar um ícone, copie o SVG e inclua o nome no tipo abaixo:
  *   cp node_modules/@phosphor-icons/core/assets/regular/<nome>.svg public/icons/
+ * Ícones preenchidos vêm da pasta `fill` (ex.: star-fill.svg).
  *
  * O ícone é aplicado como máscara CSS, então herda a cor do texto
  * (`currentColor`) e acompanha estados como ativo e hover.
@@ -24,6 +25,7 @@ export type IconName =
   | 'map-trifold'
   | 'squares-four'
   | 'star'
+  | 'star-fill'
   | 'truck'
   | 'usb';
 

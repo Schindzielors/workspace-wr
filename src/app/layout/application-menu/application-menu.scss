@@ -380,8 +380,9 @@
   outline: 2px solid var(--color-feedback-info-strong);
 }
 
-/* Favoritada: estrela sempre visível, em brand secondary/base. */
-.menu-row--favorite .menu-favorite {
+/* Favoritada: estrela preenchida e amarela (brand primary), sempre visível. */
+.menu-row--favorite .menu-favorite,
+.menu-row--favorite .menu-favorite:hover {
   opacity: 1;
-  color: var(--color-brand-secondary-base);
+  color: var(--color-brand-primary-base);
 }
