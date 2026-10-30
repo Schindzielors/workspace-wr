@@ -1,0 +1,77 @@
+<div class="backdrop" (click)="fechar.emit()" aria-hidden="true"></div>
+
+<div class="palette" role="dialog" aria-modal="true" aria-label="Busca global">
+  <!-- Campo de busca -->
+  <label class="palette__search">
+    <input #searchInput type="text" role="combobox" autocomplete="off" spellcheck="false"
+      placeholder="Telas, sistemas e comandos..."
+      aria-label="Buscar telas, sistemas e comandos"
+      aria-expanded="true" aria-controls="busca-resultados"
+      [attr.aria-activedescendant]="idAtivo()"
+      [value]="termo()" (input)="atualizarTermo($event)" />
+    <app-icon name="magnifying-glass" [size]="18" />
+  </label>
+
+  <!-- Filtros -->
+  <div class="palette__filters" role="tablist" aria-label="Filtrar resultados">
+    @for (aba of abas(); track aba.filtro) {
+      <button type="button" class="palette__filter" role="tab"
+        [class.palette__filter--active]="filtro() === aba.filtro"
+        [attr.aria-selected]="filtro() === aba.filtro"
+        [attr.aria-label]="aba.rotulo" [title]="aba.rotulo"
+        (click)="selecionarFiltro(aba.filtro)">
+        @if (aba.icon) {
+          <app-icon [name]="aba.icon" [size]="18" />
+        } @else {
+          {{ aba.rotulo }}
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Resultados -->
+  <div #results id="busca-resultados" class="palette__results" role="listbox" aria-label="Resultados">
+    @for (grupo of grupos(); track grupo.nome) {
+      <div class="palette__group" role="group" [attr.aria-label]="grupo.nome">
+        <p class="palette__group-title" aria-hidden="true">{{ grupo.nome }}</p>
+        @for (item of grupo.itens; track item.chave) {
+          <div class="palette__item" role="option"
+            [id]="idDoItem(grupo, item)"
+            [class.palette__item--active]="idAtivo() === idDoItem(grupo, item)"
+            [class.palette__item--disabled]="item.acao.tipo === 'nenhuma'"
+            [attr.aria-selected]="idAtivo() === idDoItem(grupo, item)"
+            [attr.aria-disabled]="item.acao.tipo === 'nenhuma' ? true : null"
+            (mousemove)="ativarPorMouse(grupo, item)"
+            (click)="escolher(item)">
+            <app-icon class="palette__item-icon" [name]="item.icon" [size]="16" />
+            <span class="palette__item-title">{{ item.titulo }}</span>
+            @if (item.caminho) {
+              <span class="palette__item-path">{{ item.caminho }}</span>
+            }
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="palette__empty">
+        @if (termo()) {
+          Nenhum resultado para "{{ termo() }}".
+        } @else {
+          Nada para mostrar neste filtro.
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Atalhos -->
+  <footer class="palette__footer" aria-hidden="true">
+    <span class="palette__hint">
+      <kbd><app-icon name="arrows-down-up" [size]="14" /></kbd> Navegação
+    </span>
+    <span class="palette__hint">
+      <kbd><app-icon name="arrow-elbow-down-left" [size]="14" /></kbd> Abrir
+    </span>
+    <span class="palette__hint">
+      Fechar <kbd>esc</kbd>
+    </span>
+  </footer>
+</div>

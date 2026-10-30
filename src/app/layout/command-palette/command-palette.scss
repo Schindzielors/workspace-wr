@@ -1,0 +1,247 @@
+/* Busca global — Figma "Home - Barra de busca v1". */
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+/* Fundo esbranquiçado que desfoca a tela atrás. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(249, 250, 251, 0.6);
+  backdrop-filter: blur(1px);
+  animation: fade-in 120ms ease-out;
+}
+
+.palette {
+  position: absolute;
+  top: min(196px, 18vh);
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: min(480px, calc(100vw - 32px));
+  height: min(500px, calc(100vh - min(196px, 18vh) - 24px));
+  overflow: hidden;
+  transform: translateX(-50%);
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+  box-shadow: 0 16px 48px rgba(3, 7, 18, 0.16), 0 2px 6px rgba(3, 7, 18, 0.06);
+  animation: palette-in 140ms ease-out;
+}
+
+/* ---------------------------------------------------------------- */
+/* Campo de busca                                                    */
+/* ---------------------------------------------------------------- */
+
+.palette__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 14px 16px 10px;
+  color: var(--color-neutral-base);
+}
+
+.palette__search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-neutral-maximum);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-paragraph-sm);
+}
+
+.palette__search input::placeholder {
+  color: var(--color-neutral-base);
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- */
+/* Filtros: "Todos" em texto e os demais em ícone                    */
+/* ---------------------------------------------------------------- */
+
+.palette__filters {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  flex: 0 0 auto;
+  margin: 0 16px;
+  border-bottom: 1px solid var(--color-neutral-light);
+}
+
+.palette__filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 36px;
+  padding: 0 12px;
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.palette__filter:hover {
+  color: var(--color-neutral-maximum);
+}
+
+.palette__filter--active,
+.palette__filter--active:hover {
+  border-bottom-color: var(--color-brand-secondary-base);
+  color: var(--color-brand-secondary-base);
+}
+
+.palette__filter:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Resultados                                                       */
+/* ---------------------------------------------------------------- */
+
+.palette__results {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 8px 12px 12px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-light) transparent;
+}
+
+.palette__group + .palette__group {
+  margin-top: 8px;
+}
+
+.palette__group-title {
+  margin: 0;
+  padding: 8px 4px 4px;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+}
+
+.palette__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-text);
+  cursor: pointer;
+}
+
+.palette__item--active {
+  background: var(--color-neutral-soft);
+}
+
+.palette__item-icon {
+  color: var(--color-neutral-intense);
+}
+
+.palette__item-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Caminho ("Recursos / E-Cotação") discreto, à direita do título. */
+.palette__item-path {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-neutral-subtle-2);
+  font-size: var(--font-size-sm);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Item sem destino ainda (ex.: conectores). */
+.palette__item--disabled {
+  color: var(--color-neutral-base);
+  cursor: default;
+}
+
+.palette__empty {
+  margin: 0;
+  padding: 32px 16px;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-md);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- */
+/* Rodapé de atalhos                                                 */
+/* ---------------------------------------------------------------- */
+
+.palette__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-neutral-light);
+  background: var(--color-neutral-very-soft);
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+}
+
+.palette__hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 6px;
+  background: var(--surface-panel);
+  color: var(--color-neutral-intense);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes palette-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .palette {
+    animation: none;
+  }
+}

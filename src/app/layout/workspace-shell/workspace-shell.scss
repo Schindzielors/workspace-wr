@@ -128,28 +128,36 @@
   overflow: hidden;
 }
 
-.header__search input {
+/* O campo é um botão que abre a busca global (CommandPalette). */
+.header__search {
+  padding: 0;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.header__search:hover {
+  background: var(--color-neutral-strong);
+}
+
+.header__search:focus-visible {
+  outline: 2px solid #8db5ff;
+  outline-offset: 2px;
+}
+
+.header__search-placeholder {
   flex: 1 1 auto;
   min-width: 0;
-  height: 100%;
   padding: 8px 0 8px 16px;
-  border: 0;
-  background: transparent;
-  color: var(--header-control-text);
+  overflow: hidden;
+  color: var(--header-placeholder-text);
   font-family: var(--font-family-sans);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-regular);
   line-height: var(--line-height-paragraph-sm);
-  outline: none;
-}
-
-.header__search input::placeholder {
-  color: var(--header-placeholder-text);
-  opacity: 1;
-}
-
-.header__search input:disabled {
-  cursor: not-allowed;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header__search app-icon {

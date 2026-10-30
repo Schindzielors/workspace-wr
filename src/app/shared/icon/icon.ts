@@ -12,6 +12,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  * (`currentColor`) e acompanha estados como ativo e hover.
  */
 export type IconName =
+  | 'arrow-elbow-down-left'
+  | 'arrows-down-up'
   | 'caret-double-left'
   | 'caret-double-right'
   | 'caret-down'
