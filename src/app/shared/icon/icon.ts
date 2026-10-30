@@ -3,9 +3,12 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 /**
  * Ícones da biblioteca Phosphor (peso "regular"), a mesma usada no Figma.
  *
- * Os SVGs são copiados de `@phosphor-icons/core` para `/icons` no build
- * (ver `angular.json`). O ícone é aplicado como máscara CSS, então herda
- * a cor do texto (`currentColor`) e acompanha estados como ativo e hover.
+ * Os SVGs ficam em `public/icons` (licença MIT da Phosphor ao lado). Para
+ * adicionar um ícone, copie o SVG e inclua o nome no tipo abaixo:
+ *   cp node_modules/@phosphor-icons/core/assets/regular/<nome>.svg public/icons/
+ *
+ * O ícone é aplicado como máscara CSS, então herda a cor do texto
+ * (`currentColor`) e acompanha estados como ativo e hover.
  */
 export type IconName =
   | 'caret-double-left'
