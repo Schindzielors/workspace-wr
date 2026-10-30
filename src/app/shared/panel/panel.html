@@ -1,11 +1,16 @@
 <div class="backdrop" (click)="fechar.emit()" aria-hidden="true"></div>
 
-<section class="panel" [class.panel--left]="align() === 'left'" role="dialog" aria-modal="true"
+<section class="panel" [class.panel--left]="align() === 'left'" [class.panel--center]="align() === 'center'" role="dialog" aria-modal="true"
   [attr.aria-labelledby]="id + '-titulo'"
   [attr.aria-describedby]="subtitulo() ? id + '-subtitulo' : null">
   <header class="panel__header">
     <div>
-      <h2 class="panel__title" [id]="id + '-titulo'">{{ titulo() }}</h2>
+      <h2 class="panel__title" [id]="id + '-titulo'">
+        {{ titulo() }}
+        @if (tituloDetalhe()) {
+          <span class="panel__title-detail">{{ tituloDetalhe() }}</span>
+        }
+      </h2>
       @if (subtitulo()) {
         <p class="panel__subtitle" [id]="id + '-subtitulo'">{{ subtitulo() }}</p>
       }

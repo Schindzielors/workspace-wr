@@ -24,12 +24,24 @@
   border-radius: 12px;
   background: var(--surface-panel);
   box-shadow: 0 16px 48px rgba(3, 7, 18, 0.16), 0 2px 6px rgba(3, 7, 18, 0.06);
+  /* Não herda alinhamento de onde o painel é inserido. */
+  text-align: left;
   animation: panel-in 140ms ease-out;
 }
 
 .panel--left {
   right: auto;
   left: 12px;
+}
+
+/* Modal no centro da tela. */
+.panel--center {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  width: min(400px, calc(100vw - 24px));
+  transform: translate(-50%, -50%);
+  animation: panel-center-in 140ms ease-out;
 }
 
 .panel__header {
@@ -47,6 +59,11 @@
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-text);
+}
+
+.panel__title-detail {
+  color: var(--color-neutral-base);
+  font-weight: var(--font-weight-regular);
 }
 
 .panel__subtitle {
@@ -99,6 +116,13 @@
   from {
     opacity: 0;
     transform: translateY(-6px);
+  }
+}
+
+@keyframes panel-center-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 6px));
   }
 }
 

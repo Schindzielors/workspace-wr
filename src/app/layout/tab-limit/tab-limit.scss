@@ -1,0 +1,89 @@
+/* Aba que o usuário tentou abrir. */
+.limit__pending {
+  margin: 0;
+  padding: 12px 16px 0;
+  overflow: hidden;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.limit__pending strong {
+  color: var(--color-neutral-maximum);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ~6 guias visíveis, com rolagem (Figma). */
+.limit__list {
+  max-height: 252px;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-light) transparent;
+}
+
+.limit__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+  cursor: pointer;
+}
+
+.limit__option:hover {
+  background: var(--color-neutral-soft);
+}
+
+.limit__option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--color-brand-secondary-base);
+  cursor: pointer;
+}
+
+.limit__option-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.limit__footer {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+.limit__submit {
+  width: 100%;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-brand-primary-base);
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.limit__submit:hover:not(:disabled) {
+  background: var(--color-brand-primary-strong);
+}
+
+.limit__submit:disabled {
+  background: var(--color-brand-primary-soft);
+  color: var(--color-neutral-base);
+  cursor: not-allowed;
+}
+
+.limit__submit:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}

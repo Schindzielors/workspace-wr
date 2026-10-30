@@ -1,0 +1,28 @@
+<app-panel align="center" titulo="Limite de guias atingido" [tituloDetalhe]="'(' + limite + ')'"
+  subtitulo="Feche alguma de suas guias para abrir uma nova" (fechar)="cancelar()">
+  @if (tabsService.pendingTab(); as pendente) {
+    <p class="limit__pending">
+      Para abrir: <strong>{{ pendente.title }}</strong>
+    </p>
+  }
+
+  <ul class="limit__list" aria-label="Guias abertas">
+    @for (tab of tabsService.tabs(); track tab.id; let i = $index) {
+      <li>
+        <label class="limit__option">
+          <input type="checkbox" [checked]="selecionadas().has(tab.id)"
+            [attr.data-autofocus]="i === 0 ? '' : null"
+            (change)="alternar(tab.id)" />
+          <span class="limit__option-title" [title]="tab.title">{{ tab.title }}</span>
+        </label>
+      </li>
+    }
+  </ul>
+
+  <footer panel-footer class="limit__footer">
+    <button type="button" class="limit__submit" [disabled]="!selecionadas().size" (click)="confirmar()"
+      [attr.aria-label]="'Fechar ' + selecionadas().size + ' guia(s) e abrir a nova'">
+      Selecionar
+    </button>
+  </footer>
+</app-panel>

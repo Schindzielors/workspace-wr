@@ -10,6 +10,7 @@ import { VisaoPicker } from '../visao-picker/visao-picker';
 import { UserMenu, UserMenuAcao } from '../user-menu/user-menu';
 import { UserSettings } from '../user-settings/user-settings';
 import { UserNotifications } from '../user-notifications/user-notifications';
+import { TabLimit } from '../tab-limit/tab-limit';
 import { WorkspaceUsuarioService } from '../../features/workspace/service/workspace-usuario.service';
 import { Avatar } from '../../shared/avatar/avatar';
 import { WorkspaceVisaoService } from '../../features/workspace/service/workspace-visao.service';
@@ -36,6 +37,7 @@ import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
     UserMenu,
     UserSettings,
     UserNotifications,
+    TabLimit,
     Avatar
   ],
   templateUrl: './workspace-shell.html',
@@ -46,7 +48,7 @@ import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
 })
 export class WorkspaceShell implements OnInit {
   private readonly menuService = inject(WorkspaceMenuService);
-  private readonly tabsService = inject(WorkspaceTabsService);
+  readonly tabsService = inject(WorkspaceTabsService);
   private readonly session = inject(WorkspaceSessionService);
 
   readonly applications = signal<WorkspaceApplication[]>([]);
@@ -101,6 +103,26 @@ export class WorkspaceShell implements OnInit {
         if (application && application.id !== this.activeApplicationId()) {
           this.activeApplicationId.set(application.id);
           this.loadMenus(application);
+        }
+      });
+    });
+
+    /**
+     * Ao desistir de abrir uma aba no modal de limite, a aplicação
+     * selecionada volta a ser a da aba que está na tela (ex.: clicou no
+     * Rodopar com 10 abas abertas e cancelou).
+     */
+    effect(() => {
+      if (this.tabsService.pendingTab()) {
+        return;
+      }
+
+      untracked(() => {
+        const tab = this.tabsService.activeTab();
+        const application = tab && this.applications().find(item => item.system === tab.system);
+
+        if (application && application.id !== this.activeApplicationId()) {
+          this.activeApplicationId.set(application.id);
         }
       });
     });

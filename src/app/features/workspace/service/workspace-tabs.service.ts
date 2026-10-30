@@ -11,6 +11,9 @@ interface AbasSalvas {
 
 const CHAVE_SESSAO = 'abas';
 
+/** Máximo de abas abertas ao mesmo tempo (Figma "WR limite de guias"). */
+export const MAX_ABAS = 10;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -112,6 +115,30 @@ export class WorkspaceTabsService {
    */
   /** Pares de abas unidas em tela dividida. */
   readonly groups = this._groups.asReadonly();
+
+  /**
+   * Aba que o usuário tentou abrir com o limite atingido. Enquanto houver
+   * uma, o Workspace mostra o modal "Limite de guias atingido".
+   */
+  private readonly _pendingTab = signal<WorkspaceTab | null>(null);
+  readonly pendingTab = this._pendingTab.asReadonly();
+
+  /** Fecha as abas escolhidas no modal e abre a aba que estava pendente. */
+  confirmLimit(tabIdsToClose: string[]): void {
+    const pending = this._pendingTab();
+
+    tabIdsToClose.forEach(tabId => this.closeTab(tabId));
+    this._pendingTab.set(null);
+
+    if (pending) {
+      this.openTab(pending);
+    }
+  }
+
+  /** Desiste de abrir a aba pendente. */
+  cancelLimit(): void {
+    this._pendingTab.set(null);
+  }
 
   /**
    * Abas visíveis na área principal, na ordem da barra de abas:
@@ -221,6 +248,7 @@ export class WorkspaceTabsService {
   limparSessao(): void {
     this._tabs.set([]);
     this._activeTabId.set(null);
+    this._pendingTab.set(null);
     this._groups.set([]);
     this._loadingTabIds.set(new Set());
     this._reloadVersions.set({});
@@ -285,6 +313,14 @@ export class WorkspaceTabsService {
    */
   openTab(tab: WorkspaceTab): void {
     const existingTab = this._tabs().find(item => item.id === tab.id);
+
+    // Limite de abas: a nova aba fica pendente e o Workspace pede para o
+    // usuário fechar alguma (ver `confirmLimit`). Reabrir uma aba que já
+    // existe não conta no limite.
+    if (!existingTab && this._tabs().length >= MAX_ABAS) {
+      this._pendingTab.set(tab);
+      return;
+    }
 
     // Adiciona a aba somente quando ainda não existe uma instância aberta
     // com o mesmo identificador.

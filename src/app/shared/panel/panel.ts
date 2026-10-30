@@ -27,7 +27,10 @@ export class Panel {
 
   readonly titulo = input.required<string>();
   readonly subtitulo = input<string>();
-  readonly align = input<'left' | 'right'>('right');
+
+  /** Texto discreto ao lado do título (ex.: "(10)"). */
+  readonly tituloDetalhe = input<string>();
+  readonly align = input<'left' | 'right' | 'center'>('right');
 
   readonly fechar = output<void>();
 
