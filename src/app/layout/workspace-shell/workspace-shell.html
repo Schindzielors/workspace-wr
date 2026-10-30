@@ -102,3 +102,8 @@
     <app-user-notifications (fechar)="closeUserPanel()" />
   }
 }
+
+<!-- Limite de abas: aparece ao tentar abrir a 11ª aba. -->
+@if (tabsService.pendingTab()) {
+  <app-tab-limit />
+}
