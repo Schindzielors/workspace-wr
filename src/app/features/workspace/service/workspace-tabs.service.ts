@@ -1,10 +1,21 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { WorkspaceTab } from '../model/workspace-tab.model';
+import { WorkspaceSessionService } from './workspace-session.service';
+
+/** Formato salvo na sessão (ver WorkspaceSessionService). */
+interface AbasSalvas {
+  tabs: WorkspaceTab[];
+  activeTabId: string | null;
+}
+
+const CHAVE_SESSAO = 'abas';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceTabsService {
+
+  private readonly session = inject(WorkspaceSessionService);
 
   /**
    * Estado interno que armazena todas as abas atualmente abertas
@@ -25,7 +36,7 @@ export class WorkspaceTabsService {
    * - fechamento de uma aba;
    * - definição da próxima aba ativa após um fechamento.
    */
-  private readonly _tabs = signal<WorkspaceTab[]>([]);
+  private readonly _tabs = signal<WorkspaceTab[]>(this.abasSalvas().tabs);
 
   /**
    * Identificador da aba atualmente ativa/visível para o usuário.
@@ -35,7 +46,7 @@ export class WorkspaceTabsService {
    * É armazenado separadamente da coleção de abas para evitar manter
    * duas representações completas do mesmo objeto no estado.
    */
-  private readonly _activeTabId = signal<string | null>(null);
+  private readonly _activeTabId = signal<string | null>(this.abasSalvas().activeTabId);
 
   /**
    * Controla a versão de reload de cada aba.
@@ -90,6 +101,48 @@ export class WorkspaceTabsService {
 
     return this._tabs().find(tab => tab.id === activeTabId) ?? null;
   });
+
+  constructor() {
+    /**
+     * Salva as abas abertas e a aba ativa na sessão a cada alteração, para
+     * que recarregar a página (F5) reabra as mesmas abas.
+     *
+     * Observação: o iframe recarrega a URL da aba; a navegação feita dentro
+     * da aplicação embarcada (filtros, telas internas) não é restaurada.
+     */
+    effect(() => {
+      const salvas: AbasSalvas = {
+        tabs: this._tabs(),
+        activeTabId: this._activeTabId()
+      };
+
+      this.session.salvar(CHAVE_SESSAO, salvas);
+    });
+  }
+
+  /** Abas salvas na sessão; vazio quando não há nada salvo ou é inválido. */
+  private abasSalvas(): AbasSalvas {
+    const salvas = this.session.ler<AbasSalvas>(CHAVE_SESSAO);
+    const tabs = Array.isArray(salvas?.tabs)
+      ? salvas.tabs.filter(tab => tab?.id && tab.title && tab.system && tab.url)
+      : [];
+    const activeTabId = tabs.some(tab => tab.id === salvas?.activeTabId)
+      ? salvas!.activeTabId
+      : null;
+
+    return { tabs, activeTabId };
+  }
+
+  /**
+   * Fecha todas as abas e limpa a sessão do Workspace.
+   * Chamar no logout, para que o próximo login comece sem abas.
+   */
+  limparSessao(): void {
+    this._tabs.set([]);
+    this._activeTabId.set(null);
+    this._reloadVersions.set({});
+    this.session.limpar();
+  }
 
   /**
    * Retorna a versão atual de reload de uma determinada aba.
