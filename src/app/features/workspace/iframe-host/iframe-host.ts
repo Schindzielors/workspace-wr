@@ -230,6 +230,24 @@ export class IframeHost {
     return safeUrl;
   }
 
+  /**
+   * Fim do carregamento do iframe: esconde o loading da aba.
+   *
+   * O navegador também dispara `load` para o documento vazio inicial
+   * (about:blank) de um iframe recém-criado. Esse evento é ignorado: só vale
+   * o `load` de quando o iframe já está com a URL da aba.
+   */
+  onFrameLoad(tabId: string, event: Event): void {
+    const frame = event.target as HTMLIFrameElement;
+    const src = frame.getAttribute('src');
+
+    if (!src || src === 'about:blank') {
+      return;
+    }
+
+    this.tabsService.markLoaded(tabId);
+  }
+
   private buildReloadUrl(
     url: string,
     reloadVersion: number

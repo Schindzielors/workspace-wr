@@ -38,3 +38,50 @@
 
   color: #555;
 }
+/* Loading sobre a área da tela enquanto o iframe da aba ativa carrega. */
+.frame-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--surface-panel);
+  animation: frame-loading-in 150ms ease-out;
+}
+
+.frame-loading__spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--color-brand-secondary-light);
+  border-top-color: var(--color-brand-secondary-base);
+  border-radius: 50%;
+  animation: frame-loading-spin 800ms linear infinite;
+}
+
+.frame-loading__text {
+  margin: 0;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-text);
+}
+
+@keyframes frame-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes frame-loading-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame-loading__spinner {
+    animation-duration: 2s;
+  }
+}

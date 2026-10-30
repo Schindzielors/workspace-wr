@@ -61,6 +61,16 @@ export class WorkspaceTabsService {
   private readonly _reloadVersions = signal<Record<string, number>>({});
 
   /**
+   * Abas cujo iframe ainda está carregando (exibem o loading).
+   *
+   * Uma aba entra aqui ao ser aberta, ao ser atualizada e ao ser restaurada
+   * da sessão (F5), e sai quando o iframe dispara o evento `load`.
+   */
+  private readonly _loadingTabIds = signal<ReadonlySet<string>>(
+    new Set(this._tabs().map(tab => tab.id))
+  );
+
+  /**
    * Exposição somente leitura da coleção de abas.
    *
    * Componentes podem observar e utilizar este Signal, mas não conseguem
@@ -140,6 +150,7 @@ export class WorkspaceTabsService {
   limparSessao(): void {
     this._tabs.set([]);
     this._activeTabId.set(null);
+    this._loadingTabIds.set(new Set());
     this._reloadVersions.set({});
     this.session.limpar();
   }
@@ -150,6 +161,28 @@ export class WorkspaceTabsService {
    * Enquanto essa versão permanecer igual, o IframeHost continua
    * reutilizando a mesma SafeResourceUrl e o iframe não é recarregado.
    */
+  /** Verdadeiro enquanto o iframe da aba ainda não terminou de carregar. */
+  isLoading(tabId: string): boolean {
+    return this._loadingTabIds().has(tabId);
+  }
+
+  /** Chamado pelo IframeHost quando o iframe da aba termina de carregar. */
+  markLoaded(tabId: string): void {
+    this.setLoading(tabId, false);
+  }
+
+  private setLoading(tabId: string, loading: boolean): void {
+    this._loadingTabIds.update(ids => {
+      if (ids.has(tabId) === loading) {
+        return ids;
+      }
+
+      const next = new Set(ids);
+      loading ? next.add(tabId) : next.delete(tabId);
+      return next;
+    });
+  }
+
   reloadVersion(tabId: string): number {
     return this._reloadVersions()[tabId] ?? 0;
   }
@@ -184,6 +217,7 @@ export class WorkspaceTabsService {
     // Adiciona a aba somente quando ainda não existe uma instância aberta
     // com o mesmo identificador.
     if (!existingTab) {
+      this.setLoading(tab.id, true);
       this._tabs.update(tabs => [...tabs, tab]);
     }
 
@@ -242,6 +276,8 @@ export class WorkspaceTabsService {
     if (!exists) {
       return;
     }
+
+    this.setLoading(tabId, true);
 
     this._reloadVersions.update(versions => ({
       ...versions,
@@ -307,6 +343,7 @@ export class WorkspaceTabsService {
     const newTabs = currentTabs.filter(tab => tab.id !== tabId);
 
     this._tabs.set(newTabs);
+    this.setLoading(tabId, false);
 
     this._reloadVersions.update(versions => {
       const { [tabId]: _, ...remainingVersions } = versions;
