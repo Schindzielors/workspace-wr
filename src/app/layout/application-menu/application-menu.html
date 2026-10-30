@@ -117,7 +117,7 @@
             [attr.aria-label]="(isFavorito(item) ? 'Remover dos favoritos: ' : 'Favoritar: ') + item.title"
             [title]="isFavorito(item) ? 'Remover dos favoritos' : 'Favoritar'"
             (click)="toggleFavorito($event, item)">
-            <app-icon name="star" [size]="14" />
+            <app-icon [name]="isFavorito(item) ? 'star-fill' : 'star'" [size]="14" />
           </button>
         }
       </div>
