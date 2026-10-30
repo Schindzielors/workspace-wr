@@ -13,11 +13,6 @@ export interface HomeListResponseDto<T> {
   totalItems: number;
 }
 
-/** GET /api/WorkspaceHome/Usuario */
-export interface HomeUsuarioDto {
-  Nome: string;
-}
-
 /** GET /api/WorkspaceHome/Conectores */
 export interface HomeConectorDto {
   Id: number;

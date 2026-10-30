@@ -7,14 +7,12 @@ import { buildSystemId } from '../../workspace/utils/workspace-url';
 import {
   HomeConectorDto,
   HomeListResponseDto,
-  HomePainelDto,
-  HomeUsuarioDto
+  HomePainelDto
 } from '../dto/home.dto';
 import {
   HomeConector,
   HomeConectorStatus,
-  HomePainel,
-  HomeUsuario
+  HomePainel
 } from '../model/home.model';
 
 /**
@@ -35,13 +33,6 @@ export class HomeService {
 
   private readonly apiUrl = `${appConfig.apiUrl}/api/WorkspaceHome`;
 
-  /** Usuário logado, para a saudação. GET /api/WorkspaceHome/Usuario */
-  carregarUsuario(): Observable<HomeUsuario> {
-    return this.http
-      .get<HomeUsuarioDto>(`${this.apiUrl}/Usuario`)
-      .pipe(map(dto => this.mapUsuario(dto)));
-  }
-
   /** Conectores disponíveis (coluna "Conectores"). GET /api/WorkspaceHome/Conectores */
   carregarConectores(): Observable<HomeConector[]> {
     return this.http
@@ -59,10 +50,6 @@ export class HomeService {
   // ---------------------------------------------------------------------
   // Conversão DTO (API) -> modelo (componentes)
   // ---------------------------------------------------------------------
-
-  private mapUsuario(dto: HomeUsuarioDto): HomeUsuario {
-    return { nome: dto.Nome };
-  }
 
   private mapConector(dto: HomeConectorDto): HomeConector {
     return {

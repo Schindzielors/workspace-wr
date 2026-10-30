@@ -1,0 +1,64 @@
+/*
+ * Lista com rolagem: o painel limita a altura à tela e o corpo rola
+ * (pensado para muitos tipos de notificação).
+ */
+.notifications {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 16px;
+  list-style: none;
+}
+
+/* Card de cada notificação (Figma): título, descrição e toggle. */
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--surface-panel);
+}
+
+.notification__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--line-height-text);
+}
+
+.notification__title {
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.notification__description {
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-xs);
+}
+
+.notification--off .notification__title {
+  color: var(--color-neutral-intense);
+}
+
+.notifications__error {
+  margin: 16px 16px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-feedback-error-very-soft);
+  color: var(--color-feedback-error-intense);
+  font-size: var(--font-size-sm);
+}
+
+.notifications__loading,
+.notifications__empty {
+  margin: 0;
+  padding: 24px 16px;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}

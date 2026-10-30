@@ -1,0 +1,116 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+/* Fundo transparente: só fecha ao clicar fora. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+/* Abre logo abaixo do usuário, no canto direito do header. */
+.user-menu {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  width: 232px;
+  padding: 8px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 12px;
+  background: var(--surface-panel);
+  box-shadow: 0 16px 48px rgba(3, 7, 18, 0.16), 0 2px 6px rgba(3, 7, 18, 0.06);
+  animation: menu-in 120ms ease-out;
+}
+
+.user-menu__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--color-neutral-very-soft);
+}
+
+.user-menu__identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--line-height-text);
+}
+
+.user-menu__name {
+  overflow: hidden;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu__email {
+  overflow: hidden;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu__items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+.user-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.user-menu__item:hover:not(:disabled),
+.user-menu__item:focus-visible {
+  background: var(--color-neutral-soft);
+  outline: none;
+}
+
+.user-menu__item:disabled {
+  color: var(--color-neutral-subtle-2);
+  cursor: not-allowed;
+}
+
+/* "Sair" em vermelho (feedback error). */
+.user-menu__item--danger {
+  color: var(--color-feedback-error-strong);
+}
+
+.user-menu__item--danger:disabled {
+  color: var(--color-feedback-error-subtle);
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-menu {
+    animation: none;
+  }
+}

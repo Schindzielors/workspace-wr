@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, output, signal } from '@angular/core';
 
 import { Icon } from '../../shared/icon/icon';
 import { environment } from '../../../environments/environment';
@@ -7,6 +7,7 @@ import { HomeSection } from './home-section/home-section';
 import { HomeService } from './service/home.service';
 import { WorkspaceFavorito } from '../workspace/model/workspace-favorito.model';
 import { WorkspaceFavoritosService } from '../workspace/service/workspace-favoritos.service';
+import { WorkspaceUsuarioService } from '../workspace/service/workspace-usuario.service';
 import {
   HomeConector,
   HomeConectorStatus,
@@ -38,12 +39,16 @@ export interface HomeTelaSolicitada {
 export class Home implements OnInit {
   private readonly homeService = inject(HomeService);
   private readonly favoritosService = inject(WorkspaceFavoritosService);
+  private readonly usuarioService = inject(WorkspaceUsuarioService);
 
   /** Pede ao Workspace para abrir uma tela (favorito ou painel). */
   readonly telaSolicitada = output<HomeTelaSolicitada>();
 
   /** `null` enquanto carrega. */
-  readonly usuario = signal<HomeUsuario | null>(null);
+  /** Saudação com o primeiro nome do perfil (muda ao salvar em Configurações). */
+  readonly usuario = computed<HomeUsuario | null>(() =>
+    this.usuarioService.perfil() ? { nome: this.usuarioService.primeiroNome() } : null
+  );
   /** Compartilhados com o menu lateral (favoritar no menu atualiza aqui). */
   readonly favoritos = this.favoritosService.favoritos;
   readonly erroFavoritos = this.favoritosService.erro;
@@ -63,10 +68,7 @@ export class Home implements OnInit {
   readonly erros = signal<Partial<Record<'conectores' | 'paineis', boolean>>>({});
 
   ngOnInit(): void {
-    this.homeService.carregarUsuario().subscribe({
-      next: usuario => this.usuario.set(usuario),
-      error: erro => console.error('Home: falha ao carregar o usuário.', erro)
-    });
+    this.usuarioService.carregar();
 
     this.favoritosService.carregar();
 

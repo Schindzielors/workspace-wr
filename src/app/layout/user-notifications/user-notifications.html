@@ -1,0 +1,26 @@
+<app-panel titulo="Notificações" subtitulo="Configure quais notificações deseja receber" (fechar)="fechar.emit()">
+  @if (erroSalvar()) {
+    <p class="notifications__error" role="alert">{{ erroSalvar() }}</p>
+  }
+
+  @if (usuarioService.erroNotificacoes()) {
+    <p class="notifications__error" role="alert">Não foi possível carregar as notificações.</p>
+  } @else if (usuarioService.notificacoes(); as notificacoes) {
+    <ul class="notifications" aria-label="Tipos de notificação">
+      @for (notificacao of notificacoes; track notificacao.id) {
+        <li class="notification" [class.notification--off]="!notificacao.ativo">
+          <div class="notification__text">
+            <span class="notification__title" [id]="'notificacao-' + notificacao.id">{{ notificacao.titulo }}</span>
+            <span class="notification__description">{{ notificacao.descricao }}</span>
+          </div>
+          <app-toggle [checked]="notificacao.ativo" [label]="notificacao.titulo"
+            (checkedChange)="alterar(notificacao, $event)" />
+        </li>
+      } @empty {
+        <li class="notifications__empty">Nenhum tipo de notificação disponível.</li>
+      }
+    </ul>
+  } @else {
+    <p class="notifications__loading" role="status">Carregando...</p>
+  }
+</app-panel>

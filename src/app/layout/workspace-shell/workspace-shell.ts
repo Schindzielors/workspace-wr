@@ -7,6 +7,11 @@ import { Icon } from '../../shared/icon/icon';
 import { Home, HomeTelaSolicitada } from '../../features/home/home';
 import { CommandPalette } from '../command-palette/command-palette';
 import { VisaoPicker } from '../visao-picker/visao-picker';
+import { UserMenu, UserMenuAcao } from '../user-menu/user-menu';
+import { UserSettings } from '../user-settings/user-settings';
+import { UserNotifications } from '../user-notifications/user-notifications';
+import { WorkspaceUsuarioService } from '../../features/workspace/service/workspace-usuario.service';
+import { Avatar } from '../../shared/avatar/avatar';
 import { WorkspaceVisaoService } from '../../features/workspace/service/workspace-visao.service';
 import { PaletteAcao } from '../command-palette/command-palette.model';
 
@@ -27,7 +32,11 @@ import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
     Icon,
     Home,
     CommandPalette,
-    VisaoPicker
+    VisaoPicker,
+    UserMenu,
+    UserSettings,
+    UserNotifications,
+    Avatar
   ],
   templateUrl: './workspace-shell.html',
   styleUrl: './workspace-shell.scss',
@@ -114,12 +123,34 @@ export class WorkspaceShell implements OnInit {
 
   openVisao(): void {
     this.paletteOpen.set(false);
+    this.userPanel.set(null);
     this.visaoOpen.set(true);
   }
 
   closeVisao(): void {
     this.visaoOpen.set(false);
     this.visaoTrigger()?.nativeElement.focus();
+  }
+
+  // ---------------------------------------------------------------------
+  // Menu do usuário, Configurações e Notificações
+  // ---------------------------------------------------------------------
+
+  readonly usuarioService = inject(WorkspaceUsuarioService);
+  readonly userPanel = signal<'menu' | UserMenuAcao | null>(null);
+  private readonly userTrigger = viewChild<ElementRef<HTMLButtonElement>>('userTrigger');
+
+  toggleUserMenu(): void {
+    this.userPanel.set(this.userPanel() === 'menu' ? null : 'menu');
+  }
+
+  openUserPanel(painel: UserMenuAcao): void {
+    this.userPanel.set(painel);
+  }
+
+  closeUserPanel(): void {
+    this.userPanel.set(null);
+    this.userTrigger()?.nativeElement.focus();
   }
 
   readonly paletteOpen = signal(false);
@@ -137,6 +168,8 @@ export class WorkspaceShell implements OnInit {
     // A busca procura nas telas do menu: carrega o menu das aplicações que
     // ainda não foram abertas.
     this.applications().forEach(application => this.loadMenus(application));
+    this.visaoOpen.set(false);
+    this.userPanel.set(null);
     this.paletteOpen.set(true);
   }
 
@@ -204,6 +237,7 @@ export class WorkspaceShell implements OnInit {
 
   ngOnInit(): void {
     this.visaoService.carregar();
+    this.usuarioService.carregar();
 
     this.menuService.getApplications().subscribe(applications => {
       this.applications.set(applications);

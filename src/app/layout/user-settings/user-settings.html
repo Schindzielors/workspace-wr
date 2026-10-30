@@ -1,0 +1,38 @@
+<app-panel titulo="Configurações" subtitulo="Altere sua foto, nome ou idioma do sistema" (fechar)="fechar.emit()">
+  <form class="settings" id="form-configuracoes" (submit)="$event.preventDefault(); salvar()">
+    <div class="settings__field">
+      <span class="settings__label" id="label-avatar">Avatar</span>
+      <label class="settings__avatar" title="Alterar foto">
+        <input type="file" accept="image/*" class="settings__file"
+          aria-labelledby="label-avatar" (change)="escolherFoto($event)" />
+        <app-avatar [iniciais]="iniciaisAtuais()" [fotoUrl]="fotoExibida()" [size]="64" />
+        <span class="settings__avatar-overlay" aria-hidden="true">
+          <app-icon name="camera" [size]="20" />
+        </span>
+      </label>
+    </div>
+
+    <label class="settings__field">
+      <span class="settings__label">Nome</span>
+      <input class="settings__input" type="text" maxlength="100" autocomplete="name" data-autofocus
+        [value]="nome()" (input)="atualizarNome($event)"
+        [attr.aria-invalid]="nomeInvalido()" />
+      @if (nomeInvalido()) {
+        <span class="settings__hint settings__hint--error">Informe o nome.</span>
+      }
+    </label>
+
+    <app-select label="Idioma" [options]="idiomas" [value]="idioma()" (valueChange)="idioma.set($event)" />
+
+    @if (erro()) {
+      <p class="settings__error" role="alert">{{ erro() }}</p>
+    }
+  </form>
+
+  <footer panel-footer class="settings__footer">
+    <button type="submit" form="form-configuracoes" class="settings__submit"
+      [disabled]="!alterado() || nomeInvalido() || salvando()">
+      {{ salvando() ? 'Salvando...' : 'Salvar' }}
+    </button>
+  </footer>
+</app-panel>
