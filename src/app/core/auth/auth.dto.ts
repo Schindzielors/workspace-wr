@@ -26,12 +26,22 @@ export interface AuthNovaSenhaRequestDto {
   novaSenha: string;
 }
 
-/** POST /api/Auth/EsqueciSenha */
-export interface AuthEsqueciSenhaRequestDto {
-  loginOuEmail: string;
+/**
+ * POST /Utilitarios/ResetarSenha (ResetarSenhaController, já existente).
+ * Gera a senha temporária e envia pelo template "email_redefinicao_senha.txt".
+ */
+export interface ResetarSenhaRequestDto {
+  userName: string;
 }
 
-/** Corpo dos erros 400 do AuthController. */
+/** POST /Utilitarios/ResetarSenha (resposta 200) */
+export interface ResetarSenhaRespostaDto {
+  success: boolean;
+  message: string;
+}
+
+/** Corpo dos erros da API (AuthController usa `mensagem`; os demais, `message`). */
 export interface AuthErroDto {
   mensagem?: string;
+  message?: string;
 }

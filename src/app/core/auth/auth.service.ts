@@ -3,7 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
 import { appConfig } from '../config/app-config';
-import { AuthErroDto, AuthEsqueciSenhaRequestDto, AuthNovaSenhaRequestDto, TokenRespostaDto } from './auth.dto';
+import { AuthErroDto, AuthNovaSenhaRequestDto, ResetarSenhaRequestDto, ResetarSenhaRespostaDto, TokenRespostaDto } from './auth.dto';
 
 export type AuthEstado = 'anonimo' | 'autenticado';
 
@@ -36,6 +36,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly urlToken = `${appConfig.apiUrl}/api/Token`;
   private readonly urlAuth = `${appConfig.apiUrl}/api/Auth`;
+  private readonly urlResetarSenha = `${appConfig.apiUrl}/Utilitarios/ResetarSenha`;
 
   private readonly _accessToken = signal<string | null>(null);
   private timerExpiracao: ReturnType<typeof setTimeout> | null = null;
@@ -58,7 +59,7 @@ export class AuthService {
 
   /** URLs de login/senha (o interceptor não mexe nelas). */
   ehUrlAuth(url: string): boolean {
-    return url.startsWith(this.urlToken) || url.startsWith(this.urlAuth);
+    return url.startsWith(this.urlToken) || url.startsWith(this.urlAuth) || url.startsWith(this.urlResetarSenha);
   }
 
   /** Antes do app iniciar: recupera o token salvo, se ainda for válido. */
@@ -109,11 +110,15 @@ export class AuthService {
     );
   }
 
-  /** POST /api/Auth/EsqueciSenha: a API envia uma senha temporária por e-mail. */
-  solicitarRedefinicao(loginOuEmail: string): Observable<void> {
-    const body: AuthEsqueciSenhaRequestDto = { loginOuEmail: loginOuEmail.trim() };
+  /**
+   * "Esqueci minha senha": POST /Utilitarios/ResetarSenha (ResetarSenhaController),
+   * que gera a senha temporária e envia por e-mail.
+   */
+  solicitarRedefinicao(login: string): Observable<void> {
+    const body: ResetarSenhaRequestDto = { userName: login.trim() };
 
-    return this.http.post<void>(`${this.urlAuth}/EsqueciSenha`, body).pipe(
+    return this.http.post<ResetarSenhaRespostaDto>(this.urlResetarSenha, body).pipe(
+      map(() => undefined),
       catchError(erro =>
         throwError(() => new Error(this.mensagemDe(erro, 'Não foi possível enviar a solicitação. Tente novamente.')))
       )
@@ -193,8 +198,8 @@ export class AuthService {
       return erro.status === 401 ? padrao : corpo;
     }
 
-    if (corpo && typeof corpo === 'object' && corpo.mensagem) {
-      return corpo.mensagem;
+    if (corpo && typeof corpo === 'object' && (corpo.mensagem || corpo.message)) {
+      return (corpo.mensagem || corpo.message)!;
     }
 
     return padrao;
