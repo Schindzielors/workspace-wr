@@ -1,10 +1,10 @@
 /**
  * Contratos de `/api/WorkspaceHome` (WorkspaceHomeController).
  *
- * As propriedades vêm em PascalCase, como no `/WorkspaceMenu/MenuProjetos`:
- * a API devolve linhas do Dapper (ou Dictionary, no mock), que mantêm o nome
- * exato do alias do SQL. Se algum endpoint passar a devolver objeto anônimo
- * ou classe, o .NET serializa em camelCase e estes nomes precisam mudar.
+ * As propriedades vêm em camelCase, padrão da API (primeira letra
+ * minúscula). Nas consultas com Dapper, os aliases do SQL precisam seguir
+ * esse formato (ex.: `NOMCON AS nome`), porque a linha mantém o nome exato
+ * do alias.
  */
 
 /** Envelope de lista usado pela API do Workspace. */
@@ -15,20 +15,20 @@ export interface HomeListResponseDto<T> {
 
 /** GET /api/WorkspaceHome/Conectores */
 export interface HomeConectorDto {
-  Id: number;
-  Nome: string;
-  Descricao: string;
-  Categoria: string;
+  id: number;
+  nome: string;
+  descricao: string;
+  categoria: string;
 
   /** 'ATIVO' | 'EM_ANALISE' | 'INATIVO' | 'AGUARDANDO_CONFIGURACAO' */
-  Status: string;
-  LogoUrl: string | null;
+  status: string;
+  logoUrl: string | null;
 }
 
 /** GET /api/WorkspaceHome/Paineis */
 export interface HomePainelDto {
-  Id: number;
-  Titulo: string;
-  Projeto: string | null;
-  Rota: string | null;
+  id: number;
+  titulo: string;
+  projeto: string | null;
+  rota: string | null;
 }

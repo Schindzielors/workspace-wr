@@ -1,7 +1,7 @@
 export interface WorkspaceMenuDto {
-  Id: number;
-  IdPai: number | null;
-  Titulo: string;
-  Rota: string | null;
-  Icone: string | null;
+  id: number;
+  idPai: number | null;
+  titulo: string;
+  rota: string | null;
+  icone: string | null;
 }

@@ -81,9 +81,9 @@ export class WorkspaceVisaoService {
       .get<WorkspaceVisaoAtualDto>(`${this.apiUrl}/Atual`)
       .subscribe({
         next: dto => this._atual.set({
-          idGrupo: dto.IdGrupo,
-          idEmpresa: dto.IdEmpresa,
-          idFilial: dto.IdFilial
+          idGrupo: dto.idGrupo,
+          idEmpresa: dto.idEmpresa,
+          idFilial: dto.idFilial
         }),
         error: erro => console.error('Visão: falha ao carregar a visão atual.', erro)
       });
@@ -92,9 +92,9 @@ export class WorkspaceVisaoService {
   /** PUT Atual. Só atualiza o header depois que a API confirmar. */
   selecionar(visao: WorkspaceVisao): Observable<unknown> {
     const body: WorkspaceVisaoAtualDto = {
-      IdGrupo: visao.idGrupo,
-      IdEmpresa: visao.idEmpresa,
-      IdFilial: visao.idFilial
+      idGrupo: visao.idGrupo,
+      idEmpresa: visao.idEmpresa,
+      idFilial: visao.idFilial
     };
 
     return this.http
@@ -139,10 +139,10 @@ export class WorkspaceVisaoService {
 
   private mapNo(dto: WorkspaceVisaoNoDto): WorkspaceVisaoNo {
     return {
-      id: dto.Id,
-      nome: dto.Nome,
-      tipo: dto.Tipo.toLowerCase() as WorkspaceVisaoTipo,
-      idPai: dto.IdPai
+      id: dto.id,
+      nome: dto.nome,
+      tipo: dto.tipo.toLowerCase() as WorkspaceVisaoTipo,
+      idPai: dto.idPai
     };
   }
 }
