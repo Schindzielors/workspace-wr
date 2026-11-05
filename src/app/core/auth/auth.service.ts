@@ -98,8 +98,8 @@ export class AuthService {
   }
 
   /** POST /api/Auth/NovaSenha com o token da senha temporária; depois entra. */
-  definirNovaSenha(tokenTemporario: string, novaSenha: string): Observable<void> {
-    const body: AuthNovaSenhaRequestDto = { novaSenha };
+  definirNovaSenha(tokenTemporario: string, senhaTemporaria: string, novaSenha: string): Observable<void> {
+    const body: AuthNovaSenhaRequestDto = { senhaAtual: senhaTemporaria, novaSenha };
     const headers = new HttpHeaders({ Authorization: `Bearer ${tokenTemporario}` });
 
     return this.http.post<void>(`${this.urlAuth}/NovaSenha`, body, { headers }).pipe(

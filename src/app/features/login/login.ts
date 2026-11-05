@@ -49,6 +49,9 @@ export class Login {
 
   // Nova senha
   private tokenTemporario = '';
+
+  /** Senha temporária digitada no login (a API confere antes de trocar). */
+  private senhaTemporaria = '';
   readonly novaSenha = signal('');
   readonly confirmacao = signal('');
   readonly mostrarNovaSenha = signal(false);
@@ -109,15 +112,17 @@ export class Login {
     this.auth.entrar(this.login(), this.senha()).subscribe({
       next: resultado => {
         this.enviando.set(false);
-        this.senha.set('');
 
         if (resultado.tipo === 'senha-temporaria') {
           this.tokenTemporario = resultado.tokenTemporario;
+          this.senhaTemporaria = this.senha();
           this.etapa.set('nova-senha');
           this.focar('nova-senha');
         } else {
           this.irParaVisao();
         }
+
+        this.senha.set('');
       },
       error: (erro: Error) => this.falhar(erro)
     });
@@ -134,11 +139,18 @@ export class Login {
       return;
     }
 
+    if (this.novaSenha() === this.senhaTemporaria) {
+      this.erro.set('A nova senha precisa ser diferente da senha temporária.');
+      return;
+    }
+
     this.iniciarEnvio();
 
-    this.auth.definirNovaSenha(this.tokenTemporario, this.novaSenha()).subscribe({
+    this.auth.definirNovaSenha(this.tokenTemporario, this.senhaTemporaria, this.novaSenha()).subscribe({
       next: () => {
         this.enviando.set(false);
+        this.senhaTemporaria = '';
+        this.tokenTemporario = '';
         this.novaSenha.set('');
         this.confirmacao.set('');
         this.irParaVisao();

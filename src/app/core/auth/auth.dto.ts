@@ -21,8 +21,13 @@ export interface TokenRespostaDto {
   message?: string;
 }
 
-/** POST /api/Auth/NovaSenha (com o Bearer da senha temporária) */
+/**
+ * POST /api/Auth/NovaSenha (com o Bearer da senha temporária).
+ * Usa o AutenticacaoServiceApp.AlterarSenha, que confere a senha atual.
+ */
 export interface AuthNovaSenhaRequestDto {
+  /** Senha temporária digitada no login. */
+  senhaAtual: string;
   novaSenha: string;
 }
 
