@@ -32,14 +32,14 @@ export class WorkspaceMenuService {
       .pipe(
         map(response =>
           response.items.map(project => ({
-            id: project.Id.toString(),
-            projeto: project.Projeto,
-            system: buildSystemId(project.Projeto),
-            title: project.Nome,
-            shortTitle: project.Nome,
-            baseUrl: project.Url,
-            icon: project.Icon ?? undefined,
-            possuiMenu: project.PossuiMenu ?? true,
+            id: project.id.toString(),
+            projeto: project.projeto,
+            system: buildSystemId(project.projeto),
+            title: project.nome,
+            shortTitle: project.nome,
+            baseUrl: project.url,
+            icon: project.icon ?? undefined,
+            possuiMenu: project.possuiMenu ?? true,
             menus: []
           }))
         )
@@ -79,12 +79,12 @@ export class WorkspaceMenuService {
     const menuMap = new Map<number, WorkspaceMenuItem>();
 
     items.forEach(item => {
-      menuMap.set(item.Id, {
-        id: item.Id.toString(),
-        title: item.Titulo,
+      menuMap.set(item.id, {
+        id: item.id.toString(),
+        title: item.titulo,
         system,
-        url: buildScreenUrl(baseUrl, item.Rota),
-        rota: item.Rota ?? undefined,
+        url: buildScreenUrl(baseUrl, item.rota),
+        rota: item.rota ?? undefined,
         children: []
       });
     });
@@ -92,18 +92,18 @@ export class WorkspaceMenuService {
     const rootItems: WorkspaceMenuItem[] = [];
 
     items.forEach(item => {
-      const menuItem = menuMap.get(item.Id);
+      const menuItem = menuMap.get(item.id);
 
       if (!menuItem) {
         return;
       }
 
-      if (item.IdPai === null) {
+      if (item.idPai === null) {
         rootItems.push(menuItem);
         return;
       }
 
-      const parent = menuMap.get(item.IdPai);
+      const parent = menuMap.get(item.idPai);
 
       if (parent) {
         parent.children?.push(menuItem);

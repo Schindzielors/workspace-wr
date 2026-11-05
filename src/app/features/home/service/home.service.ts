@@ -22,7 +22,7 @@ import {
  * este serviço já está ligado de verdade: quando o backend trocar o mock
  * pelas consultas reais, nada muda aqui.
  *
- * Cada método converte o DTO da API (PascalCase) para o modelo usado pelos
+ * Cada método converte o DTO da API (camelCase) para o modelo usado pelos
  * componentes.
  */
 @Injectable({
@@ -53,12 +53,12 @@ export class HomeService {
 
   private mapConector(dto: HomeConectorDto): HomeConector {
     return {
-      id: dto.Id.toString(),
-      nome: dto.Nome,
-      descricao: dto.Descricao,
-      categoria: dto.Categoria,
-      status: this.mapConectorStatus(dto.Status),
-      logoUrl: dto.LogoUrl ?? undefined
+      id: dto.id.toString(),
+      nome: dto.nome,
+      descricao: dto.descricao,
+      categoria: dto.categoria,
+      status: this.mapConectorStatus(dto.status),
+      logoUrl: dto.logoUrl ?? undefined
     };
   }
 
@@ -77,10 +77,10 @@ export class HomeService {
 
   private mapPainel(dto: HomePainelDto): HomePainel {
     return {
-      id: dto.Id.toString(),
-      titulo: dto.Titulo,
-      sistema: dto.Projeto ? buildSystemId(dto.Projeto) : undefined,
-      rota: dto.Rota ?? undefined
+      id: dto.id.toString(),
+      titulo: dto.titulo,
+      sistema: dto.projeto ? buildSystemId(dto.projeto) : undefined,
+      rota: dto.rota ?? undefined
     };
   }
 }

@@ -127,7 +127,7 @@ export class WorkspaceFavoritosService {
     this._favoritos.set(favoritos);
 
     const body: WorkspaceFavoritoOrdemRequestDto = {
-      Ids: favoritos.map(favorito => Number(favorito.idMenu))
+      ids: favoritos.map(favorito => Number(favorito.idMenu))
     };
 
     this.http
@@ -165,24 +165,24 @@ export class WorkspaceFavoritosService {
 
   private mapFavorito(dto: WorkspaceFavoritoDto): WorkspaceFavorito {
     return {
-      idMenu: dto.IdMenu.toString(),
-      titulo: dto.Titulo,
-      categoria: dto.Categoria ?? '',
-      subcategoria: dto.Subcategoria ?? '',
-      sistema: buildSystemId(dto.Projeto),
-      projeto: dto.Projeto,
-      rota: dto.Rota
+      idMenu: dto.idMenu.toString(),
+      titulo: dto.titulo,
+      categoria: dto.categoria ?? '',
+      subcategoria: dto.subcategoria ?? '',
+      sistema: buildSystemId(dto.projeto),
+      projeto: dto.projeto,
+      rota: dto.rota
     };
   }
 
   private toRequest(favorito: WorkspaceFavorito): WorkspaceFavoritoRequestDto {
     return {
-      IdMenu: Number(favorito.idMenu),
-      Titulo: favorito.titulo,
-      Categoria: favorito.categoria || null,
-      Subcategoria: favorito.subcategoria || null,
-      Projeto: favorito.projeto,
-      Rota: favorito.rota
+      idMenu: Number(favorito.idMenu),
+      titulo: favorito.titulo,
+      categoria: favorito.categoria || null,
+      subcategoria: favorito.subcategoria || null,
+      projeto: favorito.projeto,
+      rota: favorito.rota
     };
   }
 }

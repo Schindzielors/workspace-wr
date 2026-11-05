@@ -68,7 +68,7 @@ export class WorkspaceUsuarioService {
 
     return enviarFoto$.pipe(
       switchMap(fotoUrl => {
-        const body: WorkspaceUsuarioPerfilRequestDto = { Nome: dados.nome, Idioma: dados.idioma };
+        const body: WorkspaceUsuarioPerfilRequestDto = { nome: dados.nome, idioma: dados.idioma };
 
         return this.http.put(`${this.apiUrl}/Perfil`, body).pipe(
           tap(() => this._perfil.update(perfil => perfil && {
@@ -90,10 +90,10 @@ export class WorkspaceUsuarioService {
     this.http
       .get<ListResponseDto<WorkspaceNotificacaoDto>>(`${this.apiUrl}/Notificacoes`)
       .pipe(map(response => response.items.map(dto => ({
-        id: dto.Id,
-        titulo: dto.Titulo,
-        descricao: dto.Descricao,
-        ativo: dto.Ativo
+        id: dto.id,
+        titulo: dto.titulo,
+        descricao: dto.descricao,
+        ativo: dto.ativo
       }))))
       .subscribe({
         next: notificacoes => this._notificacoes.set(notificacoes),
@@ -116,7 +116,7 @@ export class WorkspaceUsuarioService {
     );
 
     return this.http
-      .put(`${this.apiUrl}/Notificacoes/${id}`, { Ativo: ativo })
+      .put(`${this.apiUrl}/Notificacoes/${id}`, { ativo: ativo })
       .pipe(tap({ error: () => this._notificacoes.set(anterior) }));
   }
 
@@ -126,16 +126,16 @@ export class WorkspaceUsuarioService {
 
     return this.http
       .post<WorkspaceUsuarioFotoDto>(`${this.apiUrl}/Foto`, form)
-      .pipe(map(dto => dto.FotoUrl));
+      .pipe(map(dto => dto.fotoUrl));
   }
 
   private mapPerfil(dto: WorkspaceUsuarioPerfilDto): WorkspaceUsuarioPerfil {
     return {
-      nome: dto.Nome,
-      email: dto.Email,
-      cargo: dto.Cargo,
-      fotoUrl: dto.FotoUrl,
-      idioma: dto.Idioma
+      nome: dto.nome,
+      email: dto.email,
+      cargo: dto.cargo,
+      fotoUrl: dto.fotoUrl,
+      idioma: dto.idioma
     };
   }
 }

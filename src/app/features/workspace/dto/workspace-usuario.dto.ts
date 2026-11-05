@@ -1,34 +1,34 @@
 /**
  * Contratos de `/api/WorkspaceUsuario` (WorkspaceUsuarioController).
- * PascalCase, como os demais endpoints do Workspace.
+ * camelCase, padrão da API (primeira letra minúscula).
  */
 
 /** GET /api/WorkspaceUsuario/Perfil */
 export interface WorkspaceUsuarioPerfilDto {
-  Nome: string;
-  Email: string;
+  nome: string;
+  email: string;
   /** Definido pelo administrador; só leitura. */
-  Cargo: string;
-  FotoUrl: string | null;
+  cargo: string;
+  fotoUrl: string | null;
   /** 'pt-BR' | 'en-US' | 'es-ES' */
-  Idioma: string;
+  idioma: string;
 }
 
 /** PUT /api/WorkspaceUsuario/Perfil */
 export interface WorkspaceUsuarioPerfilRequestDto {
-  Nome: string;
-  Idioma: string;
+  nome: string;
+  idioma: string;
 }
 
 /** POST /api/WorkspaceUsuario/Foto (resposta) */
 export interface WorkspaceUsuarioFotoDto {
-  FotoUrl: string;
+  fotoUrl: string;
 }
 
 /** GET /api/WorkspaceUsuario/Notificacoes (itens da lista) */
 export interface WorkspaceNotificacaoDto {
-  Id: number;
-  Titulo: string;
-  Descricao: string;
-  Ativo: boolean;
+  id: number;
+  titulo: string;
+  descricao: string;
+  ativo: boolean;
 }
