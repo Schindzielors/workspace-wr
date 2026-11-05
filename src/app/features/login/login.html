@@ -1,0 +1,165 @@
+<main class="login">
+  <section class="login__lado">
+    <header class="login__topo">
+      <app-brand-logo />
+      <span class="login__slogan">Gestão de transportes sem limites</span>
+    </header>
+
+    <div class="login__conteudo">
+      @switch (etapa()) {
+        <!-- 1. Entrar -->
+        @case ('entrar') {
+          <form class="form" (submit)="entrar($event)" novalidate>
+            <div class="form__cabecalho">
+              <h1 class="form__titulo">Entrar</h1>
+              <p class="form__subtitulo">Bem-vindo de volta! Acesse sua conta para continuar.</p>
+            </div>
+
+            <label class="campo">
+              <span class="campo__label">Login</span>
+              <input class="campo__input" id="login" name="login" type="text" autocomplete="username"
+                autocapitalize="none" spellcheck="false" placeholder="Informe seu login" autofocus
+                [value]="login()" (input)="login.set($any($event.target).value)" />
+            </label>
+
+            <div class="campo">
+              <label class="campo__label" for="senha">Senha</label>
+              <div class="campo__senha">
+                <input class="campo__input" id="senha" name="senha" autocomplete="current-password"
+                  placeholder="Informe sua senha" [type]="mostrarSenha() ? 'text' : 'password'"
+                  [value]="senha()" (input)="senha.set($any($event.target).value)" />
+                <button type="button" class="campo__olho" (click)="mostrarSenha.set(!mostrarSenha())"
+                  [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+                  [attr.aria-pressed]="mostrarSenha()">
+                  <app-icon [name]="mostrarSenha() ? 'eye-slash' : 'eye'" [size]="16" />
+                </button>
+              </div>
+              <button type="button" class="form__link" (click)="redefinirAberto.set(true)">
+                Esqueci minha senha
+              </button>
+            </div>
+
+            @if (erro()) {
+              <p class="form__erro" role="alert">{{ erro() }}</p>
+            }
+
+            <button type="submit" class="form__botao" [disabled]="enviando()">
+              {{ enviando() ? 'Entrando...' : 'Entrar' }}
+            </button>
+          </form>
+        }
+
+        <!-- 2. Nova senha (senha temporária) -->
+        @case ('nova-senha') {
+          <form class="form" (submit)="salvarNovaSenha($event)" novalidate>
+            <!-- Login escondido: ajuda o gerenciador de senhas a salvar a nova senha. -->
+            <input type="text" class="visualmente-oculto" name="username" autocomplete="username"
+              tabindex="-1" aria-hidden="true" [value]="login()" readonly />
+
+            <div class="form__cabecalho form__cabecalho--centro">
+              <span class="form__selo" aria-hidden="true"><app-icon name="check" [size]="20" /></span>
+              <h1 class="form__titulo">Defina sua nova senha</h1>
+              <p class="form__subtitulo">Sua senha é temporária. Crie uma nova senha permanente para continuar.</p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__label" for="nova-senha">Nova senha</label>
+              <div class="campo__senha">
+                <input class="campo__input" id="nova-senha" name="nova-senha" autocomplete="new-password"
+                  placeholder="Informe sua senha" aria-describedby="criterios"
+                  [type]="mostrarNovaSenha() ? 'text' : 'password'"
+                  [value]="novaSenha()" (input)="novaSenha.set($any($event.target).value)" />
+                <button type="button" class="campo__olho" (click)="mostrarNovaSenha.set(!mostrarNovaSenha())"
+                  [attr.aria-label]="mostrarNovaSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+                  [attr.aria-pressed]="mostrarNovaSenha()">
+                  <app-icon [name]="mostrarNovaSenha() ? 'eye-slash' : 'eye'" [size]="16" />
+                </button>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label class="campo__label" for="confirmacao">Confirmar nova senha</label>
+              <div class="campo__senha">
+                <input class="campo__input" id="confirmacao" name="confirmacao" autocomplete="new-password"
+                  placeholder="Informe sua senha" aria-describedby="criterios"
+                  [type]="mostrarConfirmacao() ? 'text' : 'password'"
+                  [value]="confirmacao()" (input)="confirmacao.set($any($event.target).value)" />
+                <button type="button" class="campo__olho" (click)="mostrarConfirmacao.set(!mostrarConfirmacao())"
+                  [attr.aria-label]="mostrarConfirmacao() ? 'Ocultar senha' : 'Mostrar senha'"
+                  [attr.aria-pressed]="mostrarConfirmacao()">
+                  <app-icon [name]="mostrarConfirmacao() ? 'eye-slash' : 'eye'" [size]="16" />
+                </button>
+              </div>
+            </div>
+
+            <div class="criterios" id="criterios">
+              <span class="criterios__titulo"><app-icon name="password" [size]="16" /> Critérios</span>
+              <ul class="criterios__lista">
+                @for (criterio of criterios(); track criterio.id) {
+                  <li class="criterio"
+                    [class.criterio--ok]="avaliandoSenha() && criterio.ok"
+                    [class.criterio--falha]="avaliandoSenha() && !criterio.ok">
+                    <app-icon [name]="avaliandoSenha() && !criterio.ok ? 'x' : 'check'" [size]="14" />
+                    {{ criterio.texto }}
+                    <span class="visualmente-oculto">
+                      {{ !avaliandoSenha() ? '' : criterio.ok ? '(atendido)' : '(não atendido)' }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            @if (erro()) {
+              <p class="form__erro" role="alert">{{ erro() }}</p>
+            }
+
+            <button type="submit" class="form__botao" [disabled]="!senhaValida() || enviando()">
+              {{ enviando() ? 'Salvando...' : 'Salvar e entrar' }}
+            </button>
+          </form>
+        }
+
+        <!-- 3. Visão -->
+        @case ('visao') {
+          <form class="form" (submit)="confirmarVisao($event)" novalidate>
+            <div class="form__cabecalho">
+              <h1 class="form__titulo">Selecione por onde você quer começar</h1>
+              <p class="form__subtitulo">Você pode alterar a qualquer momento dentro da área de trabalho</p>
+            </div>
+
+            @if (visaoCarregada()) {
+              <app-visao-form class="form__visao" [(idGrupo)]="idGrupo" [(idEmpresa)]="idEmpresa"
+                [(idFilial)]="idFilial" />
+            } @else if (visaoService.falhou()) {
+              <p class="form__aviso" role="alert">
+                Não foi possível carregar suas empresas agora. Você pode entrar e trocar a visão depois.
+              </p>
+            } @else {
+              <p class="form__aviso" role="status">Carregando suas empresas...</p>
+            }
+
+            @if (erro()) {
+              <p class="form__erro" role="alert">{{ erro() }}</p>
+            }
+
+            <button type="submit" class="form__botao"
+              [disabled]="enviando() || (visaoCarregada() && !idGrupo()) || (!visaoCarregada() && !visaoService.falhou())">
+              {{ enviando() ? 'Entrando...' : 'Entrar' }}
+            </button>
+          </form>
+        }
+      }
+    </div>
+
+    <footer class="login__rodape">
+      <span>© Datapar {{ ano }}</span>
+      <span>Versão: <strong>{{ versao }}</strong></span>
+    </footer>
+  </section>
+
+  <app-login-showcase class="login__vitrine" />
+</main>
+
+@if (redefinirAberto()) {
+  <app-redefinir-senha [loginInicial]="login()" (fechar)="redefinirAberto.set(false)" />
+}

@@ -93,7 +93,7 @@
 
 @switch (userPanel()) {
   @case ('menu') {
-    <app-user-menu (escolhido)="openUserPanel($event)" (fechar)="closeUserPanel()" />
+    <app-user-menu (escolhido)="openUserPanel($event)" (fechar)="closeUserPanel()" (sair)="sair()" />
   }
   @case ('configuracoes') {
     <app-user-settings (fechar)="closeUserPanel()" />

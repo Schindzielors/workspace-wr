@@ -1,0 +1,109 @@
+/* Busca + Grupo > Empresa > Filial ("Trocar visão" e etapa de visão do login). */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Busca                                                             */
+/* ---------------------------------------------------------------- */
+
+.visao-form__search-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visao-form__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--select-height, 36px);
+  padding: 0 12px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: var(--color-neutral-soft);
+  color: var(--color-neutral-base);
+}
+
+.visao-form__search:focus-within {
+  border-color: var(--color-brand-secondary-base);
+  box-shadow: 0 0 0 3px var(--color-brand-secondary-soft);
+}
+
+.visao-form__search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-neutral-maximum);
+  font-family: var(--font-family-sans);
+  font-size: var(--select-font-size, var(--font-size-sm));
+}
+
+.visao-form__search input::placeholder {
+  color: var(--color-neutral-base);
+  opacity: 1;
+}
+
+.visao-form__results {
+  max-height: 196px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-light) transparent;
+}
+
+.visao-form__result {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.visao-form__result--active {
+  background: var(--color-neutral-soft);
+}
+
+/* "Insany LTDA / Insany 01 / Filial": níveis acima + tipo em azul. */
+.visao-form__result-path {
+  overflow: hidden;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.visao-form__result-sep {
+  padding: 0 1px;
+}
+
+.visao-form__result-type {
+  color: var(--color-brand-secondary-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.visao-form__result-name {
+  overflow: hidden;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.visao-form__result-empty {
+  padding: 12px 8px;
+  color: var(--color-neutral-base);
+  font-size: var(--font-size-sm);
+}

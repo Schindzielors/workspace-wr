@@ -1,0 +1,31 @@
+<div class="showcase__logo">
+  <app-brand-logo variante="simbolo" />
+</div>
+
+<div class="showcase__lista" aria-hidden="true">
+  <ul class="showcase__palavras" [style.--destaque]="slide().destaque">
+    @for (palavra of palavras; track palavra; let i = $index) {
+      <li class="showcase__palavra" [attr.data-distancia]="distancia(i)">
+        @if (distancia(i) === 0) {
+          <app-icon [name]="slide().icone" [size]="40" />
+        }
+        {{ palavra }}
+      </li>
+    }
+  </ul>
+</div>
+
+<div class="showcase__texto" aria-live="polite">
+  <h2 class="showcase__titulo">{{ slide().titulo }}</h2>
+  <p class="showcase__descricao">{{ slide().texto }}</p>
+</div>
+
+<div class="showcase__indicadores" role="tablist" aria-label="Destaques">
+  @for (item of slides; track $index; let i = $index) {
+    <button type="button" class="showcase__indicador" role="tab"
+      [class.showcase__indicador--ativo]="atual() === i"
+      [attr.aria-selected]="atual() === i"
+      [attr.aria-label]="item.titulo"
+      (click)="irPara(i)"></button>
+  }
+</div>

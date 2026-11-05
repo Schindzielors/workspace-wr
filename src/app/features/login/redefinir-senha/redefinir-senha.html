@@ -1,0 +1,44 @@
+<div class="backdrop" (click)="fechar.emit()" aria-hidden="true"></div>
+
+@if (!enviado()) {
+  <form class="modal" role="dialog" aria-modal="true" aria-labelledby="redefinir-titulo"
+    aria-describedby="redefinir-descricao" (submit)="enviar($event)">
+    <div class="modal__corpo">
+      <h2 class="modal__titulo" id="redefinir-titulo">Redefinir senha</h2>
+      <p class="modal__descricao" id="redefinir-descricao">
+        Informe seu e-mail ou login usado para acessar o sistema.
+        Você receberá uma senha temporária por e-mail.
+      </p>
+
+      <label class="campo">
+        <span class="campo__label">Email ou Login</span>
+        <input #campo class="campo__input" type="text" autocomplete="username" spellcheck="false"
+          placeholder="Adicione seu email ou login" [value]="valor()"
+          (input)="valor.set($any($event.target).value)" />
+      </label>
+
+      @if (erro()) {
+        <p class="modal__erro" role="alert">{{ erro() }}</p>
+      }
+    </div>
+
+    <div class="modal__rodape">
+      <button type="button" class="botao botao--secundario" (click)="fechar.emit()">Cancelar</button>
+      <button type="submit" class="botao botao--primario" [disabled]="!valor().trim() || enviando()">
+        {{ enviando() ? 'Enviando...' : 'Enviar' }}
+      </button>
+    </div>
+  </form>
+} @else {
+  <div class="modal modal--sucesso" role="alertdialog" aria-modal="true" aria-labelledby="enviado-titulo"
+    aria-describedby="enviado-descricao">
+    <span class="modal__selo" aria-hidden="true"><app-icon name="check" [size]="20" /></span>
+    <h2 class="modal__titulo" id="enviado-titulo">Solicitação enviada</h2>
+    <p class="modal__descricao" id="enviado-descricao">
+      Você receberá uma senha temporária por e-mail em instantes. Verifique sua caixa de entrada.
+    </p>
+    <button #botaoFechar type="button" class="botao botao--primario botao--compacto" (click)="fechar.emit()">
+      Fechar
+    </button>
+  </div>
+}

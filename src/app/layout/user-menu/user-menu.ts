@@ -35,6 +35,7 @@ export class UserMenu {
 
   readonly escolhido = output<UserMenuAcao>();
   readonly fechar = output<void>();
+  readonly sair = output<void>();
 
   constructor() {
     afterNextRender(() => this.itens()[0]?.focus());

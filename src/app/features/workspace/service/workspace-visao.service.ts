@@ -24,6 +24,7 @@ export class WorkspaceVisaoService {
 
   private readonly _estrutura = signal<WorkspaceVisaoNo[]>([]);
   private readonly _atual = signal<WorkspaceVisao | null>(null);
+  private readonly _falhou = signal(false);
   private carregado = false;
 
   /** Grupos, empresas e filiais que o usuário pode acessar. */
@@ -31,6 +32,9 @@ export class WorkspaceVisaoService {
 
   /** Visão selecionada; `null` enquanto carrega. */
   readonly atual = this._atual.asReadonly();
+
+  /** Alguma das chamadas de `carregar()` falhou. */
+  readonly falhou = this._falhou.asReadonly();
 
   private readonly porId = computed(
     () => new Map(this._estrutura().map(no => [no.id, no]))
@@ -74,7 +78,10 @@ export class WorkspaceVisaoService {
       .pipe(map(response => response.items.map(dto => this.mapNo(dto))))
       .subscribe({
         next: estrutura => this._estrutura.set(estrutura),
-        error: erro => console.error('Visão: falha ao carregar a estrutura.', erro)
+        error: erro => {
+          console.error('Visão: falha ao carregar a estrutura.', erro);
+          this._falhou.set(true);
+        }
       });
 
     this.http
@@ -85,7 +92,10 @@ export class WorkspaceVisaoService {
           idEmpresa: dto.idEmpresa,
           idFilial: dto.idFilial
         }),
-        error: erro => console.error('Visão: falha ao carregar a visão atual.', erro)
+        error: erro => {
+          console.error('Visão: falha ao carregar a visão atual.', erro);
+          this._falhou.set(true);
+        }
       });
   }
 
