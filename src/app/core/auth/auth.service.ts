@@ -1,9 +1,9 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
 import { appConfig } from '../config/app-config';
-import { AuthErroDto, AuthNovaSenhaRequestDto, ResetarSenhaRequestDto, ResetarSenhaRespostaDto, TokenRespostaDto } from './auth.dto';
+import { AuthErroDto, LoginRequestDto, LoginRespostaDto, NovaSenhaRequestDto, ResetarSenhaRequestDto } from './auth.dto';
 
 export type AuthEstado = 'anonimo' | 'autenticado';
 
@@ -19,9 +19,10 @@ const CHAVE_TOKEN = 'workspace.auth.token';
 const CANAL_LOGOUT = 'workspace.logout';
 
 /**
- * Sessão do usuário, no mesmo modelo dos outros sistemas da Datapar:
+ * Sessão do usuário:
  *
- * - Login pelo `POST /api/Token` (TokenController), que devolve o JWT.
+ * - Login pelo `POST /api/WorkspaceLogin`, que devolve o JWT (mesmo token
+ *   do TokenController, válido para toda a API).
  * - O token fica no `sessionStorage`: o F5 não desloga, cada aba do
  *   navegador tem a sua sessão e fechar a aba encerra a sessão.
  * - Vai em `Authorization: Bearer` (interceptor). Sem cookie, então o CORS
@@ -34,9 +35,7 @@ const CANAL_LOGOUT = 'workspace.logout';
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly urlToken = `${appConfig.apiUrl}/api/Token`;
-  private readonly urlAuth = `${appConfig.apiUrl}/api/Auth`;
-  private readonly urlResetarSenha = `${appConfig.apiUrl}/Utilitarios/ResetarSenha`;
+  private readonly urlLogin = `${appConfig.apiUrl}/api/WorkspaceLogin`;
 
   private readonly _accessToken = signal<string | null>(null);
   private timerExpiracao: ReturnType<typeof setTimeout> | null = null;
@@ -59,7 +58,7 @@ export class AuthService {
 
   /** URLs de login/senha (o interceptor não mexe nelas). */
   ehUrlAuth(url: string): boolean {
-    return url.startsWith(this.urlToken) || url.startsWith(this.urlAuth) || url.startsWith(this.urlResetarSenha);
+    return url.startsWith(this.urlLogin);
   }
 
   /** Antes do app iniciar: recupera o token salvo, se ainda for válido. */
@@ -75,34 +74,34 @@ export class AuthService {
     return Promise.resolve();
   }
 
-  /** POST /api/Token (form UserName/Password). Erros chegam como `Error` com a mensagem para a tela. */
+  /** POST /api/WorkspaceLogin. Erros chegam como `Error` com a mensagem para a tela. */
   entrar(login: string, senha: string): Observable<AuthLoginResultado> {
-    const body = new HttpParams().set('UserName', login.trim()).set('Password', senha);
+    const body: LoginRequestDto = { login: login.trim(), senha };
 
-    return this.http.post<TokenRespostaDto>(this.urlToken, body).pipe(
+    return this.http.post<LoginRespostaDto>(this.urlLogin, body).pipe(
       map(resposta => {
-        if (!resposta?.access_token) {
-          throw new Error('Resposta da API sem access_token.');
+        if (!resposta?.accessToken) {
+          throw new Error('Resposta da API sem accessToken.');
         }
 
-        if (resposta.passwordReset) {
+        if (resposta.senhaTemporaria) {
           // Ainda não entra: o token só é usado para definir a nova senha.
-          return { tipo: 'senha-temporaria' as const, tokenTemporario: resposta.access_token };
+          return { tipo: 'senha-temporaria' as const, tokenTemporario: resposta.accessToken };
         }
 
-        this.iniciarSessao(resposta.access_token);
+        this.iniciarSessao(resposta.accessToken);
         return { tipo: 'autenticado' as const };
       }),
       catchError(erro => throwError(() => new Error(this.mensagemDe(erro, 'Login ou senha inválidos.'))))
     );
   }
 
-  /** POST /api/Auth/NovaSenha com o token da senha temporária; depois entra. */
+  /** POST /api/WorkspaceLogin/NovaSenha com o token da senha temporária; depois entra. */
   definirNovaSenha(tokenTemporario: string, senhaTemporaria: string, novaSenha: string): Observable<void> {
-    const body: AuthNovaSenhaRequestDto = { senhaAtual: senhaTemporaria, novaSenha };
+    const body: NovaSenhaRequestDto = { senhaAtual: senhaTemporaria, novaSenha };
     const headers = new HttpHeaders({ Authorization: `Bearer ${tokenTemporario}` });
 
-    return this.http.post<void>(`${this.urlAuth}/NovaSenha`, body, { headers }).pipe(
+    return this.http.post<void>(`${this.urlLogin}/NovaSenha`, body, { headers }).pipe(
       map(() => this.iniciarSessao(tokenTemporario)),
       catchError(erro =>
         throwError(() => new Error(this.mensagemDe(erro, 'Não foi possível salvar a nova senha. Tente novamente.')))
@@ -110,15 +109,11 @@ export class AuthService {
     );
   }
 
-  /**
-   * "Esqueci minha senha": POST /Utilitarios/ResetarSenha (ResetarSenhaController),
-   * que gera a senha temporária e envia por e-mail.
-   */
-  solicitarRedefinicao(login: string): Observable<void> {
-    const body: ResetarSenhaRequestDto = { userName: login.trim() };
+  /** "Esqueci minha senha": POST /api/WorkspaceLogin/ResetarSenha. */
+  solicitarRedefinicao(loginOuEmail: string): Observable<void> {
+    const body: ResetarSenhaRequestDto = { loginOuEmail: loginOuEmail.trim() };
 
-    return this.http.post<ResetarSenhaRespostaDto>(this.urlResetarSenha, body).pipe(
-      map(() => undefined),
+    return this.http.post<void>(`${this.urlLogin}/ResetarSenha`, body).pipe(
       catchError(erro =>
         throwError(() => new Error(this.mensagemDe(erro, 'Não foi possível enviar a solicitação. Tente novamente.')))
       )
@@ -193,7 +188,7 @@ export class AuthService {
 
     const corpo = erro.error as AuthErroDto | string | null;
 
-    // TokenController responde texto simples (ex.: "Usuário inválido!").
+    // Erro em texto simples (ex.: middleware de exceções).
     if (typeof corpo === 'string' && corpo.length < 200 && !corpo.trimStart().startsWith('<')) {
       return erro.status === 401 ? padrao : corpo;
     }

@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
  * volta para o login.
  *
  * Chamadas para outros domínios (ex.: sistemas nos iframes), para
- * `/api/Token` e para `/api/Auth` não passam por aqui.
+ * `/api/WorkspaceLogin` não passam por aqui.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);

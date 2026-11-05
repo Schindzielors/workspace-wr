@@ -1,51 +1,42 @@
 /**
- * Contratos da autenticação.
- *
- * Login: o mesmo `POST /api/Token` (TokenController) que os outros sistemas
- * já usam. Recebe form (`UserName`, `Password`) e devolve o JWT no corpo.
- * Os nomes abaixo são os do objeto anônimo do TokenController.
+ * Contratos de `/api/WorkspaceLogin` (WorkspaceLoginController).
+ * camelCase, padrão da API.
  */
 
-/** POST /api/Token (resposta 200) */
-export interface TokenRespostaDto {
-  authenticated: boolean;
-
-  /** Senha temporária ("Snhtmp = S"): precisa definir uma nova antes de entrar. */
-  passwordReset: boolean;
-  isFirstAccess: boolean;
-
-  /** "yyyy-MM-dd HH:mm:ss" no horário do servidor. A validade usada é o `exp` do JWT. */
-  created: string;
-  expiration: string;
-  access_token: string;
-  message?: string;
+/** POST /api/WorkspaceLogin */
+export interface LoginRequestDto {
+  /** Login ou e-mail. */
+  login: string;
+  senha: string;
 }
 
-/**
- * POST /api/Auth/NovaSenha (com o Bearer da senha temporária).
- * Usa o AutenticacaoServiceApp.AlterarSenha, que confere a senha atual.
- */
-export interface AuthNovaSenhaRequestDto {
+/** POST /api/WorkspaceLogin (resposta 200) */
+export interface LoginRespostaDto {
+  accessToken: string;
+
+  /** Segundos até expirar (TokenSettings:Seconds). A validade usada é o `exp` do JWT. */
+  expiraEm: number;
+
+  /** Senha temporária: precisa definir uma nova antes de entrar. */
+  senhaTemporaria: boolean;
+
+  /** Ainda não usado (fluxo de primeiro acesso). */
+  primeiroAcesso: boolean;
+}
+
+/** POST /api/WorkspaceLogin/NovaSenha (com o Bearer da senha temporária) */
+export interface NovaSenhaRequestDto {
   /** Senha temporária digitada no login. */
   senhaAtual: string;
   novaSenha: string;
 }
 
-/**
- * POST /Utilitarios/ResetarSenha (ResetarSenhaController, já existente).
- * Gera a senha temporária e envia pelo template "email_redefinicao_senha.txt".
- */
+/** POST /api/WorkspaceLogin/ResetarSenha */
 export interface ResetarSenhaRequestDto {
-  userName: string;
+  loginOuEmail: string;
 }
 
-/** POST /Utilitarios/ResetarSenha (resposta 200) */
-export interface ResetarSenhaRespostaDto {
-  success: boolean;
-  message: string;
-}
-
-/** Corpo dos erros da API (AuthController usa `mensagem`; os demais, `message`). */
+/** Corpo dos erros da API. */
 export interface AuthErroDto {
   mensagem?: string;
   message?: string;
