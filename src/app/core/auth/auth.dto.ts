@@ -1,43 +1,43 @@
 /**
- * Contratos de `/api/Auth` (AuthController). camelCase, padrão da API.
- *
- * O refresh token nunca passa pelo JavaScript: a API grava em cookie
- * HttpOnly no Login/NovaSenha e lê no Refresh/Logout.
+ * Contratos de `/api/WorkspaceLogin` (WorkspaceLoginController).
+ * camelCase, padrão da API.
  */
 
-/** POST /api/Auth/Login */
-export interface AuthLoginRequestDto {
+/** POST /api/WorkspaceLogin */
+export interface LoginRequestDto {
+  /** Login ou e-mail. */
   login: string;
   senha: string;
 }
 
-/**
- * Resposta de Login, NovaSenha e Refresh.
- *
- * Senha temporária: `senhaTemporaria = true`, sem `accessToken` e sem
- * cookie. O `tokenTrocaSenha` só serve para o POST NovaSenha.
- */
-export interface AuthSessaoDto {
-  accessToken: string | null;
+/** POST /api/WorkspaceLogin (resposta 200) */
+export interface LoginRespostaDto {
+  accessToken: string;
 
-  /** Validade do access token, em segundos. */
-  expiraEm: number | null;
+  /** Segundos até expirar (TokenSettings:Seconds). A validade usada é o `exp` do JWT. */
+  expiraEm: number;
+
+  /** Senha temporária: precisa definir uma nova antes de entrar. */
   senhaTemporaria: boolean;
-  tokenTrocaSenha?: string | null;
+
+  /** Ainda não usado (fluxo de primeiro acesso). */
+  primeiroAcesso: boolean;
 }
 
-/** POST /api/Auth/NovaSenha */
-export interface AuthNovaSenhaRequestDto {
-  tokenTrocaSenha: string;
+/** POST /api/WorkspaceLogin/NovaSenha (com o Bearer da senha temporária) */
+export interface NovaSenhaRequestDto {
+  /** Senha temporária digitada no login. */
+  senhaAtual: string;
   novaSenha: string;
 }
 
-/** POST /api/Auth/EsqueciSenha */
-export interface AuthEsqueciSenhaRequestDto {
+/** POST /api/WorkspaceLogin/ResetarSenha */
+export interface ResetarSenhaRequestDto {
   loginOuEmail: string;
 }
 
-/** Corpo dos erros 400/401 da API. */
+/** Corpo dos erros da API. */
 export interface AuthErroDto {
   mensagem?: string;
+  message?: string;
 }

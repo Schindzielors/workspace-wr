@@ -9,10 +9,8 @@ import { Injectable } from '@angular/core';
  * - é separado por aba do navegador.
  *
  * LOGIN / LOGOUT:
- * Ainda não há login no front. Quando houver, o logout deve chamar
- * `limpar()`: assim, ao logar de novo, o Workspace começa sem abas.
- * Se o login trocar de usuário sem logout (ex.: token expirado e outro
- * usuário entrando), chame `limpar()` também ao detectar a troca.
+ * O logout (AuthService) limpa todo o sessionStorage da aba, então ao
+ * entrar de novo o Workspace começa sem abas.
  *
  * Todas as leituras e escritas são protegidas: se o navegador bloquear o
  * armazenamento (modo privado, cota cheia), o Workspace funciona normalmente,

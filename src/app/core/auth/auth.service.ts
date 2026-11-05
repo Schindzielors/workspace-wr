@@ -1,48 +1,44 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, finalize, firstValueFrom, map, Observable, of, shareReplay, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 import { appConfig } from '../config/app-config';
-import {
-  AuthErroDto,
-  AuthEsqueciSenhaRequestDto,
-  AuthLoginRequestDto,
-  AuthNovaSenhaRequestDto,
-  AuthSessaoDto
-} from './auth.dto';
+import { AuthErroDto, LoginRequestDto, LoginRespostaDto, NovaSenhaRequestDto, ResetarSenhaRequestDto } from './auth.dto';
 
 export type AuthEstado = 'anonimo' | 'autenticado';
 
 /** Resultado do login para a tela decidir a próxima etapa. */
 export type AuthLoginResultado =
   | { tipo: 'autenticado' }
-  | { tipo: 'senha-temporaria'; tokenTrocaSenha: string };
+  | { tipo: 'senha-temporaria'; tokenTemporario: string };
+
+/** Token da sessão (fora do prefixo `workspace.v1.` das abas). */
+const CHAVE_TOKEN = 'workspace.auth.token';
 
 /** Chave usada para avisar outras abas do navegador sobre o logout. */
 const CANAL_LOGOUT = 'workspace.logout';
 
 /**
- * Sessão do usuário.
+ * Sessão do usuário:
  *
- * - Access token (Bearer): só em memória. Não vai para localStorage nem
- *   sessionStorage, então um script injetado na página não o encontra
- *   guardado.
- * - Refresh token: cookie HttpOnly gravado pela API (o JavaScript nunca vê).
- *   Ao abrir ou atualizar a página (F5), `restaurar()` chama o Refresh e
- *   recupera um access token novo sem pedir a senha.
- * - O access token é renovado sozinho um pouco antes de expirar, e o
- *   interceptor renova e repete a chamada se a API responder 401.
+ * - Login pelo `POST /api/WorkspaceLogin`, que devolve o JWT (mesmo token
+ *   do TokenController, válido para toda a API).
+ * - O token fica no `sessionStorage`: o F5 não desloga, cada aba do
+ *   navegador tem a sua sessão e fechar a aba encerra a sessão.
+ * - Vai em `Authorization: Bearer` (interceptor). Sem cookie, então o CORS
+ *   "CorsWithoutCredentials" da API já atende.
+ * - Quando o token vence (`exp` do JWT) ou a API responde 401, a sessão
+ *   acaba e o usuário volta para o login.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${appConfig.apiUrl}/api/Auth`;
+  private readonly urlLogin = `${appConfig.apiUrl}/api/WorkspaceLogin`;
 
   private readonly _accessToken = signal<string | null>(null);
-  private timerRenovacao: ReturnType<typeof setTimeout> | null = null;
-  private renovacaoEmAndamento: Observable<string> | null = null;
+  private timerExpiracao: ReturnType<typeof setTimeout> | null = null;
 
   readonly estado = computed<AuthEstado>(() => this._accessToken() ? 'autenticado' : 'anonimo');
 
@@ -60,58 +56,64 @@ export class AuthService {
     return this._accessToken();
   }
 
-  /** URLs da API de autenticação (o interceptor não põe Bearer nelas). */
+  /** URLs de login/senha (o interceptor não mexe nelas). */
   ehUrlAuth(url: string): boolean {
-    return url.startsWith(this.apiUrl);
+    return url.startsWith(this.urlLogin);
   }
 
-  /**
-   * Chamado antes do app iniciar: tenta recuperar a sessão pelo cookie.
-   * Nunca falha; sem sessão, o usuário fica anônimo e vai para o login.
-   */
+  /** Antes do app iniciar: recupera o token salvo, se ainda for válido. */
   restaurar(): Promise<void> {
-    return firstValueFrom(
-      this.renovar().pipe(
-        map(() => undefined),
-        catchError(() => of(undefined))
-      )
-    );
+    const token = lerToken();
+
+    if (token && segundosRestantes(token) > 0) {
+      this.iniciarSessao(token);
+    } else {
+      removerToken();
+    }
+
+    return Promise.resolve();
   }
 
-  /** POST Login. Erros chegam como `Error` com a mensagem para a tela. */
+  /** POST /api/WorkspaceLogin. Erros chegam como `Error` com a mensagem para a tela. */
   entrar(login: string, senha: string): Observable<AuthLoginResultado> {
-    const body: AuthLoginRequestDto = { login: login.trim(), senha };
+    const body: LoginRequestDto = { login: login.trim(), senha };
 
-    return this.http.post<AuthSessaoDto>(`${this.apiUrl}/Login`, body, { withCredentials: true }).pipe(
-      map(sessao => {
-        if (sessao.senhaTemporaria && sessao.tokenTrocaSenha) {
-          return { tipo: 'senha-temporaria' as const, tokenTrocaSenha: sessao.tokenTrocaSenha };
+    return this.http.post<LoginRespostaDto>(this.urlLogin, body).pipe(
+      map(resposta => {
+        if (!resposta?.accessToken) {
+          throw new Error('Resposta da API sem accessToken.');
         }
 
-        this.iniciarSessao(sessao);
+        if (resposta.senhaTemporaria) {
+          // Ainda não entra: o token só é usado para definir a nova senha.
+          return { tipo: 'senha-temporaria' as const, tokenTemporario: resposta.accessToken };
+        }
+
+        this.iniciarSessao(resposta.accessToken);
         return { tipo: 'autenticado' as const };
       }),
       catchError(erro => throwError(() => new Error(this.mensagemDe(erro, 'Login ou senha inválidos.'))))
     );
   }
 
-  /** POST NovaSenha: troca a senha temporária e já entra. */
-  definirNovaSenha(tokenTrocaSenha: string, novaSenha: string): Observable<void> {
-    const body: AuthNovaSenhaRequestDto = { tokenTrocaSenha, novaSenha };
+  /** POST /api/WorkspaceLogin/NovaSenha com o token da senha temporária; depois entra. */
+  definirNovaSenha(tokenTemporario: string, senhaTemporaria: string, novaSenha: string): Observable<void> {
+    const body: NovaSenhaRequestDto = { senhaAtual: senhaTemporaria, novaSenha };
+    const headers = new HttpHeaders({ Authorization: `Bearer ${tokenTemporario}` });
 
-    return this.http.post<AuthSessaoDto>(`${this.apiUrl}/NovaSenha`, body, { withCredentials: true }).pipe(
-      map(sessao => this.iniciarSessao(sessao)),
+    return this.http.post<void>(`${this.urlLogin}/NovaSenha`, body, { headers }).pipe(
+      map(() => this.iniciarSessao(tokenTemporario)),
       catchError(erro =>
         throwError(() => new Error(this.mensagemDe(erro, 'Não foi possível salvar a nova senha. Tente novamente.')))
       )
     );
   }
 
-  /** POST EsqueciSenha: a API envia uma senha temporária por e-mail. */
+  /** "Esqueci minha senha": POST /api/WorkspaceLogin/ResetarSenha. */
   solicitarRedefinicao(loginOuEmail: string): Observable<void> {
-    const body: AuthEsqueciSenhaRequestDto = { loginOuEmail: loginOuEmail.trim() };
+    const body: ResetarSenhaRequestDto = { loginOuEmail: loginOuEmail.trim() };
 
-    return this.http.post<void>(`${this.apiUrl}/EsqueciSenha`, body).pipe(
+    return this.http.post<void>(`${this.urlLogin}/ResetarSenha`, body).pipe(
       catchError(erro =>
         throwError(() => new Error(this.mensagemDe(erro, 'Não foi possível enviar a solicitação. Tente novamente.')))
       )
@@ -119,55 +121,23 @@ export class AuthService {
   }
 
   /**
-   * POST Refresh (cookie HttpOnly). Chamadas simultâneas compartilham a
-   * mesma requisição, então várias respostas 401 ao mesmo tempo geram só
-   * uma renovação.
-   */
-  renovar(): Observable<string> {
-    if (!this.renovacaoEmAndamento) {
-      this.renovacaoEmAndamento = this.http
-        .post<AuthSessaoDto>(`${this.apiUrl}/Refresh`, null, { withCredentials: true })
-        .pipe(
-          map(sessao => {
-            this.iniciarSessao(sessao);
-            return sessao.accessToken!;
-          }),
-          catchError(erro => {
-            this.limparToken();
-            return throwError(() => erro);
-          }),
-          finalize(() => (this.renovacaoEmAndamento = null)),
-          shareReplay(1)
-        );
-    }
-
-    return this.renovacaoEmAndamento;
-  }
-
-  /**
-   * Sair: a API apaga o cookie e invalida o refresh token. Depois a página
-   * recarrega no login, o que limpa toda a memória do app (abas, menus,
-   * favoritos, perfil) sem precisar zerar serviço por serviço.
+   * Sair: apaga o token, avisa as outras abas e recarrega no login, o que
+   * limpa toda a memória do app (abas, menus, favoritos, perfil).
    */
   sair(): void {
-    this.http
-      .post<void>(`${this.apiUrl}/Logout`, null, { withCredentials: true })
-      .pipe(catchError(() => of(undefined)))
-      .subscribe(() => {
-        try {
-          localStorage.setItem(CANAL_LOGOUT, Date.now().toString());
-          localStorage.removeItem(CANAL_LOGOUT);
-        } catch {
-          // Sem storage: as outras abas saem quando o token expirar.
-        }
+    try {
+      localStorage.setItem(CANAL_LOGOUT, Date.now().toString());
+      localStorage.removeItem(CANAL_LOGOUT);
+    } catch {
+      // Sem storage: as outras abas saem quando o token vencer.
+    }
 
-        this.encerrarLocalmente();
-      });
+    this.encerrarLocalmente();
   }
 
-  /** Sessão perdida (refresh recusado, logout em outra aba): volta ao login. */
+  /** Sessão encerrada (logout, token vencido, 401): volta ao login. */
   encerrarLocalmente(): void {
-    this.limparToken();
+    this.limpar();
 
     try {
       sessionStorage.clear();
@@ -175,57 +145,97 @@ export class AuthService {
       // Nada a limpar.
     }
 
-    window.location.assign(`${window.location.pathname}#/login`);
+    window.location.hash = '#/login';
     window.location.reload();
   }
 
   // ---------------------------------------------------------------------
 
-  private iniciarSessao(sessao: AuthSessaoDto): void {
-    if (!sessao.accessToken) {
-      throw new Error('Resposta da API sem accessToken.');
+  private iniciarSessao(token: string): void {
+    this._accessToken.set(token);
+    salvarToken(token);
+
+    if (this.timerExpiracao) {
+      clearTimeout(this.timerExpiracao);
     }
 
-    this._accessToken.set(sessao.accessToken);
-    this.agendarRenovacao(sessao.expiraEm ?? 0);
-  }
+    // setTimeout aceita no máximo ~24,8 dias; acima disso, o 401 encerra.
+    const ms = segundosRestantes(token) * 1000;
 
-  /** Renova com 80% da validade (ex.: token de 15 min renova aos 12). */
-  private agendarRenovacao(expiraEmSegundos: number): void {
-    if (this.timerRenovacao) {
-      clearTimeout(this.timerRenovacao);
-    }
-
-    if (expiraEmSegundos > 0) {
-      this.timerRenovacao = setTimeout(
-        () => this.renovar().subscribe({ error: () => this.encerrarLocalmente() }),
-        expiraEmSegundos * 800
-      );
+    if (ms > 0 && ms < 2_147_000_000) {
+      this.timerExpiracao = setTimeout(() => this.encerrarLocalmente(), ms);
     }
   }
 
-  private limparToken(): void {
+  private limpar(): void {
     this._accessToken.set(null);
+    removerToken();
 
-    if (this.timerRenovacao) {
-      clearTimeout(this.timerRenovacao);
-      this.timerRenovacao = null;
+    if (this.timerExpiracao) {
+      clearTimeout(this.timerExpiracao);
+      this.timerExpiracao = null;
     }
   }
 
   private mensagemDe(erro: unknown, padrao: string): string {
-    if (erro instanceof HttpErrorResponse) {
-      if (erro.status === 0) {
-        return 'Sem conexão com o servidor. Verifique sua internet e tente novamente.';
-      }
+    if (!(erro instanceof HttpErrorResponse)) {
+      return padrao;
+    }
 
-      const corpo = erro.error as AuthErroDto | null;
+    if (erro.status === 0) {
+      return 'Sem conexão com o servidor. Verifique sua internet e tente novamente.';
+    }
 
-      if (corpo && typeof corpo === 'object' && corpo.mensagem) {
-        return corpo.mensagem;
-      }
+    const corpo = erro.error as AuthErroDto | string | null;
+
+    // Erro em texto simples (ex.: middleware de exceções).
+    if (typeof corpo === 'string' && corpo.length < 200 && !corpo.trimStart().startsWith('<')) {
+      return erro.status === 401 ? padrao : corpo;
+    }
+
+    if (corpo && typeof corpo === 'object' && (corpo.mensagem || corpo.message)) {
+      return (corpo.mensagem || corpo.message)!;
     }
 
     return padrao;
+  }
+}
+
+// -----------------------------------------------------------------------
+// Armazenamento e leitura do JWT
+// -----------------------------------------------------------------------
+
+function lerToken(): string | null {
+  try {
+    return sessionStorage.getItem(CHAVE_TOKEN);
+  } catch {
+    return null;
+  }
+}
+
+function salvarToken(token: string): void {
+  try {
+    sessionStorage.setItem(CHAVE_TOKEN, token);
+  } catch {
+    // Sem storage: a sessão vale até o F5.
+  }
+}
+
+function removerToken(): void {
+  try {
+    sessionStorage.removeItem(CHAVE_TOKEN);
+  } catch {
+    // Nada a remover.
+  }
+}
+
+/** Segundos até o `exp` do JWT (0 se vencido ou ilegível). */
+function segundosRestantes(token: string): number {
+  try {
+    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const { exp } = JSON.parse(atob(payload.padEnd(Math.ceil(payload.length / 4) * 4, '='))) as { exp?: number };
+    return exp ? Math.max(0, Math.floor(exp - Date.now() / 1000)) : 0;
+  } catch {
+    return 0;
   }
 }

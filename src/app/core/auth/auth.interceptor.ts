@@ -1,6 +1,6 @@
-import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 
 import { appConfig } from '../config/app-config';
 import { AuthService } from './auth.service';
@@ -8,12 +8,11 @@ import { AuthService } from './auth.service';
 /**
  * Põe `Authorization: Bearer <token>` nas chamadas à API do Workspace.
  *
- * Se a API responder 401 (token expirado), renova pelo Refresh e repete a
- * chamada uma vez. Se a renovação também falhar, a sessão acabou: volta
- * para o login.
+ * Se a API responder 401 (token vencido ou inválido), a sessão acabou:
+ * volta para o login.
  *
- * Chamadas para outros domínios (ex.: sistemas nos iframes) e para
- * `/api/Auth` não recebem o token.
+ * Chamadas para outros domínios (ex.: sistemas nos iframes), para
+ * `/api/WorkspaceLogin` não passam por aqui.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -22,22 +21,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const comToken = (token: string | null): HttpRequest<unknown> =>
-    token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
+  const token = auth.accessToken();
+  const comToken = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
-  return next(comToken(auth.accessToken())).pipe(
+  return next(comToken).pipe(
     catchError(erro => {
-      if (!(erro instanceof HttpErrorResponse) || erro.status !== 401) {
-        return throwError(() => erro);
+      if (erro instanceof HttpErrorResponse && erro.status === 401 && token) {
+        auth.encerrarLocalmente();
       }
 
-      return auth.renovar().pipe(
-        catchError(erroRenovacao => {
-          auth.encerrarLocalmente();
-          return throwError(() => erroRenovacao);
-        }),
-        switchMap(token => next(comToken(token)))
-      );
+      return throwError(() => erro);
     })
   );
 };
