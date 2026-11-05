@@ -21,8 +21,8 @@
     <button type="button" class="user-menu__item" role="menuitem" disabled title="Ajuda (em desenvolvimento)">
       <app-icon name="question" [size]="16" /> Ajuda
     </button>
-    <button type="button" class="user-menu__item user-menu__item--danger" role="menuitem" disabled
-      title="Sair (disponível quando o login for implementado)">
+    <button type="button" class="user-menu__item user-menu__item--danger" role="menuitem"
+      (click)="sair.emit()">
       <app-icon name="sign-out" [size]="16" /> Sair
     </button>
   </div>

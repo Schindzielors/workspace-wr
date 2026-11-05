@@ -1,0 +1,139 @@
+/* Painel azul à direita do login (prints do layout, sem Figma ainda). */
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 56px 56px 40px;
+  overflow: hidden;
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(160deg, #2b68b3 0%, #2560ab 55%, #215aa3 100%);
+  color: #fff;
+}
+
+.showcase__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: #fff;
+  --logo-size: 36px;
+}
+
+/* Lista que rola: o item destacado fica sempre na terceira linha. */
+.showcase__lista {
+  --linha: 84px;
+  flex: 1 1 auto;
+  min-height: calc(var(--linha) * 5);
+  margin-top: 40px;
+  overflow: hidden;
+}
+
+.showcase__palavras {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateY(calc((2 - var(--destaque)) * var(--linha)));
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.showcase__palavra {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--linha);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.showcase__palavra[data-distancia="0"] {
+  opacity: 1;
+}
+
+.showcase__palavra[data-distancia="1"] {
+  opacity: 0.35;
+}
+
+.showcase__palavra[data-distancia="2"] {
+  opacity: 0.12;
+}
+
+.showcase__texto {
+  margin-top: 32px;
+}
+
+.showcase__titulo {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+}
+
+.showcase__descricao {
+  max-width: 480px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: var(--font-size-xl);
+  line-height: 1.5;
+}
+
+.showcase__indicadores {
+  display: flex;
+  gap: 8px;
+  margin-top: 40px;
+}
+
+.showcase__indicador {
+  width: 16px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: width 300ms ease, background 300ms ease;
+}
+
+.showcase__indicador--ativo {
+  width: 32px;
+  background: #fff;
+}
+
+.showcase__indicador:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Telas baixas: lista menor. */
+@media (max-height: 760px) {
+  :host {
+    padding: 40px;
+  }
+
+  .showcase__lista {
+    --linha: 64px;
+    margin-top: 24px;
+  }
+
+  .showcase__palavra {
+    font-size: var(--font-size-h4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase__palavras,
+  .showcase__palavra,
+  .showcase__indicador {
+    transition: none;
+  }
+}

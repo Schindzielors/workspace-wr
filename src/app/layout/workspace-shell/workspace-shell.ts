@@ -7,6 +7,7 @@ import { Icon } from '../../shared/icon/icon';
 import { Home, HomeTelaSolicitada } from '../../features/home/home';
 import { CommandPalette } from '../command-palette/command-palette';
 import { VisaoPicker } from '../visao-picker/visao-picker';
+import { AuthService } from '../../core/auth/auth.service';
 import { UserMenu, UserMenuAcao } from '../user-menu/user-menu';
 import { UserSettings } from '../user-settings/user-settings';
 import { UserNotifications } from '../user-notifications/user-notifications';
@@ -47,6 +48,7 @@ import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
   }
 })
 export class WorkspaceShell implements OnInit {
+  private readonly auth = inject(AuthService);
   private readonly menuService = inject(WorkspaceMenuService);
   readonly tabsService = inject(WorkspaceTabsService);
   private readonly session = inject(WorkspaceSessionService);
@@ -168,6 +170,12 @@ export class WorkspaceShell implements OnInit {
 
   openUserPanel(painel: UserMenuAcao): void {
     this.userPanel.set(painel);
+  }
+
+  /** Sair: encerra a sessão na API e volta para o login (abas são descartadas). */
+  sair(): void {
+    this.userPanel.set(null);
+    this.auth.sair();
   }
 
   closeUserPanel(): void {

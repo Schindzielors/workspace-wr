@@ -13,54 +13,8 @@
   </header>
 
   <div class="picker__body">
-    <!-- Busca em todos os níveis -->
-    <div class="picker__search-area">
-      <label class="picker__search">
-        <input #buscaInput type="text" role="combobox" autocomplete="off" spellcheck="false"
-          placeholder="Buscar" aria-label="Buscar grupo, empresa ou filial"
-          aria-controls="visao-resultados"
-          [attr.aria-expanded]="mostrarResultados()"
-          [attr.aria-activedescendant]="mostrarResultados() && resultados().length ? 'visao-resultado-' + indiceBusca() : null"
-          (input)="atualizarTermo($event)" (keydown)="onBuscaKeydown($event)"
-          (focus)="buscaAtiva.set(true)" (blur)="buscaAtiva.set(false)" />
-        <app-icon name="magnifying-glass" [size]="16" />
-      </label>
-
-      @if (mostrarResultados()) {
-        <ul class="picker__results" id="visao-resultados" role="listbox" aria-label="Resultados">
-          @for (resultado of resultados(); track resultado.no.id; let i = $index) {
-            <li class="picker__result" role="option" [id]="'visao-resultado-' + i"
-              [class.picker__result--active]="indiceBusca() === i"
-              [attr.aria-selected]="indiceBusca() === i"
-              (mousedown)="$event.preventDefault()"
-              (mousemove)="indiceBusca.set(i)"
-              (click)="escolherResultado(resultado.no)">
-              <span class="picker__result-path">
-                @for (nome of resultado.caminho; track $index) {
-                  {{ nome }} <span class="picker__result-sep">/</span>
-                }
-                <span class="picker__result-type">{{ resultado.tipo }}</span>
-              </span>
-              <span class="picker__result-name">{{ resultado.no.nome }}</span>
-            </li>
-          } @empty {
-            <li class="picker__result-empty">Nada encontrado.</li>
-          }
-        </ul>
-      }
-    </div>
-
-    <!-- Campos em cascata -->
-    <app-select label="Nível de Grupo" placeholder="Selecione o Grupo"
-      [options]="opcoesGrupo()" [value]="idGrupo()" (valueChange)="escolherGrupo($event)" />
-
-    <app-select label="Nível de empresa" placeholder="Selecione a empresa"
-      [options]="opcoesEmpresa()" [value]="idEmpresa()" [disabled]="!idGrupo()"
-      (valueChange)="escolherEmpresa($event)" />
-
-    <app-select label="Nível de filial" placeholder="Selecione a filial"
-      [options]="opcoesFilial()" [value]="idFilial()" [disabled]="!idEmpresa()"
-      (valueChange)="escolherFilial($event)" />
+    <app-visao-form [focarBusca]="true" [(idGrupo)]="idGrupo" [(idEmpresa)]="idEmpresa"
+      [(idFilial)]="idFilial" />
   </div>
 
   <footer class="picker__footer">
