@@ -1,0 +1,191 @@
+/* Modais do "Esqueci minha senha" (prints do layout). */
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.28);
+  animation: fade-in 140ms ease-out;
+}
+
+/* Cartão branco com anel claro em volta. */
+.modal {
+  position: relative;
+  width: min(400px, 100%);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 20px 48px rgba(3, 7, 18, 0.2);
+  animation: modal-in 160ms ease-out;
+}
+
+.modal__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 16px 16px;
+}
+
+.modal__titulo {
+  margin: 0;
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-text);
+}
+
+.modal__descricao {
+  margin: 0 0 12px;
+  color: var(--color-neutral-strong);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+}
+
+.modal__erro {
+  margin: 8px 0 0;
+  color: var(--color-feedback-error-intense);
+  font-size: var(--font-size-sm);
+}
+
+.modal__rodape {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid var(--color-neutral-light);
+}
+
+/* "Solicitação enviada": tudo centralizado. */
+.modal--sucesso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: min(400px, 100%);
+  padding: 20px 24px 16px;
+  text-align: center;
+}
+
+.modal--sucesso .modal__descricao {
+  margin-bottom: 20px;
+}
+
+.modal__selo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(3, 7, 18, 0.06);
+  color: var(--color-brand-secondary-base);
+}
+
+/* Campo */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo__label {
+  color: var(--color-neutral-maximum);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.campo__input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--color-neutral-maximum);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  outline: none;
+}
+
+.campo__input::placeholder {
+  color: var(--color-neutral-subtle-2);
+}
+
+.campo__input:focus {
+  border-color: var(--color-brand-secondary-base);
+  box-shadow: 0 0 0 3px var(--color-brand-secondary-soft);
+}
+
+/* Botões */
+.botao {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.botao--primario {
+  border: 0;
+  background: var(--color-brand-primary-base);
+  color: var(--color-neutral-maximum);
+}
+
+.botao--primario:hover:not(:disabled) {
+  background: var(--color-brand-primary-strong);
+}
+
+.botao--primario:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.botao--secundario {
+  border: 1px solid var(--color-neutral-light);
+  background: var(--color-neutral-very-soft);
+  color: var(--color-neutral-maximum);
+}
+
+.botao--secundario:hover {
+  background: var(--color-neutral-soft);
+}
+
+.botao--compacto {
+  height: 36px;
+  padding: 0 20px;
+}
+
+.botao:focus-visible {
+  outline: 2px solid var(--color-feedback-info-strong);
+  outline-offset: 2px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .modal {
+    animation: none;
+  }
+}
