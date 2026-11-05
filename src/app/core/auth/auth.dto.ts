@@ -1,34 +1,28 @@
 /**
- * Contratos de `/api/Auth` (AuthController). camelCase, padrão da API.
+ * Contratos da autenticação.
  *
- * O refresh token nunca passa pelo JavaScript: a API grava em cookie
- * HttpOnly no Login/NovaSenha e lê no Refresh/Logout.
+ * Login: o mesmo `POST /api/Token` (TokenController) que os outros sistemas
+ * já usam. Recebe form (`UserName`, `Password`) e devolve o JWT no corpo.
+ * Os nomes abaixo são os do objeto anônimo do TokenController.
  */
 
-/** POST /api/Auth/Login */
-export interface AuthLoginRequestDto {
-  login: string;
-  senha: string;
+/** POST /api/Token (resposta 200) */
+export interface TokenRespostaDto {
+  authenticated: boolean;
+
+  /** Senha temporária ("Snhtmp = S"): precisa definir uma nova antes de entrar. */
+  passwordReset: boolean;
+  isFirstAccess: boolean;
+
+  /** "yyyy-MM-dd HH:mm:ss" no horário do servidor. A validade usada é o `exp` do JWT. */
+  created: string;
+  expiration: string;
+  access_token: string;
+  message?: string;
 }
 
-/**
- * Resposta de Login, NovaSenha e Refresh.
- *
- * Senha temporária: `senhaTemporaria = true`, sem `accessToken` e sem
- * cookie. O `tokenTrocaSenha` só serve para o POST NovaSenha.
- */
-export interface AuthSessaoDto {
-  accessToken: string | null;
-
-  /** Validade do access token, em segundos. */
-  expiraEm: number | null;
-  senhaTemporaria: boolean;
-  tokenTrocaSenha?: string | null;
-}
-
-/** POST /api/Auth/NovaSenha */
+/** POST /api/Auth/NovaSenha (com o Bearer da senha temporária) */
 export interface AuthNovaSenhaRequestDto {
-  tokenTrocaSenha: string;
   novaSenha: string;
 }
 
@@ -37,7 +31,7 @@ export interface AuthEsqueciSenhaRequestDto {
   loginOuEmail: string;
 }
 
-/** Corpo dos erros 400/401 da API. */
+/** Corpo dos erros 400 do AuthController. */
 export interface AuthErroDto {
   mensagem?: string;
 }

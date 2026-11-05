@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
     // fallback para index.html.
     provideRouter(routes, withHashLocation()),
     provideHttpClient(withInterceptors([authInterceptor])),
-    // Antes da primeira tela: recupera a sessão pelo cookie (F5 não desloga).
+    // Antes da primeira tela: recupera o token salvo na aba (F5 não desloga).
     provideAppInitializer(() => inject(AuthService).restaurar())
   ]
 };

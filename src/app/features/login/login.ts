@@ -48,7 +48,7 @@ export class Login {
   readonly mostrarSenha = signal(false);
 
   // Nova senha
-  private tokenTrocaSenha = '';
+  private tokenTemporario = '';
   readonly novaSenha = signal('');
   readonly confirmacao = signal('');
   readonly mostrarNovaSenha = signal(false);
@@ -112,7 +112,7 @@ export class Login {
         this.senha.set('');
 
         if (resultado.tipo === 'senha-temporaria') {
-          this.tokenTrocaSenha = resultado.tokenTrocaSenha;
+          this.tokenTemporario = resultado.tokenTemporario;
           this.etapa.set('nova-senha');
           this.focar('nova-senha');
         } else {
@@ -136,7 +136,7 @@ export class Login {
 
     this.iniciarEnvio();
 
-    this.auth.definirNovaSenha(this.tokenTrocaSenha, this.novaSenha()).subscribe({
+    this.auth.definirNovaSenha(this.tokenTemporario, this.novaSenha()).subscribe({
       next: () => {
         this.enviando.set(false);
         this.novaSenha.set('');
