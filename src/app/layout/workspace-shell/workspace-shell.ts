@@ -22,7 +22,7 @@ import { WorkspaceMenuService } from '../../features/workspace/service/workspace
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
 import { WorkspaceSessionService } from '../../features/workspace/service/workspace-session.service';
-import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
+import { buildScreenUrl, marcarUrlWorkspace } from '../../features/workspace/utils/workspace-url';
 
 @Component({
   selector: 'app-workspace-shell',
@@ -293,7 +293,7 @@ export class WorkspaceShell implements OnInit {
         id: `aplicacao-${application.system}`,
         title: application.title,
         system: application.system,
-        url: application.baseUrl
+        url: marcarUrlWorkspace(application.baseUrl)
       });
       return;
     }
