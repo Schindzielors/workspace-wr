@@ -17,10 +17,33 @@ export function buildSystemId(project: string): string {
     .replace(/\s+/g, '-');
 }
 
+/** Parâmetro que avisa o sistema embutido que ele está no Workspace. */
+export const PARAMETRO_WORKSPACE = 'workspace';
+
+/**
+ * Acrescenta `?workspace=1` na URL (antes do `#`).
+ *
+ * Os sistemas (via dtp-angular-library) só entram no "modo Workspace"
+ * (sem header e sem menu lateral) quando estão em um iframe E a URL tem
+ * esse parâmetro. Quem abre o sistema direto continua vendo o layout normal.
+ * Antes do `#` ele não se perde quando o sistema troca de rota.
+ *
+ * Exemplo: "http://host:8588/#/cotacoes" -> "http://host:8588/?workspace=1#/cotacoes"
+ */
+export function marcarUrlWorkspace(url: string): string {
+  try {
+    const destino = new URL(url, window.location.href);
+    destino.searchParams.set(PARAMETRO_WORKSPACE, '1');
+    return destino.toString();
+  } catch {
+    return url;
+  }
+}
+
 /**
  * Monta a URL de uma tela a partir da URL base da aplicação e da rota.
  *
- * Exemplo: ("http://host:8588", "/cotacoes") -> "http://host:8588/#/cotacoes"
+ * Exemplo: ("http://host:8588", "/cotacoes") -> "http://host:8588/?workspace=1#/cotacoes"
  */
 export function buildScreenUrl(
   baseUrl: string,
@@ -41,5 +64,5 @@ export function buildScreenUrl(
       ? route.substring(1)
       : route;
 
-  return `${normalizedBaseUrl}#/${normalizedRoute}`;
+  return marcarUrlWorkspace(`${normalizedBaseUrl}#/${normalizedRoute}`);
 }
