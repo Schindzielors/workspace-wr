@@ -56,6 +56,12 @@ export class AuthService {
     return this._accessToken();
   }
 
+  /** Expiração do token atual (`exp` do JWT, em segundos desde 1970), ou `null`. */
+  expiracao(): number | null {
+    const token = this._accessToken();
+    return token ? lerExp(token) : null;
+  }
+
   /** URLs de login/senha (o interceptor não mexe nelas). */
   ehUrlAuth(url: string): boolean {
     return url.startsWith(this.urlLogin);
@@ -229,13 +235,19 @@ function removerToken(): void {
   }
 }
 
-/** Segundos até o `exp` do JWT (0 se vencido ou ilegível). */
-function segundosRestantes(token: string): number {
+/** `exp` do JWT (segundos desde 1970), ou `null` se ilegível. */
+function lerExp(token: string): number | null {
   try {
     const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
     const { exp } = JSON.parse(atob(payload.padEnd(Math.ceil(payload.length / 4) * 4, '='))) as { exp?: number };
-    return exp ? Math.max(0, Math.floor(exp - Date.now() / 1000)) : 0;
+    return typeof exp === 'number' ? exp : null;
   } catch {
-    return 0;
+    return null;
   }
+}
+
+/** Segundos até o `exp` do JWT (0 se vencido ou ilegível). */
+function segundosRestantes(token: string): number {
+  const exp = lerExp(token);
+  return exp ? Math.max(0, Math.floor(exp - Date.now() / 1000)) : 0;
 }

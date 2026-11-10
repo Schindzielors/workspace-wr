@@ -41,6 +41,30 @@ export class WorkspaceVisaoService {
   );
 
   /**
+   * Códigos das filiais da visão atual, enviados aos sistemas das abas:
+   * grupo = todas as filiais do grupo; empresa = as filiais da empresa;
+   * filial = só ela. `null` enquanto a visão não carregou.
+   */
+  readonly codigosFiliais = computed<number[] | null>(() => {
+    const atual = this._atual();
+
+    if (!atual || !this._estrutura().length) {
+      return null;
+    }
+
+    if (atual.idFilial) {
+      const filial = this.no(atual.idFilial);
+      return filial ? [filial.codigo] : [];
+    }
+
+    const empresas = atual.idEmpresa
+      ? [atual.idEmpresa]
+      : this.filhos(atual.idGrupo, 'empresa').map(empresa => empresa.id);
+
+    return empresas.flatMap(idEmpresa => this.filhos(idEmpresa, 'filial').map(filial => filial.codigo));
+  });
+
+  /**
    * Textos do header: empresa (ou grupo) em cima, filial (ou nível) embaixo.
    * Ex.: "Insany 01" / "Insany Alfenas".
    */
@@ -150,6 +174,7 @@ export class WorkspaceVisaoService {
   private mapNo(dto: WorkspaceVisaoNoDto): WorkspaceVisaoNo {
     return {
       id: dto.id,
+      codigo: Number(dto.codigo),
       nome: dto.nome,
       tipo: dto.tipo.toLowerCase() as WorkspaceVisaoTipo,
       idPai: dto.idPai

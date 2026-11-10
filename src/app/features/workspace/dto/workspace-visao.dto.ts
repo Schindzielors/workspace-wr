@@ -9,6 +9,12 @@ export type WorkspaceVisaoTipoDto = 'GRUPO' | 'EMPRESA' | 'FILIAL';
 export interface WorkspaceVisaoNoDto {
   /** Único na lista toda (ex.: "G1", "E1", "F1"). */
   id: string;
+
+  /**
+   * Código real no ERP: código do grupo, da empresa ou da filial. As filiais
+   * da visão são enviadas por esse código aos sistemas abertos nas abas.
+   */
+  codigo: number;
   nome: string;
   tipo: WorkspaceVisaoTipoDto;
 

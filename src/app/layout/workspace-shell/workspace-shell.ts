@@ -7,6 +7,7 @@ import { Icon } from '../../shared/icon/icon';
 import { Home, HomeTelaSolicitada } from '../../features/home/home';
 import { CommandPalette } from '../command-palette/command-palette';
 import { VisaoPicker } from '../visao-picker/visao-picker';
+import { WorkspaceEmbedPonteService } from '../../features/workspace/embed/workspace-embed-ponte.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { UserMenu, UserMenuAcao } from '../user-menu/user-menu';
 import { UserSettings } from '../user-settings/user-settings';
@@ -80,6 +81,9 @@ export class WorkspaceShell implements OnInit {
   private readonly lastTabBySystem = new Map<string, string>();
 
   constructor() {
+    // Entrega token e filiais da visão aos sistemas abertos nas abas (postMessage).
+    inject(WorkspaceEmbedPonteService).iniciar();
+
     /**
      * Mantém a aplicação selecionada em sincronia com a aba ativa.
      *
