@@ -14,7 +14,13 @@
 
   @for (tab of tabsService.tabs(); track tab.id) {
     <div class="frame-slot" [class.frame-slot--visible]="isVisible(tab.id)">
+      <!--
+        name="dtp-workspace": a dtp-angular-library lê o window.name para entrar
+        no "modo Workspace" (sem header/menu). Diferente do ?workspace=1 da URL,
+        o nome continua valendo mesmo se o sistema redirecionar ao abrir.
+      -->
       <iframe
+        name="dtp-workspace"
         class="workspace-frame"
         [src]="getSafeUrl(
           tab.id,

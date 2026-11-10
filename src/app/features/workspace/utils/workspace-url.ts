@@ -24,9 +24,11 @@ export const PARAMETRO_WORKSPACE = 'workspace';
  * Acrescenta `?workspace=1` na URL (antes do `#`).
  *
  * Os sistemas (via dtp-angular-library) só entram no "modo Workspace"
- * (sem header e sem menu lateral) quando estão em um iframe E a URL tem
- * esse parâmetro. Quem abre o sistema direto continua vendo o layout normal.
- * Antes do `#` ele não se perde quando o sistema troca de rota.
+ * (sem header e sem menu lateral) quando estão em um iframe E têm o
+ * marcador: o nome do iframe (`name="dtp-workspace"`, no IframeHost) ou
+ * este parâmetro. O nome é o principal, porque sobrevive a redirecionamentos
+ * do sistema; o parâmetro fica como reforço. Quem abre o sistema direto
+ * continua vendo o layout normal.
  *
  * Exemplo: "http://host:8588/#/cotacoes" -> "http://host:8588/?workspace=1#/cotacoes"
  */
