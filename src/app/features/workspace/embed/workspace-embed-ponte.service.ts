@@ -1,10 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { effect, inject, Injectable, untracked } from '@angular/core';
 
+import { appConfig } from '../../../core/config/app-config';
 import { AuthService } from '../../../core/auth/auth.service';
 import { WorkspaceVisaoService } from '../service/workspace-visao.service';
 import {
   MENSAGEM_PEDIR_SESSAO,
   MENSAGEM_SESSAO,
+  MENSAGEM_SESSAO_EXPIRADA,
   MENSAGEM_VISAO,
   PROTOCOLO_VERSAO,
   SessaoMensagem,
@@ -28,6 +31,9 @@ interface PedidoPendente {
  *   filiais da visão atual. Assim o sistema não mostra a tela de login nem a
  *   de seleção de filiais dentro do iframe.
  * - Quando o usuário troca a visão no header, avisa todas as abas.
+ * - Quando um sistema avisa que a sessão expirou (401 que a renovação não
+ *   resolveu), confere a sessão do Workspace: token vencido ou recusado pela
+ *   API leva ao login do Workspace; token válido é reenviado para a aba.
  *
  * Só responde para iframes do próprio Workspace e só para a origem exata da
  * URL que a aba abriu, então o token não vai para nenhum outro site.
@@ -38,6 +44,7 @@ interface PedidoPendente {
 })
 export class WorkspaceEmbedPonteService {
   private readonly auth = inject(AuthService);
+  private readonly http = inject(HttpClient);
   private readonly visaoService = inject(WorkspaceVisaoService);
 
   private iniciado = false;
@@ -47,6 +54,9 @@ export class WorkspaceEmbedPonteService {
 
   /** Últimas filiais avisadas às abas (para só avisar quando mudar). */
   private ultimasFiliais: string | null = null;
+
+  /** Conferência de sessão em andamento (vários avisos geram uma chamada só). */
+  private conferindoSessao = false;
 
   constructor() {
     effect(() => {
@@ -79,7 +89,9 @@ export class WorkspaceEmbedPonteService {
   // ---------------------------------------------------------------------
 
   private readonly aoReceberMensagem = (evento: MessageEvent): void => {
-    if (evento.data?.tipo !== MENSAGEM_PEDIR_SESSAO) {
+    const tipo = evento.data?.tipo;
+
+    if (tipo !== MENSAGEM_PEDIR_SESSAO && tipo !== MENSAGEM_SESSAO_EXPIRADA) {
       return;
     }
 
@@ -92,6 +104,11 @@ export class WorkspaceEmbedPonteService {
 
     const pedido: PedidoPendente = { janela: evento.source as Window, origem: evento.origin };
 
+    if (tipo === MENSAGEM_SESSAO_EXPIRADA) {
+      this.conferirSessao(pedido);
+      return;
+    }
+
     if (this.visaoService.codigosFiliais() === null && !this.visaoService.falhou()) {
       this.pendentes.push(pedido);
       return;
@@ -99,6 +116,36 @@ export class WorkspaceEmbedPonteService {
 
     this.enviarSessao(pedido);
   };
+
+  /**
+   * Um sistema recebeu 401 mesmo depois de renovar. Se o token do Workspace
+   * venceu, vai para o login. Senão, testa o token na API: 401 lá faz o
+   * interceptor do Workspace levar ao login; se a API aceitar, o problema era
+   * do sistema e a sessão é reenviada para a aba.
+   */
+  private conferirSessao(pedido: PedidoPendente): void {
+    const expiracao = this.auth.expiracao();
+
+    if (expiracao !== null && expiracao <= Date.now() / 1000) {
+      this.auth.encerrarLocalmente();
+      return;
+    }
+
+    if (this.conferindoSessao) {
+      return;
+    }
+
+    this.conferindoSessao = true;
+
+    this.http.get(`${appConfig.apiUrl}/api/WorkspaceUsuario/Perfil`).subscribe({
+      next: () => {
+        this.conferindoSessao = false;
+        this.enviarSessao(pedido);
+      },
+      // 401: o authInterceptor já leva ao login. Outros erros: nada a fazer aqui.
+      error: () => (this.conferindoSessao = false)
+    });
+  }
 
   private responderPendentes(): void {
     const pedidos = this.pendentes;

@@ -7,6 +7,7 @@
  *   sistema  -> Workspace : { tipo: 'dtp-workspace:pedir-sessao', versao: 1 }
  *   Workspace -> sistema  : { tipo: 'dtp-workspace:sessao', versao: 1, token, expiraEm, filiais, visao }
  *   Workspace -> sistema  : { tipo: 'dtp-workspace:visao',  versao: 1, filiais, visao }   (troca de visão)
+ *   sistema  -> Workspace : { tipo: 'dtp-workspace:sessao-expirada', versao: 1 }        (401 que a renovação não resolveu)
  *
  * Segurança: o Workspace só responde para iframes dele e só para a origem da
  * URL que abriu (postMessage com targetOrigin exato).
@@ -17,6 +18,7 @@ export const PROTOCOLO_VERSAO = 1;
 export const MENSAGEM_PEDIR_SESSAO = 'dtp-workspace:pedir-sessao';
 export const MENSAGEM_SESSAO = 'dtp-workspace:sessao';
 export const MENSAGEM_VISAO = 'dtp-workspace:visao';
+export const MENSAGEM_SESSAO_EXPIRADA = 'dtp-workspace:sessao-expirada';
 
 /** Item da visão com o código real do ERP. */
 export interface VisaoItemMensagem {
