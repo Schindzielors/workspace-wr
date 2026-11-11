@@ -8,7 +8,15 @@ export interface WorkspaceProjectDto {
   nome: string;
   descricao: string;
   projeto: string;
+
+  /** URL do Web Rodopar (ou da aplicação, quando ela é um sistema só). */
   url: string;
+
+  /**
+   * URL do Portal WR. A aplicação WR junta dois sistemas: as telas com
+   * `projeto` (Nomexe) "Portal Wr" abrem aqui; as demais, em `url`.
+   */
+  urlPortal?: string | null;
 
   /** Ícone da aplicação na navegação (ex.: "map", "truck"). */
   icon?: string | null;

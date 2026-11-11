@@ -13,6 +13,9 @@ export interface WorkspaceFavoritoDto {
 
   /** Mesmo valor de `projeto` em /WorkspaceMenu/Projetos (ex.: "Wr"). */
   projeto: string;
+
+  /** Sistema da tela (RODFRM.NOMEXE, ex.: "Portal Wr"), para abrir na URL certa. */
+  origem: string | null;
   rota: string;
 }
 
