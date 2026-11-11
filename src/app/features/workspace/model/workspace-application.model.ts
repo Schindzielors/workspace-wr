@@ -56,6 +56,12 @@ export interface WorkspaceApplication {
   baseUrl: string;
 
   /**
+   * URL do Portal WR (`urlPortal` da API). A aplicação WR junta Portal WR e
+   * Web Rodopar: telas com origem "Portal Wr" usam esta URL; as demais, `baseUrl`.
+   */
+  portalUrl?: string;
+
+  /**
    * Indica se a aplicação tem menu lateral.
    *
    * - true (ex.: WR): ao selecionar, o Workspace mostra o menu lateral.

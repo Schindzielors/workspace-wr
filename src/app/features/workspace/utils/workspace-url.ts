@@ -42,6 +42,30 @@ export function marcarUrlWorkspace(url: string): string {
   }
 }
 
+/** Origem (RODFRM.NOMEXE) das telas que abrem na `urlPortal` da aplicação. */
+const ORIGEM_PORTAL = 'portal wr';
+
+/**
+ * URL base de uma tela da aplicação: a do Portal WR para telas com origem
+ * "Portal Wr" (quando a aplicação tem `portalUrl`), senão a `baseUrl`.
+ */
+export function baseUrlDaTela(
+  application: { baseUrl: string; portalUrl?: string },
+  origem?: string | null
+): string {
+  const ehPortal = origem?.trim().toLowerCase() === ORIGEM_PORTAL;
+  return ehPortal && application.portalUrl ? application.portalUrl : application.baseUrl;
+}
+
+/** URL completa de uma tela da aplicação (ver `baseUrlDaTela`). */
+export function urlDaTela(
+  application: { baseUrl: string; portalUrl?: string },
+  rota: string | null | undefined,
+  origem?: string | null
+): string | undefined {
+  return buildScreenUrl(baseUrlDaTela(application, origem), rota);
+}
+
 /**
  * Monta a URL de uma tela a partir da URL base da aplicação e da rota.
  *

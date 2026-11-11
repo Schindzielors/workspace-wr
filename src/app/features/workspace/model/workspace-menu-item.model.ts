@@ -11,4 +11,7 @@ export interface WorkspaceMenuItem {
 
   /** Rota original da API (ex.: "/cotacoes-em-aberto"), usada nos favoritos. */
   rota?: string;
+
+  /** Sistema da tela (RODFRM.NOMEXE, ex.: "Portal Wr", "Web Rodopar"). */
+  origem?: string;
 }

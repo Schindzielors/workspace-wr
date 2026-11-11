@@ -100,6 +100,7 @@ export class WorkspaceFavoritosService {
       subcategoria: caminho.length > 1 ? caminho[caminho.length - 1].title : '',
       sistema: application.system,
       projeto: application.projeto,
+      origem: item.origem ?? '',
       rota: item.rota ?? ''
     };
 
@@ -171,6 +172,7 @@ export class WorkspaceFavoritosService {
       subcategoria: dto.subcategoria ?? '',
       sistema: buildSystemId(dto.projeto),
       projeto: dto.projeto,
+      origem: dto.origem ?? '',
       rota: dto.rota
     };
   }
@@ -182,6 +184,7 @@ export class WorkspaceFavoritosService {
       categoria: favorito.categoria || null,
       subcategoria: favorito.subcategoria || null,
       projeto: favorito.projeto,
+      origem: favorito.origem || null,
       rota: favorito.rota
     };
   }

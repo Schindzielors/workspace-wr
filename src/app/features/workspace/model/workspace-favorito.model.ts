@@ -18,5 +18,8 @@ export interface WorkspaceFavorito {
   /** Valor de `projeto` da aplicação (ex.: "Wr"), enviado à API. */
   projeto: string;
 
+  /** Sistema da tela (ex.: "Portal Wr"); define se abre na `urlPortal`. */
+  origem: string;
+
   rota: string;
 }

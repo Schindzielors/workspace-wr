@@ -21,6 +21,9 @@ export interface HomeTelaSolicitada {
   titulo: string;
   sistema: string;
   rota: string;
+
+  /** Sistema da tela (ex.: "Portal Wr"); define se abre na `urlPortal`. */
+  origem?: string;
 }
 
 /**
@@ -94,7 +97,8 @@ export class Home implements OnInit {
       id: favorito.idMenu,
       titulo: favorito.titulo,
       sistema: favorito.sistema,
-      rota: favorito.rota
+      rota: favorito.rota,
+      origem: favorito.origem
     });
   }
 

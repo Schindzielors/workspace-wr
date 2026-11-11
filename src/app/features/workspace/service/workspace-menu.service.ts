@@ -7,7 +7,7 @@ import { WorkspaceApplication } from '../model/workspace-application.model';
 import { WorkspaceMenuResponseDto } from '../dto/workspace-menu-response.dto';
 import { WorkspaceMenuItem } from '../model/workspace-menu-item.model';
 import { WorkspaceMenuDto } from '../dto/workspace-menu.dto';
-import { buildScreenUrl, buildSystemId } from '../utils/workspace-url';
+import { buildSystemId, urlDaTela } from '../utils/workspace-url';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +38,7 @@ export class WorkspaceMenuService {
             title: project.nome,
             shortTitle: project.nome,
             baseUrl: project.url,
+            portalUrl: project.urlPortal || undefined,
             icon: project.icon ?? undefined,
             possuiMenu: project.possuiMenu ?? true,
             menus: []
@@ -46,13 +47,10 @@ export class WorkspaceMenuService {
       );
   }
 
-  getMenus(
-    projeto: string,
-    baseUrl: string,
-    system: string
-  ): Observable<WorkspaceMenuItem[]> {
+  /** Menu lateral da aplicação; cada tela abre na URL do sistema dela (url / urlPortal). */
+  getMenus(application: WorkspaceApplication): Observable<WorkspaceMenuItem[]> {
     const params = new HttpParams()
-      .set('projeto', projeto);
+      .set('projeto', application.projeto);
 
     return this.http
       .get<WorkspaceMenuResponseDto>(
@@ -61,19 +59,14 @@ export class WorkspaceMenuService {
       )
       .pipe(
         map(response =>
-          this.buildMenuTree(
-            response.items,
-            baseUrl,
-            system
-          )
+          this.buildMenuTree(response.items, application)
         )
       );
   }
 
   private buildMenuTree(
     items: WorkspaceMenuDto[],
-    baseUrl: string,
-    system: string
+    application: WorkspaceApplication
   ): WorkspaceMenuItem[] {
 
     const menuMap = new Map<number, WorkspaceMenuItem>();
@@ -82,9 +75,10 @@ export class WorkspaceMenuService {
       menuMap.set(item.id, {
         id: item.id.toString(),
         title: item.titulo,
-        system,
-        url: buildScreenUrl(baseUrl, item.rota),
+        system: application.system,
+        url: urlDaTela(application, item.rota, item.projeto),
         rota: item.rota ?? undefined,
+        origem: item.projeto ?? undefined,
         children: []
       });
     });

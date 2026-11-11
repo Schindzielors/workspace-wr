@@ -23,7 +23,7 @@ import { WorkspaceMenuService } from '../../features/workspace/service/workspace
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
 import { WorkspaceSessionService } from '../../features/workspace/service/workspace-session.service';
-import { buildScreenUrl, marcarUrlWorkspace } from '../../features/workspace/utils/workspace-url';
+import { marcarUrlWorkspace, urlDaTela } from '../../features/workspace/utils/workspace-url';
 
 @Component({
   selector: 'app-workspace-shell',
@@ -248,7 +248,7 @@ export class WorkspaceShell implements OnInit {
     const application = this.applications().find(
       item => item.system === tela.sistema
     );
-    const url = application && buildScreenUrl(application.baseUrl, tela.rota);
+    const url = application && urlDaTela(application, tela.rota, tela.origem);
 
     if (!application || !url) {
       console.warn('Tela da Home sem aplicação ou rota válida:', tela);
@@ -331,11 +331,7 @@ export class WorkspaceShell implements OnInit {
     this.loadingMenus.add(application.id);
 
     this.menuService
-      .getMenus(
-        application.projeto,
-        application.baseUrl,
-        application.system
-      )
+      .getMenus(application)
       .subscribe({
         complete: () => this.loadingMenus.delete(application.id),
         error: () => this.loadingMenus.delete(application.id),

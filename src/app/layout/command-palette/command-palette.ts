@@ -17,7 +17,7 @@ import { WorkspaceApplication } from '../../features/workspace/model/workspace-a
 import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu-item.model';
 import { WorkspaceFavoritosService } from '../../features/workspace/service/workspace-favoritos.service';
 import { WorkspaceSessionService } from '../../features/workspace/service/workspace-session.service';
-import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
+import { urlDaTela } from '../../features/workspace/utils/workspace-url';
 import { Icon, IconName } from '../../shared/icon/icon';
 import { applicationIcon } from '../../shared/icon/application-icon';
 import { PaletteAcao, PaletteFiltro, PaletteItem } from './command-palette.model';
@@ -284,7 +284,7 @@ export class CommandPalette {
       grupo: 'Favoritos',
       filtro: 'favoritos',
       // Mesmo id da aba do menu: não duplica a tela.
-      acao: this.acaoTela(favorito.idMenu, favorito.titulo, favorito.sistema, favorito.rota)
+      acao: this.acaoTela(favorito.idMenu, favorito.titulo, favorito.sistema, favorito.rota, favorito.origem)
     }));
   }
 
@@ -312,9 +312,9 @@ export class CommandPalette {
   }
 
   /** Ação de abrir tela; sem aplicação ou rota válida, o item fica sem ação. */
-  private acaoTela(id: string, titulo: string, sistema?: string, rota?: string): PaletteAcao {
+  private acaoTela(id: string, titulo: string, sistema?: string, rota?: string, origem?: string): PaletteAcao {
     const application = this.applications().find(item => item.system === sistema);
-    const url = application && buildScreenUrl(application.baseUrl, rota);
+    const url = application && urlDaTela(application, rota, origem);
 
     return application && url
       ? { tipo: 'tela', id, titulo, sistema: application.system, url }

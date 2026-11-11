@@ -6,7 +6,7 @@ import { WorkspaceMenuItem } from '../../features/workspace/model/workspace-menu
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
 import { WorkspaceFavoritosService } from '../../features/workspace/service/workspace-favoritos.service';
 import { WorkspaceFavorito } from '../../features/workspace/model/workspace-favorito.model';
-import { buildScreenUrl } from '../../features/workspace/utils/workspace-url';
+import { urlDaTela } from '../../features/workspace/utils/workspace-url';
 import { Icon, IconName } from '../../shared/icon/icon';
 import { applicationIcon } from '../../shared/icon/application-icon';
 
@@ -63,7 +63,7 @@ export class ApplicationMenu {
   }
 
   abrirFavorito(favorito: WorkspaceFavorito): void {
-    const url = this.application && buildScreenUrl(this.application.baseUrl, favorito.rota);
+    const url = this.application && urlDaTela(this.application, favorito.rota, favorito.origem);
 
     if (!this.application || !url) {
       return;
