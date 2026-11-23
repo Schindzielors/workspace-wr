@@ -76,19 +76,24 @@ export function buildScreenUrl(
   route: string | null | undefined
 ): string | undefined {
 
-  if (!route?.trim() || !baseUrl?.trim()) {
+  // trim: URLs vindas do banco podem ter espaço no fim (ex.: "https://host/ "),
+  // o que gerava "https://host/%20/#/rota".
+  const base = baseUrl?.trim();
+  const rota = route?.trim();
+
+  if (!rota || !base) {
     return undefined;
   }
 
   const normalizedBaseUrl =
-    baseUrl.endsWith('/')
-      ? baseUrl
-      : `${baseUrl}/`;
+    base.endsWith('/')
+      ? base
+      : `${base}/`;
 
   const normalizedRoute =
-    route.startsWith('/')
-      ? route.substring(1)
-      : route;
+    rota.startsWith('/')
+      ? rota.substring(1)
+      : rota;
 
   return marcarUrlWorkspace(`${normalizedBaseUrl}#/${normalizedRoute}`);
 }
