@@ -88,6 +88,16 @@ export interface WorkspaceTab {
    * indiscriminado de origens não confiáveis.
    */
   url: string;
+
+  /**
+   * false = sistema que não usa a dtp-angular-library (ex.: Rodopar via
+   * TSplus). O iframe dessa aba fica sem o `name="dtp-workspace"`: assim o
+   * sistema pode usar o próprio window.name (o TSplus guarda nele o login ao
+   * abrir a sessão na mesma guia) e a ponte não envia sessão para ele.
+   *
+   * Omitido = true (telas do WR: Web Rodopar e Portal WR).
+   */
+  integrada?: boolean;
 }
 
 /**

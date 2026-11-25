@@ -297,7 +297,8 @@ export class WorkspaceShell implements OnInit {
         id: `aplicacao-${application.system}`,
         title: application.title,
         system: application.system,
-        url: marcarUrlWorkspace(application.baseUrl)
+        url: marcarUrlWorkspace(application.baseUrl),
+        integrada: false
       });
       return;
     }
