@@ -18,9 +18,11 @@
         name="dtp-workspace": a dtp-angular-library lê o window.name para entrar
         no "modo Workspace" (sem header/menu). Diferente do ?workspace=1 da URL,
         o nome continua valendo mesmo se o sistema redirecionar ao abrir.
+        Abas de sistemas sem a lib (integrada = false, ex.: Rodopar/TSplus)
+        ficam sem nome: o TSplus usa o window.name para passar o login.
       -->
       <iframe
-        name="dtp-workspace"
+        [attr.name]="tab.integrada === false ? null : 'dtp-workspace'"
         class="workspace-frame"
         [src]="getSafeUrl(
           tab.id,
