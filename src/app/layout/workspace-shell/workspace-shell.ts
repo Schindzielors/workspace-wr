@@ -23,7 +23,7 @@ import { WorkspaceMenuService } from '../../features/workspace/service/workspace
 import { WorkspaceApplication } from '../../features/workspace/model/workspace-application.model';
 import { WorkspaceTabsService } from '../../features/workspace/service/workspace-tabs.service';
 import { WorkspaceSessionService } from '../../features/workspace/service/workspace-session.service';
-import { marcarUrlWorkspace, urlDaTela } from '../../features/workspace/utils/workspace-url';
+import { urlDaTela } from '../../features/workspace/utils/workspace-url';
 
 @Component({
   selector: 'app-workspace-shell',
@@ -297,7 +297,9 @@ export class WorkspaceShell implements OnInit {
         id: `aplicacao-${application.system}`,
         title: application.title,
         system: application.system,
-        url: marcarUrlWorkspace(application.baseUrl),
+        // Sistema fora da dtp-angular-library: abre a URL como cadastrada,
+        // sem o ?workspace=1 (o TSplus não usa e trata parâmetros na URL).
+        url: application.baseUrl.trim(),
         integrada: false
       });
       return;
